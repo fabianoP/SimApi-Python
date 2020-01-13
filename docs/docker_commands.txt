@@ -1,0 +1,9 @@
+# starts container shell
+docker-compose run web sh
+
+# build container
+sudo docker-compose build
+
+
+# starts container
+docker-compose up

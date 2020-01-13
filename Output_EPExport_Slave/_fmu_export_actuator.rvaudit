@@ -1,0 +1,16 @@
+ ReadVarsESO
+ processing:._fmu_export_actuator.rvi
+ input file:_fmu_export_actuator.eso
+ output file:_fmu_export_actuator.csv
+ getting all vars from:_fmu_export_actuator.eso
+  number variables requested for output=          34
+ ReadVars Run Time=00hr 00min  0.07sec
+ ReadVarsESO program completed successfully.
+ ReadVarsESO
+ processing:._fmu_export_actuator.mvi
+ input file:_fmu_export_actuator.mtr
+ output file:_fmu_export_actuatorMeter.csv
+ getting all vars from:_fmu_export_actuator.mtr
+  number variables requested for output=           6
+ ReadVars Run Time=00hr 00min  0.02sec
+ ReadVarsESO program completed successfully.

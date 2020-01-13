@@ -1,0 +1,2 @@
+Assimulo==3.1
+PyFMI==2.5.4
