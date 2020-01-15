@@ -1,9 +1,8 @@
-# starts container shell
-docker-compose run web sh
+# starts container shell: fmu is the container that produces .fmu and sim is container that runs it
+docker-compose run fmu sh or docker-compose run sim sh
 
 # build container
-sudo docker-compose build
+docker-compose build
 
-
-# starts container
+# starts container, also builds if not built already
 docker-compose up

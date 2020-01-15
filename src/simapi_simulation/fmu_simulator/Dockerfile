@@ -21,7 +21,8 @@ RUN wget https://github.com/NREL/EnergyPlus/releases/download/v9.0.1/EnergyPlus-
     && mkdir /home/deb/EnergyPlus \
     && tar -xzvf ~/EnergyPlus-9.0.1-bb7ca4f0da-Linux-x86_64.tar.gz -C  ~/EnergyPlus/ \
     && rm ~/EnergyPlus-9.0.1-bb7ca4f0da-Linux-x86_64.tar.gz \
-    && mv ~/EnergyPlus/EnergyPlus-9.0.1-bb7ca4f0da-Linux-x86_64/EnergyPlus-9-0-1 ~/EnergyPlus/
+    && mv ~/EnergyPlus/EnergyPlus-9.0.1-bb7ca4f0da-Linux-x86_64/EnergyPlus-9-0-1 ~/EnergyPlus/ \
+    && rm -d ~/EnergyPlus/EnergyPlus-9.0.1-bb7ca4f0da-Linux-x86_64
 
 ENV PATH /root/miniconda/bin:$PATH
 ENV PATH /home/deb/miniconda/bin:$PATH
