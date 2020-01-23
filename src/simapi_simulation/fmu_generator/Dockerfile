@@ -33,3 +33,5 @@ RUN mkdir /home/fmu/code/energy \
     && ./test.exe \
     && echo '\nEnd of tests\n'
 
+CMD tail -f /dev/null
+

@@ -8,12 +8,15 @@ services:
       -d
       -i  /home/fmu/code/Energy+.idd
       -w  /home/fmu/code/USA.epw
+      /home/fmu/code/_fmu-export-actuator.idf
+      && ./idf-to-fmu-export-prep-linux
+      /home/fmu/code/Energy+.idd
       /home/fmu/code/_fmu-export-actuator.idf"
     volumes:
       - ./fmu_simulator/volume:/home/deb/code/energy/test
   sim:
     build: ./fmu_simulator
-    command:  bash -c "python pyfmi_master.py"
+    command:  bash -c "tail -f /dev/null"
     volumes:
       - ./fmu_simulator/volume:/home/deb/code
     restart: on-failure

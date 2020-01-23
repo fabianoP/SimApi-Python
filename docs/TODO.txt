@@ -1,0 +1,7 @@
+Run fmu_simulator indefinitely with ports open for communication with Django app
+add api to pass Json to Django api
+
+
+Dockerize Django app and create server side api
+
+Implement message queue to handle communication

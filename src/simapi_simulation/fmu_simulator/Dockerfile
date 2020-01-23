@@ -36,3 +36,5 @@ RUN conda update conda \
    && conda install -c conda-forge assimulo \
    && conda install -c https://conda.binstar.org/chria pyfmi \
    && pip install -r requirements.txt
+
+CMD tail -f /dev/null
