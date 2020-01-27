@@ -3,7 +3,7 @@ version: '3'
 services:
   fmu:
     build: ./fmu_generator
-    command:  bash -c "cd /home/deb/code/energy/test
+    command:  bash -c "ls && cd /home/fmu/code/energy/test
       && python  /home/fmu/code/energy/Scripts/EnergyPlusToFMU.py
       -d
       -i  /home/fmu/code/Energy+.idd
@@ -13,7 +13,7 @@ services:
       /home/fmu/code/Energy+.idd
       /home/fmu/code/_fmu-export-actuator.idf"
     volumes:
-      - ./fmu_simulator/volume:/home/deb/code/energy/test
+      - ./fmu_simulator/volume:/home/fmu/code/energy/test
   sim:
     build: ./fmu_simulator
     command:  bash -c "tail -f /dev/null"
