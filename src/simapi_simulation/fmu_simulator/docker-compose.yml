@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  sim:
+    build: .
+    command:  bash -c "tail -f /dev/null"
+    volumes:
+      - ./work_dir:/home/deb/code

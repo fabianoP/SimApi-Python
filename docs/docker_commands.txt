@@ -6,3 +6,12 @@ docker-compose build
 
 # starts container, also builds if not built already
 docker-compose up
+
+# list running containers
+docker container ps
+
+# list docker images
+docker image ls
+
+# run bash terminal of container, container must be running
+docker exec -it {name/id of container} /bin/bash
