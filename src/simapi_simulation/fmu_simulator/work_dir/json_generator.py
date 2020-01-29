@@ -3,16 +3,16 @@ import json
 
 class JsonSerializer:
 
-    def __init__(self, fmu_vars):
-        self.fmu_vars = fmu_vars
+    @staticmethod
+    def to_json(var_dict):
+        return json.dumps(var_dict)
 
-    def to_json(self):
-        return json.dumps(self.fmu_vars)
+    @staticmethod
+    def to_dict(var_json):
+        return json.loads(var_json)
 
-    def to_dict(self, var_dict):
-        return json.loads(var_dict)
-
-    def to_json_file(self, file, output):
+    @staticmethod
+    def to_json_file(file, output):
         with file as json_file:
             json.dump(output, json_file)
 

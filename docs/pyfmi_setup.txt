@@ -1,5 +1,0 @@
-Requirements:
-    Anaconda3 python=python3.7:
-        conda config --append channels conda-forge
-        conda install -c conda-forge assimulo
-        conda install -c https://conda.binstar.org/chria pyfmi
