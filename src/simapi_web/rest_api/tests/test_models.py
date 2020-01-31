@@ -3,10 +3,18 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 from django.test import TestCase
 
-from rest_api.models import Input
-from rest_api.models import Output
-from rest_api.models import Timestep
-from user_profile.models import User
+from rest_api.models import Input, Output, Timestep, User
+
+
+class UserTestCase(TestCase):
+
+    def test_user(self):
+        User.objects.create(name='test_user',
+                            email='testuser@test.com',
+                            password='test user 88')
+
+        self.assertEquals(User.objects.count(),
+                          1)
 
 
 class TimestepTestCase(TestCase):

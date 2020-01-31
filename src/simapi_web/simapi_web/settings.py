@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djcelery',
     'rest_api',
-    'user_profile',
 ]
 
 MIDDLEWARE = [
@@ -125,4 +124,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = 'user_profile.User'
+AUTH_USER_MODEL = 'rest_api.User'
