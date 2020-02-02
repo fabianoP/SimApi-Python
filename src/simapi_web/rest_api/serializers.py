@@ -1,0 +1,35 @@
+from rest_framework import serializers
+from rest_api.models import Input, Output, Timestep, User
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('user_id', 'name', 'email')
+
+
+class TimestepSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, required=False)
+
+    class Meta:
+        model = Timestep
+        fields = ('user', 'time_step')
+
+
+class InputSerializer(serializers.ModelSerializer):
+    time_step = TimestepSerializer(many=False, required=True)
+
+    class Meta:
+        model = Input
+        fields = ('time_step', 'yshade')
+
+
+class OutputSerializer(serializers.ModelSerializer):
+    time_step = TimestepSerializer(many=False, required=True)
+
+    class Meta:
+        model = Output
+        fields = ('time_step', 'yshade', 'dry_bulb', 'troo', 'isolext', 'sout', 'zonesens', 'cool_rate')
+
+
+

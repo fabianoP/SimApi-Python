@@ -1,8 +1,4 @@
-from django.urls import reverse
-from rest_framework.test import APITestCase, APIClient
-from rest_framework.views import status
 from django.test import TestCase
-
 from rest_api.models import Input, Output, Timestep, User
 
 

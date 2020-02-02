@@ -1,12 +1,16 @@
 from pyfmi import load_fmu
 from json_generator import JsonSerializer
 
-"""SimulationObject class represents an FMU model and class methods to access and run the model"""
+"""
+SimulationObject class represents an FMU model and class methods to access and run the model
+"""
 
 
 class SimulationObject:
 
-    """"""
+    """
+
+    """
     def __init__(self, step_size=600, final_time=72., path_to_fmu='_fmu_export_variable.fmu'):
         self.step_size = step_size
         self.final_time = 60*60*final_time
@@ -17,13 +21,12 @@ class SimulationObject:
         self.model.initialize(0, self.final_time)
 
     def do_time_step(self, json_input):
-        output = {}
         fmu_input = JsonSerializer.to_dict(json_input)
         time_step = fmu_input.get('timestep')
         yshade = fmu_input.get('yshade')
         self.model.set('yShadeFMU', yshade)
 
-        output['timestep'] = time_step
+        output = {'timestep': time_step}
         self.model.do_step(current_t=time_step, step_size=self.step_size, new_step=True)
 
         for key in self.model_vars.keys():

@@ -2,7 +2,8 @@ version: '3'
 
 services:
   fmu:
-    build: .
+    build: .  # create bash script to command below
+              # script will find .idf, .idd, an .epw file and produce .fmu
     command:  bash -c "cd /home/fmu/code/energy/test &&
               python  /home/fmu/code/energy/Scripts/EnergyPlusToFMU.py
               -d

@@ -12,10 +12,6 @@ print(opts)
 # set number of communication points dependent on final_time and .idf steps per hour
 final_time = 60*60*72.  # 72 hour simulation
 
-# idf_steps_per_hour = 6  # 10 mins per step
-# ncp = final_time/(3600./idf_steps_per_hour)  # number of communication points (ncp) not currently used
-# opts['ncp'] = ncp
-
 model.initialize(0, final_time)
 t_step = 0
 step_size = 600

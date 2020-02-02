@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
@@ -63,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Timestep(models.Model):
     """Represents the Timestep values for the fmu"""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     time_step = models.BigIntegerField(unique=True, default=0, primary_key=True)
 
     objects = models.Manager()
