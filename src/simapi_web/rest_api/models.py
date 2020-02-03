@@ -61,6 +61,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class InitModel(models.Model):
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
+    step_size = models.IntegerField(default=0, unique=False)
+    final_time = models.DecimalField(max_digits=20, decimal_places=1)
+
+    objects = models.Manager()
+
+
 class Timestep(models.Model):
     """Represents the Timestep values for the fmu"""
 

@@ -1,11 +1,19 @@
 from rest_framework import serializers
-from rest_api.models import Input, Output, Timestep, User
+from rest_api.models import Input, Output, Timestep, User, InitModel
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('user_id', 'name', 'email')
+
+
+class InitModelSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, required=False)
+
+    class Meta:
+        model = InitModel
+        fields = ('user', 'step_size', 'final_time')
 
 
 class TimestepSerializer(serializers.ModelSerializer):
