@@ -7,7 +7,7 @@ from rest_api.models import Timestep, Input, Output, User
 
 class UserCreateAPIView(APITestCase):
     def setUp(self) -> None:
-        self.url = reverse('api-user-list', kwargs={'Version': 'v1'})
+        self.url = reverse('api-user-list')
 
     def test_create_user(self):
         self.assertEquals(
@@ -60,7 +60,7 @@ class UserCreateAPIView(APITestCase):
 
 class TimeStepCreateAPIView(APITestCase):
     def setUp(self) -> None:
-        self.url = reverse('api-timestep-list', kwargs={'version': 'v1'})
+        self.url = reverse('api-timestep-list')
         self.test_user = User(name='test_user2',
                               email='testuser2@test.com',
                               password='test user2 88')
@@ -111,7 +111,7 @@ class TimeStepCreateAPIView(APITestCase):
 
 class InputCreateAPIView(APITestCase):
     def setUp(self) -> None:
-        self.url = reverse('api-input-list', kwargs={'version': 'v1'})
+        self.url = reverse('api-input-list')
         self.test_user = User(name='test_user3',
                               email='testuser3@test.com',
                               password='test user3 88')
@@ -165,7 +165,7 @@ class InputCreateAPIView(APITestCase):
 
 class OutputCreateAPIView(APITestCase):
     def setUp(self) -> None:
-        self.url = reverse('api-output-list', kwargs={'version': 'v1'})
+        self.url = reverse('api-output-list')
         self.test_user = User(name='test_user4',
                               email='testuser4@test.com',
                               password='test user4 88')

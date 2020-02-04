@@ -22,6 +22,19 @@ class TimestepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Timestep
         fields = ('user', 'time_step')
+        # lookup_field = 'user'
+
+
+class TimestepByUserSerializer(serializers.HyperlinkedModelSerializer):
+    user = UserSerializer(many=False, required=False)
+
+    class Meta:
+        model = Timestep
+        fields = ('url', 'user', 'time_step')
+        lookup_field = 'user'
+        extra_kwargs = {
+            'url': {'lookup_field': 'user'},
+        }
 
 
 class InputSerializer(serializers.ModelSerializer):

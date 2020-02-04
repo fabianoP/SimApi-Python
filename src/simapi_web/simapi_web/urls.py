@@ -15,10 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from rest_framework import routers
+from rest_api.views import DetailsTimestepView
 from rest_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('rest_api.urls')),
-
+    #path('', include('rest_api.urls')),
 ]
+
+router = routers.SimpleRouter()
+router.register(r'timestep', DetailsTimestepView)
+urlpatterns += router.urls

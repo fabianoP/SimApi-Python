@@ -1,8 +1,10 @@
-from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_api.serializers import UserSerializer, TimestepSerializer, InputSerializer, OutputSerializer, InitModelSerializer
+from rest_framework import viewsets
+from rest_api.serializers import UserSerializer, TimestepSerializer, InputSerializer, OutputSerializer, \
+    InitModelSerializer, TimestepByUserSerializer
 
 from rest_api.models import Input, User, Output, Timestep, InitModel
+
 
 # Create your views here.
 
@@ -37,6 +39,7 @@ class DetailsInitModelView(RetrieveUpdateDestroyAPIView):
     """
     API view to retrieve, update or delete post
     """
+
     serializer_class = InitModelSerializer
     queryset = InitModel.objects.all()
 
@@ -50,12 +53,19 @@ class ListTimestepView(ListCreateAPIView):
     queryset = Timestep.objects.all()
 
 
-class DetailsTimestepView(RetrieveUpdateDestroyAPIView):
+class DetailsTimestepView(viewsets.ModelViewSet):
     """
     API view to retrieve, update or delete post
     """
-    serializer_class = TimestepSerializer
     queryset = Timestep.objects.all()
+    serializer_class = TimestepByUserSerializer
+    lookup_field = 'user'
+    # user_id =
+
+    def get_queryset(self):
+        qs = Timestep.objects.all()
+        filtered = qs.filter(user_id=self.kwargs.get('user'))
+        return filtered
 
 
 class ListInputView(ListCreateAPIView):
