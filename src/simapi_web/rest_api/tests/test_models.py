@@ -1,5 +1,5 @@
 from django.test import TestCase
-from rest_api.models import Input, Output, Timestep, User
+from rest_api.temp.models import Input, Output, Timestep, User
 
 
 class UserTestCase(TestCase):

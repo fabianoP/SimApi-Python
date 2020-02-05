@@ -7,6 +7,40 @@ from django.contrib.auth.models import BaseUserManager
 # Create your models here.
 
 
+class InitModel(models.Model):
+    """Represents parameters received user to initialize an fmu time step"""
+
+    model_name = models.CharField(max_length=30, unique=True)
+    step_size = models.IntegerField(default=0, unique=False)
+    final_time = models.DecimalField(max_digits=20, decimal_places=1)
+
+    objects = models.Manager()
+
+
+class Output(models.Model):
+    """Represents output received from an fmu time step"""
+
+    time_step = models.BigIntegerField(unique=True, default=0, primary_key=True)
+    yshade = models.DecimalField(max_digits=20, decimal_places=4)
+    dry_bulb = models.DecimalField(max_digits=20, decimal_places=4)
+    troo = models.DecimalField(max_digits=20, decimal_places=4)
+    isolext = models.DecimalField(max_digits=20, decimal_places=4)
+    sout = models.DecimalField(max_digits=20, decimal_places=4)
+    zonesens = models.DecimalField(max_digits=20, decimal_places=4)
+    cool_rate = models.DecimalField(max_digits=20, decimal_places=4)
+
+    objects = models.Manager()
+
+
+class Input(models.Model):
+    """Represents fmu inputs from web api"""
+
+    time_step = models.BigIntegerField(unique=True, default=0, primary_key=True)
+    yshade = models.DecimalField(max_digits=20, decimal_places=4)
+
+    objects = models.Manager()
+
+
 class UserManager(BaseUserManager):
 
     def create_user(self, email, name, password=None):
@@ -39,6 +73,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
 
+    init_model = models.ForeignKey(InitModel, on_delete=models.CASCADE, blank=True, null=True)
+    input = models.ForeignKey(Input, on_delete=models.CASCADE, blank=True, null=True)
+    output = models.ForeignKey(Output, on_delete=models.CASCADE, blank=True, null=True)
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -59,45 +97,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
 
         return self.email
-
-
-class InitModel(models.Model):
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
-    step_size = models.IntegerField(default=0, unique=False)
-    final_time = models.DecimalField(max_digits=20, decimal_places=1)
-
-    objects = models.Manager()
-
-
-class Timestep(models.Model):
-    """Represents the Timestep values for the fmu"""
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
-    time_step = models.BigIntegerField(unique=True, default=0, primary_key=True)
-
-    objects = models.Manager()
-
-
-class Output(models.Model):
-    """Represents output received from an fmu timestep"""
-
-    time_step = models.OneToOneField(Timestep, primary_key=True, on_delete=models.CASCADE, unique=True)
-    yshade = models.DecimalField(max_digits=20, decimal_places=4)
-    dry_bulb = models.DecimalField(max_digits=20, decimal_places=4)
-    troo = models.DecimalField(max_digits=20, decimal_places=4)
-    isolext = models.DecimalField(max_digits=20, decimal_places=4)
-    sout = models.DecimalField(max_digits=20, decimal_places=4)
-    zonesens = models.DecimalField(max_digits=20, decimal_places=4)
-    cool_rate = models.DecimalField(max_digits=20, decimal_places=4)
-
-    objects = models.Manager()
-
-
-class Input(models.Model):
-    """Represents fmu inputs from web api"""
-
-    time_step = models.OneToOneField(Timestep, primary_key=True, on_delete=models.CASCADE, unique=True)
-    yshade = models.DecimalField(max_digits=20, decimal_places=4)
-
-    objects = models.Manager()

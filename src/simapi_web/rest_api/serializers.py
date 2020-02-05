@@ -1,56 +1,46 @@
 from rest_framework import serializers
-from rest_api.models import Input, Output, Timestep, User, InitModel
+from . import models
 
+# /user/id/init_model
+# should store the init params in db and call method to pass json to simulation container
+# POST, GET
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('user_id', 'name', 'email')
+# /user/id/input
+# should store input in db and pass to sim container
+# POST, GET
+
+# /user/id/ouput
+# should retrieve from container and store in db
+# POST, GET
+
+# Implement data/time and random name for each simulation ran. Send user email with all settings for the simulation
+# just ran or text file with same
 
 
 class InitModelSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False, required=False)
-
     class Meta:
-        model = InitModel
-        fields = ('user', 'step_size', 'final_time')
-
-
-class TimestepSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False, required=False)
-
-    class Meta:
-        model = Timestep
-        fields = ('user', 'time_step')
-        # lookup_field = 'user'
-
-
-class TimestepByUserSerializer(serializers.HyperlinkedModelSerializer):
-    user = UserSerializer(many=False, required=False)
-
-    class Meta:
-        model = Timestep
-        fields = ('url', 'user', 'time_step')
-        lookup_field = 'user'
-        extra_kwargs = {
-            'url': {'lookup_field': 'user'},
-        }
+        model = models.InitModel
+        fields = ['model_name', 'step_size', 'final_time']
 
 
 class InputSerializer(serializers.ModelSerializer):
-    time_step = TimestepSerializer(many=False, required=True)
-
     class Meta:
-        model = Input
-        fields = ('time_step', 'yshade')
+        model = models.Input
+        fields = ['time_step', 'yshade']
 
 
 class OutputSerializer(serializers.ModelSerializer):
-    time_step = TimestepSerializer(many=False, required=True)
-
     class Meta:
-        model = Output
+        model = models.Output
         fields = ('time_step', 'yshade', 'dry_bulb', 'troo', 'isolext', 'sout', 'zonesens', 'cool_rate')
 
 
+class UserSerializer(serializers.ModelSerializer):
+    init_model = InitModelSerializer(many=False)
+    input = InputSerializer(many=False)
+    output = OutputSerializer(many=False)
+
+    class Meta:
+        model = models.User
+        fields = ['user_id', 'email', 'name', 'init_model', 'input', 'output']
 

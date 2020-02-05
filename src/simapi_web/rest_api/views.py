@@ -1,102 +1,38 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework import viewsets
-from rest_api.serializers import UserSerializer, TimestepSerializer, InputSerializer, OutputSerializer, \
-    InitModelSerializer, TimestepByUserSerializer
-
-from rest_api.models import Input, User, Output, Timestep, InitModel
-
-
-# Create your views here.
+from rest_framework import renderers
+from rest_framework.response import Response
+import rest_framework.generics
+from rest_framework.decorators import action
+from rest_framework import status, viewsets
+from .models import User, InitModel
+from . import serializers
 
 
-class ListUserView(ListCreateAPIView):
-    """
-    API view to retrieve list of or create new time step
-    """
-
-    serializer_class = UserSerializer
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
 
 
-class DetailsUserView(RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update or delete post
-    """
-    serializer_class = UserSerializer
+
+
+"""
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+
+    @action(detail=True, methods=['post'])
+    def init_model(self, request, pk=None):
+        user = self.get_object()
+        serializer = serializers.InitModelSerializerDetail(data=request.data)
+        if serializer.is_valid():
+            model_params = InitModel(user=user,
+                                     step_size=serializer.data['step_size'],
+                                     final_time=serializer.data['final_time'])
+            model_params.save()
+            return Response({'status': 'success'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+"""
 
 
-class ListInitModelView(ListCreateAPIView):
-    """
-    API view to retrieve list of or create new time step
-    """
 
-    serializer_class = InitModelSerializer
-    queryset = InitModel.objects.all()
-
-
-class DetailsInitModelView(RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update or delete post
-    """
-
-    serializer_class = InitModelSerializer
-    queryset = InitModel.objects.all()
-
-
-class ListTimestepView(ListCreateAPIView):
-    """
-    API view to retrieve list of or create new time step
-    """
-
-    serializer_class = TimestepSerializer
-    queryset = Timestep.objects.all()
-
-
-class DetailsTimestepView(viewsets.ModelViewSet):
-    """
-    API view to retrieve, update or delete post
-    """
-    queryset = Timestep.objects.all()
-    serializer_class = TimestepByUserSerializer
-    lookup_field = 'user'
-    # user_id =
-
-    def get_queryset(self):
-        qs = Timestep.objects.all()
-        filtered = qs.filter(user_id=self.kwargs.get('user'))
-        return filtered
-
-
-class ListInputView(ListCreateAPIView):
-    """
-    API view to retrieve list of or create new input
-    """
-
-    serializer_class = InputSerializer
-    queryset = Input.objects.all()
-
-
-class DetailsInputView(RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update or delete post
-    """
-    serializer_class = InputSerializer
-    queryset = Input.objects.all()
-
-
-class ListOutputView(ListCreateAPIView):
-    """
-    API view to retrieve list of or create new output
-    """
-
-    serializer_class = OutputSerializer
-    queryset = Output.objects.all()
-
-
-class DetailsOutputView(RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update or delete post
-    """
-    serializer_class = OutputSerializer
-    queryset = Output.objects.all()
