@@ -36,9 +36,9 @@ class OutputSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    init_model = InitModelSerializer(many=False)
-    input = InputSerializer(many=False)
-    output = OutputSerializer(many=False)
+    init_model = InitModelSerializer(many=False, allow_null=True)
+    input = InputSerializer(many=False, allow_null=True, required=False, read_only=True)
+    output = OutputSerializer(many=False, allow_null=True, required=False, read_only=True)
 
     class Meta:
         model = models.User
