@@ -10,6 +10,7 @@ from django.contrib.auth.models import BaseUserManager
 class InitModel(models.Model):
     """Represents parameters received user to initialize an fmu time step"""
 
+    model_id = models.AutoField(primary_key=True)
     model_name = models.CharField(max_length=30, unique=True)
     step_size = models.IntegerField(default=0, unique=False)
     final_time = models.DecimalField(max_digits=20, decimal_places=1)
