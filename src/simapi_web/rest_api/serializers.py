@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_api.models import Input, Output, User, InitModel
+from rest_api.models import Input, Output, User, FmuModelParameters
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,11 +22,13 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class InitModelSerializer(serializers.ModelSerializer):
+class FmuModelParametersSerializer(serializers.ModelSerializer):
     """"""
     class Meta:
-        model = InitModel
+        model = FmuModelParameters
         fields = ('model_name', 'user', 'step_size', 'final_time', 'created_on')
+
+        """read-only field user. Can only be created by authenticated user"""
         extra_kwargs = {'user': {'read_only': True}}
 
 
@@ -34,9 +36,11 @@ class InputSerializer(serializers.ModelSerializer):
     """"""
     class Meta:
         model = Input
-        fields = ('user', 'model_name', 'time_step', 'yshade')
+        fields = ('user', 'fmu_model', 'time_step', 'yshade')
+
+        """read-only fields user and model_name. Can only be created by authenticated user"""
         extra_kwargs = {'user': {'read_only': True},
-                        'model_name': {'read_only': True}}
+                        'fmu_model': {'read_only': True}}
 
 
 class OutputSerializer(serializers.ModelSerializer):
@@ -44,7 +48,7 @@ class OutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Output
         fields = ('user',
-                  'model_name',
+                  'fmu_model',
                   'time_step',
                   'yshade',
                   'dry_bulb',
@@ -53,8 +57,10 @@ class OutputSerializer(serializers.ModelSerializer):
                   'sout',
                   'zonesens',
                   'cool_rate')
+
+        """read-only fields user and model_name. Can only be created by authenticated user"""
         extra_kwargs = {'user': {'read_only': True},
-                        'model_name': {'read_only': True}}
+                        'fmu_model': {'read_only': True}}
 
 
 

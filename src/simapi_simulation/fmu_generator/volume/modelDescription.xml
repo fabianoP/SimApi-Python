@@ -6,7 +6,7 @@
   guid="7dbbd1b7c9d1e3d02b178a19a6af8b87"
   description="Automatically generated from EnergyPlus input file _fmu-export-variable.idf"
   generationTool="idf-to-fmu-export-prep-linux"
-  generationDateAndTime="2020-01-27T15:42:23Z"
+  generationDateAndTime="2020-02-12T18:15:43Z"
   variableNamingConvention="flat"
   numberOfContinuousStates="0"
   numberOfEventIndicators="0">

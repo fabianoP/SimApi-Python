@@ -23,7 +23,7 @@ from rest_api import views
 router = routers.DefaultRouter()
 router.register('user', views.UserViewSet)
 router.register('login', views.LoginViewSet, basename='login')
-router.register('init_model', views.InitModelViewSet)
+router.register('init_model', views.FmuModelViewSet)
 router.register('input', views.InputViewSet)
 router.register('output', views.OutputViewSet)
 

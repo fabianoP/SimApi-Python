@@ -63,7 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 # TODO possibly just store JSON in all models except user.
 
 
-class InitModel(models.Model):
+class FmuModelParameters(models.Model):
     """represents .fmu initialization parameters"""
     model_name = models.CharField(max_length=255, unique=True, primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -84,7 +84,7 @@ class Input(models.Model):
     """represents inputs from web api going to an fmu model"""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    model_name = models.ForeignKey(InitModel, on_delete=models.CASCADE)
+    fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
 
     # set as single json object
     time_step = models.BigIntegerField(unique=True, default=0)
@@ -96,7 +96,7 @@ class Input(models.Model):
 class Output(models.Model):
     """represents output received from an fmu time step"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    model_name = models.ForeignKey(InitModel, on_delete=models.CASCADE)
+    fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
 
     # set as single json object
     time_step = models.BigIntegerField(unique=True, default=0)

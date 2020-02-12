@@ -1,16 +1,17 @@
 from rest_framework import viewsets
-from rest_api import serializers
 from rest_framework.decorators import action
-from rest_api import models
-
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework import filters
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 
-from . import permissions
+from rest_api import serializers
+from rest_api import models
+from rest_api import permissions
+
+
 # Create your views here.
-# TODO  re-work model foreign key. if user has more than one model api breaks.
+# TODO  Add exception handling.
 # Possibly have master script in while(time < final_time) and have the pauses inside the loop.
 
 
@@ -34,12 +35,12 @@ class LoginViewSet(viewsets.ViewSet):
         return ObtainAuthToken().post(request)
 
 
-class InitModelViewSet(viewsets.ModelViewSet):
+class FmuModelViewSet(viewsets.ModelViewSet):
     """handles creating and reading model initialization parameters"""
 
     authentication_classes = (TokenAuthentication, SessionAuthentication)
-    serializer_class = serializers.InitModelSerializer
-    queryset = models.InitModel.objects.all()
+    serializer_class = serializers.FmuModelParametersSerializer
+    queryset = models.FmuModelParameters.objects.all()
 
     def perform_create(self, serializer):
 
@@ -53,11 +54,15 @@ class InputViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.InputSerializer
     queryset = models.Input.objects.all()
 
-    """create new input instance. set user as current authenticated user, model_name as init_model related to user"""
+    """
+    create new input instance. set user as current authenticated user,
+    fmu_model as current fmu_model related to user
+    """
     def perform_create(self, serializer):
 
-        model = models.InitModel.objects.get(user=self.request.user)
-        serializer.save(user=self.request.user, model_name=model)
+        # TODO add second get param of time/date to ensure the current model is returned
+        model = models.FmuModelParameters.objects.get(user=self.request.user)
+        serializer.save(user=self.request.user, fmu_model=model)
 
 
 class OutputViewSet(viewsets.ModelViewSet):
@@ -67,8 +72,12 @@ class OutputViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.OutputSerializer
     queryset = models.Output.objects.all()
 
-    """create new output instance. set user as current authenticated user, model_name as init_model related to user"""
+    """
+    create new output instance. set user as current authenticated user,
+    fmu_model as current init_model related to user
+    """
     def perform_create(self, serializer):
 
-        model = models.InitModel.objects.get(user=self.request.user)
-        serializer.save(user=self.request.user, model_name=model)
+        # TODO add second get param of time/date to ensure the current model is returned
+        model = models.FmuModelParameters.objects.get(user=self.request.user)
+        serializer.save(user=self.request.user, fmu_model=model)
