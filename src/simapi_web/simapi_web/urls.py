@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
 from rest_framework import routers
+
 from rest_api import views
 
 
@@ -24,7 +24,8 @@ router = routers.DefaultRouter()
 router.register('user', views.UserViewSet)
 router.register('login', views.LoginViewSet, basename='login')
 router.register('init_model', views.InitModelViewSet)
-
+router.register('input', views.InputViewSet)
+router.register('output', views.OutputViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

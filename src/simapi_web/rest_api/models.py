@@ -34,7 +34,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Represents Users in the system"""
+    """represents Users in the system"""
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -61,12 +61,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 # TODO possibly just store JSON in all models except user.
-# TODO
 
 
 class InitModel(models.Model):
-    """Represents .fmu initialization parameters"""
-    model_name = models.CharField(max_length=255, unique=True)
+    """represents .fmu initialization parameters"""
+    model_name = models.CharField(max_length=255, unique=True, primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     # set as single json object
@@ -76,9 +75,26 @@ class InitModel(models.Model):
 
     objects = models.Manager()
 
+    def __str__(self):
+
+        return self.model_name
+
+
+class Input(models.Model):
+    """represents inputs from web api going to an fmu model"""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    model_name = models.ForeignKey(InitModel, on_delete=models.CASCADE)
+
+    # set as single json object
+    time_step = models.BigIntegerField(unique=True, default=0)
+    yshade = models.DecimalField(max_digits=20, decimal_places=4)
+
+    objects = models.Manager()
+
 
 class Output(models.Model):
-    """Represents output received from an fmu time step"""
+    """represents output received from an fmu time step"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     model_name = models.ForeignKey(InitModel, on_delete=models.CASCADE)
 
@@ -94,14 +110,3 @@ class Output(models.Model):
 
     objects = models.Manager()
 
-
-class Input(models.Model):
-    """Represents fmu inputs from web api"""
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    model_name = models.ForeignKey(InitModel, on_delete=models.CASCADE)
-
-    # set as single json object
-    time_step = models.BigIntegerField(unique=True, default=0)
-    yshade = models.DecimalField(max_digits=20, decimal_places=4)
-
-    objects = models.Manager()

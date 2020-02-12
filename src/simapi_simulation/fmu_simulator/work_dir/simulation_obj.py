@@ -1,16 +1,12 @@
 from pyfmi import load_fmu
 from json_generator import JsonSerializer
 
-"""
-SimulationObject class represents an FMU model and class methods to access and run the model
-"""
+"""SimulationObject class represents an FMU model and class methods to access and run the model"""
 
 
 class SimulationObject:
 
-    """
-
-    """
+    #
     def __init__(self, step_size=600, final_time=72., path_to_fmu='_fmu_export_variable.fmu'):
         self.step_size = step_size
         self.final_time = 60*60*final_time

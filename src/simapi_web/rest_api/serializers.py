@@ -3,13 +3,14 @@ from rest_api.models import Input, Output, User, InitModel
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """"""
     class Meta:
         model = User
         fields = ('user_id', 'name', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-
+        """"""
         user = User(
             email=validated_data['email'],
             name=validated_data['name']
@@ -22,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class InitModelSerializer(serializers.ModelSerializer):
-
+    """"""
     class Meta:
         model = InitModel
         fields = ('model_name', 'user', 'step_size', 'final_time', 'created_on')
@@ -30,14 +31,16 @@ class InitModelSerializer(serializers.ModelSerializer):
 
 
 class InputSerializer(serializers.ModelSerializer):
-
+    """"""
     class Meta:
         model = Input
         fields = ('user', 'model_name', 'time_step', 'yshade')
+        extra_kwargs = {'user': {'read_only': True},
+                        'model_name': {'read_only': True}}
 
 
 class OutputSerializer(serializers.ModelSerializer):
-
+    """"""
     class Meta:
         model = Output
         fields = ('user',
@@ -50,6 +53,8 @@ class OutputSerializer(serializers.ModelSerializer):
                   'sout',
                   'zonesens',
                   'cool_rate')
+        extra_kwargs = {'user': {'read_only': True},
+                        'model_name': {'read_only': True}}
 
 
 

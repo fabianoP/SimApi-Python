@@ -1,28 +1,26 @@
 from rest_framework import viewsets
-from rest_api.serializers import UserSerializer, InitModelSerializer
+from rest_api import serializers
 from rest_framework.decorators import action
-from rest_api.models import User, InitModel
+from rest_api import models
 
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework import filters
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 
 from . import permissions
 # Create your views here.
-# TODO  figure out mod headers to use login token, and test InitModel.
-# implement rest of the viewsets, add class filters to return all instances associated with user
+# TODO  re-work model foreign key. if user has more than one model api breaks.
 # Possibly have master script in while(time < final_time) and have the pauses inside the loop.
-# comment code,
 
 
 class UserViewSet(viewsets.ModelViewSet):
     """retrieve list of or create new user"""
 
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+    queryset = models.User.objects.all()
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (permissions.UpdateOwnProfile,)
+    # permission_classes = (permissions.UpdateOwnProfile,)
 
 
 class LoginViewSet(viewsets.ViewSet):
@@ -37,12 +35,40 @@ class LoginViewSet(viewsets.ViewSet):
 
 
 class InitModelViewSet(viewsets.ModelViewSet):
-    """Handles creating and reading model initialization parameters"""
+    """handles creating and reading model initialization parameters"""
 
-    authentication_classes = (TokenAuthentication,)
-    serializer_class = InitModelSerializer
-    queryset = InitModel.objects.all()
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    serializer_class = serializers.InitModelSerializer
+    queryset = models.InitModel.objects.all()
 
     def perform_create(self, serializer):
 
         serializer.save(user=self.request.user)
+
+
+class InputViewSet(viewsets.ModelViewSet):
+    """handles creating and reading model input parameters"""
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    serializer_class = serializers.InputSerializer
+    queryset = models.Input.objects.all()
+
+    """create new input instance. set user as current authenticated user, model_name as init_model related to user"""
+    def perform_create(self, serializer):
+
+        model = models.InitModel.objects.get(user=self.request.user)
+        serializer.save(user=self.request.user, model_name=model)
+
+
+class OutputViewSet(viewsets.ModelViewSet):
+    """handles creating and reading model output parameters"""
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    serializer_class = serializers.OutputSerializer
+    queryset = models.Output.objects.all()
+
+    """create new output instance. set user as current authenticated user, model_name as init_model related to user"""
+    def perform_create(self, serializer):
+
+        model = models.InitModel.objects.get(user=self.request.user)
+        serializer.save(user=self.request.user, model_name=model)

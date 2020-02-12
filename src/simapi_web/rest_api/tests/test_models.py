@@ -1,5 +1,6 @@
 from django.test import TestCase
-from rest_api.temp.models import Input, Output, Timestep, User
+from rest_api.temp.models import Input, Output, User
+# TODO rewrite tests to suit new models
 
 
 class UserTestCase(TestCase):
