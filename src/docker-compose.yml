@@ -1,10 +1,33 @@
-version: '3'
+version: '3.7'
 
 services:
+  db:
+    container_name: db
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
   web:
+    container_name: web
     build: .
     command:  bash -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./simapi_web:/home/deb/code
     ports:
-    - 8000:8000
+      - 8000:8000
+    depends_on:
+      - db
+  generator:
+    container_name: generator
+    build: ./simapi_simulation/fmu_generator
+    command: bash -c "tail -f /dev/null"
+    volumes:
+      - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test
+  simulator:
+    container_name: simulator
+    build: ./simapi_simulation/fmu_simulator
+    command: bash -c "tail -f /dev/null"
+    volumes:
+    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code
+
+volumes:
+  postgres_data:

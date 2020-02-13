@@ -1,5 +1,5 @@
-from simulation_obj import SimulationObject
-from json_generator import JsonSerializer
+from .simulation_obj import SimulationObject
+from .json_generator import JsonSerializer
 
 """ Simple test script to. Tests functionality of the simulation_obj class"""
 

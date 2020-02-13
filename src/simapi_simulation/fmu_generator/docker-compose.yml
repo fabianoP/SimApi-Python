@@ -1,7 +1,8 @@
-version: '3'
+version: '3.7'
 
 services:
   fmu:
+    container_name: test_generator
     build: .  # create bash script to command below
               # script will find .idf, .idd, an .epw file and produce .fmu
     command:  bash -c "cd /home/fmu/code/energy/test &&

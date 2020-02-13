@@ -1,7 +1,8 @@
-version: '3'
+version: '3.7'
 
 services:
   sim:
+    container_name: test_simulator
     build: .
     command:  bash -c "tail -f /dev/null"
     volumes:

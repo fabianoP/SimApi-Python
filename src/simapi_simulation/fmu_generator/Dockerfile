@@ -15,7 +15,7 @@ USER fmu
 RUN mkdir /home/fmu/code
 WORKDIR /home/fmu/code
 COPY . /home/fmu/code/
-
+# TODO add sudo chmod +x run.sh
 RUN mkdir /home/fmu/code/energy \
     && mkdir /home/fmu/code/energy/test \
     && wget https://github.com/lbl-srg/EnergyplusToFMU/releases/download/v2.1.0/EnergyPlusToFMU-v2.1.0.zip \

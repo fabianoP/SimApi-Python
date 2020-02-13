@@ -4,7 +4,8 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
-# Create your models here.
+
+# TODO make fat models
 
 
 class UserManager(BaseUserManager):

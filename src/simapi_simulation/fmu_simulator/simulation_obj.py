@@ -1,5 +1,5 @@
 from pyfmi import load_fmu
-from json_generator import JsonSerializer
+from .json_generator import JsonSerializer
 
 """SimulationObject class represents an FMU model and class methods to access and run the model"""
 
