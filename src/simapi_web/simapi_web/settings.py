@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djcelery',
     'rest_api',
+    'rest_framework_swagger',
 ]
 
 REST_FRAMEWORK = {

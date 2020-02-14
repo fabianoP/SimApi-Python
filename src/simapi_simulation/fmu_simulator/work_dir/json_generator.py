@@ -1,5 +1,7 @@
 import json
 
+"""Simple wrapper class for python json module. For readability"""
+
 
 class JsonSerializer:
 

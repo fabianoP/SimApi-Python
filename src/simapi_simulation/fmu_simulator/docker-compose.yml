@@ -6,4 +6,4 @@ services:
     build: .
     command:  bash -c "tail -f /dev/null"
     volumes:
-      - ./work_dir:/home/deb/code
+      - ./volume:/home/deb/code/volume

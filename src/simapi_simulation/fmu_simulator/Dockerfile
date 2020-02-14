@@ -5,12 +5,14 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y --no-install-recommends \
                wget \
                gedit \
+               vim \
                sudo
 
 RUN useradd -rm -d /home/deb -s /bin/bash -g root -G sudo -u 1000 deb
 
 USER deb
 RUN mkdir /home/deb/code
+RUN mkdir /home/deb/code/volume/
 WORKDIR /home/deb/code
 COPY . /home/deb/code/
 

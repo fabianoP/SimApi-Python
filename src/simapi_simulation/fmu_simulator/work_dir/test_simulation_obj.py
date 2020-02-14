@@ -1,5 +1,10 @@
-from .simulation_obj import SimulationObject
-from .json_generator import JsonSerializer
+import os.path
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from work_dir.simulation_obj import SimulationObject
+from work_dir.json_generator import JsonSerializer
 
 """ Simple test script to. Tests functionality of the simulation_obj class"""
 
