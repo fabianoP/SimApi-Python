@@ -1,0 +1,97 @@
+.
+├── committest.txt
+├── docker_commands.txt
+├── docs
+│   ├── eplustofmu_commands.txt
+│   ├── git.txt
+│   ├── pyfmi_setup.txt
+│   ├── report_notes.txt
+│   └── TODO.txt
+├── LICENSE
+├── README.md
+└── src
+    ├── docker-compose.yml
+    ├── Dockerfile
+    ├── simapi_simulation
+    │   ├── docker-compose.yml
+    │   ├── fmu_generator
+    │   │   ├── docker-compose.yml
+    │   │   ├── Dockerfile
+    │   │   ├── Energy+.idd
+    │   │   ├── _fmu-export-variable.idf
+    │   │   ├── run.sh
+    │   │   ├── USA.epw
+    │   │   └── volume
+    │   │       ├── _fmu_export_variable.fmu
+    │   │       ├── idf-to-fmu-export-prep-linux
+    │   │       ├── modelDescription.xml
+    │   │       ├── util-get-address-size.exe
+    │   │       └── variables.cfg
+    │   └── fmu_simulator
+    │       ├── conda_requirements.txt
+    │       ├── docker-compose.yml
+    │       ├── Dockerfile
+    │       ├── __init__.py
+    │       ├── requirements.txt
+    │       ├── simulator
+    │       │   ├── _fmu_export_variable.fmu
+    │       │   ├── __init__.py
+    │       │   ├── json_generator.py
+    │       │   ├── __pycache__
+    │       │   │   ├── __init__.cpython-37.pyc
+    │       │   │   ├── json_generator.cpython-37.pyc
+    │       │   │   └── simulation_obj.cpython-37.pyc
+    │       │   ├── simulation_obj.py
+    │       │   └── test_simulation_obj.py
+    │       ├── simulator_api
+    │       │   └── __init__.py
+    │       └── volume
+    └── simapi_web
+        ├── manage.py
+        ├── __pycache__
+        │   └── manage.cpython-37.pyc
+        ├── requirements.txt
+        ├── rest_api
+        │   ├── admin.py
+        │   ├── apps.py
+        │   ├── __init__.py
+        │   ├── middleware.py
+        │   ├── migrations
+        │   │   ├── 0001_initial.py
+        │   │   ├── __init__.py
+        │   │   └── __pycache__
+        │   │       ├── 0001_initial.cpython-37.pyc
+        │   │       └── __init__.cpython-37.pyc
+        │   ├── models.py
+        │   ├── permissions.py
+        │   ├── __pycache__
+        │   │   ├── admin.cpython-37.pyc
+        │   │   ├── __init__.cpython-37.pyc
+        │   │   ├── models.cpython-37.pyc
+        │   │   ├── permissions.cpython-37.pyc
+        │   │   ├── serializers.cpython-37.pyc
+        │   │   ├── urls.cpython-37.pyc
+        │   │   └── views.cpython-37.pyc
+        │   ├── serializers.py
+        │   ├── tests
+        │   │   ├── __init__.py
+        │   │   ├── __pycache__
+        │   │   │   ├── __init__.cpython-37.pyc
+        │   │   │   └── test_models.cpython-37.pyc
+        │   │   ├── test_models.py
+        │   │   └── test_views.py
+        │   ├── urls.py
+        │   └── views.py
+        ├── simapi_web
+        │   ├── asgi.py
+        │   ├── __init__.py
+        │   ├── __pycache__
+        │   │   ├── __init__.cpython-37.pyc
+        │   │   ├── settings.cpython-37.pyc
+        │   │   ├── urls.cpython-37.pyc
+        │   │   └── wsgi.cpython-37.pyc
+        │   ├── settings.py
+        │   ├── urls.py
+        │   └── wsgi.py
+        └── TODO.py
+

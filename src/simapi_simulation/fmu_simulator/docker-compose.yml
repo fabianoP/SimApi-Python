@@ -6,4 +6,4 @@ services:
     build: .
     command:  bash -c "tail -f /dev/null"
     volumes:
-      - ./volume:/home/deb/code/volume
+      - ./volume:/home/deb/code/volume # TODO create script to make new folder for each sim run and place OutputExpSlave

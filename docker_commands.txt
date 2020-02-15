@@ -25,8 +25,13 @@ docker stop $(docker ps -q)
 # DOCKER NETWORK COMMANDS
 
 # create user-defined bridge called my-net
-docker network create my-net
+docker network create {my-net}
+
+# connect image to user defined network
+docker network connect {network-name} {image-name}
+
+# inspect network information
+docker network inspect {network-name}
 
 
-
-
+docker network connect simapi web && docker network connect simapi simulator && docker network connect simapi generator

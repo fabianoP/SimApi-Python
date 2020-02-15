@@ -4,12 +4,16 @@ services:
   db:
     container_name: db
     image: postgres
+    networks:
+      - simapi
     volumes:
       - postgres_data:/var/lib/postgresql/data/
   web:
     container_name: web
     build: .
     command:  bash -c "python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - simapi
     volumes:
       - ./simapi_web:/home/deb/code
     ports:
@@ -20,14 +24,21 @@ services:
     container_name: generator
     build: ./simapi_simulation/fmu_generator
     command: bash -c "tail -f /dev/null"
+    networks:
+      - simapi
     volumes:
       - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test
   simulator:
     container_name: simulator
     build: ./simapi_simulation/fmu_simulator
     command: bash -c "tail -f /dev/null"
+    networks:
+      - simapi
     volumes:
-    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code
+    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
 
+networks:
+  simapi:
+    driver: bridge
 volumes:
   postgres_data:

@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                wget \
                unzip \
                build-essential \
-               sudo
+               sudo \
+               iputils-ping
 
 RUN useradd -rm -d /home/fmu -s /bin/bash -g root -G sudo -u 1000 fmu
 

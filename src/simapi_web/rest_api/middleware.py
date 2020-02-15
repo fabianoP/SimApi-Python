@@ -1,3 +1,3 @@
-# TODO check incoming json inputs against variables.cfg from generator
-# TODO create internal coreapi inside simulation container to communicate with api
+# TODO in middleware check incoming json inputs against variables.cfg from generator
+# TODO handle bad inputs here
 # TODO simulator api client
