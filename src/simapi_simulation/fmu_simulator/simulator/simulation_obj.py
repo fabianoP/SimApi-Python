@@ -31,8 +31,9 @@ class SimulationObject:
     def do_time_step(self, json_input):
         """
         process current time_step.
-        json_input: input values for current time step. Originate from API
-        converts json_input to dict, sets relevant model inputs, calls model.do_step,
+        json_input: input values for current time step. Originates from API.
+        json_input is converted to dict, values from dict are used to set relevant model inputs.
+        calls model.do_step,
         creates new dict with output then returns output dict as json to pass back to API
         """
 

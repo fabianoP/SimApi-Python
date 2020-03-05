@@ -1,19 +1,67 @@
-import coreapi
 import requests
 
 # TODO implement api client here. Receive input, provide output.
 
-# resp = requests.get('http://web:8000/')
-# print(resp)
-data1 = {"username": "test@test.com",
-         "password": "hello world88"}
 
-resp_2 = requests.post('http://127.0.0.1:8000/login/', data=data1)
-print(resp_2.headers)
-print(resp_2.cookies)
-print(resp_2.content)
+"""
+user_url = 'http://127.0.0.1:8000/user/'
+login_url = 'http://127.0.0.1:8000/login/'
+init_url = 'http://127.0.0.1:8000/init_model/'
+input_url = 'http://127.0.0.1:8000/input/'
+output_url = 'http://127.0.0.1:8000/output/'
+"""
 
-data = resp_2.json
+user_url = 'http://web:8000/user/'
+login_url = 'http://web:8000/login/'
+init_url = 'http://web:8000/init_model/'
+input_url = 'http://web:8000/input/'
+output_url = 'http://web:8000/output/'
 
-print(data)
 
+resp = requests.get('http://web:8000/')
+print(resp.text)
+
+"""
+data = {"username": "test@test.com",
+        "password": "hello world88"}
+
+resp = requests.post(login_url, data=data)
+json = resp.json()
+
+token = json['token']
+header = {'Authorization':  'Token ' + token}
+
+input_data = {
+  "fmu_model": "test1",
+  "time_step": "600",
+  "yshade": "2.0"
+}
+
+resp = requests.post(input_url, headers=header, data=input_data)
+
+print(resp.text)
+
+
+init_data = {"model_name": "test3",
+             "step_size": "800",
+             "final_time": "72.0"}
+
+resp = requests.post(init_url, headers=header, data=init_data)
+
+print(resp.text)
+
+output_data = {
+  "time_step": "800",
+  "yshade": "2.4",
+  "dry_bulb": "5.0",
+  "troo": "7.0",
+  "isolext": "4.01",
+  "sout": "6.89",
+  "zonesens": "9.111",
+  "cool_rate": "18.9"
+}
+
+resp = requests.post(output_url, headers=header, data=output_data)
+
+print(resp.text)
+"""

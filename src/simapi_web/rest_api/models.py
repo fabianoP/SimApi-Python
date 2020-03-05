@@ -88,7 +88,7 @@ class Input(models.Model):
     fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
 
     # set as single json object
-    time_step = models.BigIntegerField(unique=True, default=0)
+    time_step = models.BigIntegerField(unique=False, default=0)
     yshade = models.DecimalField(max_digits=20, decimal_places=4)
 
     objects = models.Manager()
@@ -100,7 +100,7 @@ class Output(models.Model):
     fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
 
     # set as single json object
-    time_step = models.BigIntegerField(unique=True, default=0)
+    time_step = models.BigIntegerField(unique=False, default=0)
     yshade = models.DecimalField(max_digits=20, decimal_places=4)
     dry_bulb = models.DecimalField(max_digits=20, decimal_places=4)
     troo = models.DecimalField(max_digits=20, decimal_places=4)

@@ -40,7 +40,7 @@ class InputSerializer(serializers.ModelSerializer):
 
         """read-only fields user and model_name. Can only be created by authenticated user"""
         extra_kwargs = {'user': {'read_only': True},
-                        'fmu_model': {'read_only': True}}
+                        'fmu_model': {'required': True}}
 
 
 class OutputSerializer(serializers.ModelSerializer):

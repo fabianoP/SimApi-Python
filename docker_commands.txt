@@ -33,5 +33,7 @@ docker network connect {network-name} {image-name}
 # inspect network information
 docker network inspect {network-name}
 
+# run container and publish ports defined in compose.yml
+docker-compose up -d --service-ports
 
 docker network connect simapi web && docker network connect simapi simulator && docker network connect simapi generator

@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
                wget \
                vim \
                sudo \
-               iputils-ping
+               iputils-ping \
+               curl
 
 RUN useradd -rm -d /home/deb -s /bin/bash -g root -G sudo -u 1000 deb
 

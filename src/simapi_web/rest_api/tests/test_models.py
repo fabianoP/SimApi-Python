@@ -1,5 +1,5 @@
 from django.test import TestCase
-from rest_api.temp.models import Input, Output, User
+from rest_api.models import Input, Output, User
 # TODO rewrite tests to suit new models
 
 
@@ -12,30 +12,6 @@ class UserTestCase(TestCase):
 
         self.assertEquals(User.objects.count(),
                           1)
-
-
-class TimestepTestCase(TestCase):
-    """
-    Test case for Timestep model
-    """
-    def test_timestep(self):
-        self.user = User.objects.create(name='test_user',
-                                        email='testuser@test.com',
-                                        password='test user 88')
-
-        self.assertEquals(
-            Timestep.objects.count(),
-            0
-        )
-        Timestep.objects.create(user=self.user,
-                                time_step=600)
-        Timestep.objects.create(user=self.user,
-                                time_step=1200)
-
-        self.assertEquals(
-            Timestep.objects.count(),
-            2
-        )
 
 
 class InputTestCase(TestCase):

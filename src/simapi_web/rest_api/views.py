@@ -1,13 +1,10 @@
 from rest_framework import viewsets
-from rest_framework.decorators import action
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-from rest_framework import filters
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 
 from rest_api import serializers
 from rest_api import models
-from rest_api import permissions
 
 
 # Create your views here.
@@ -21,7 +18,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
     queryset = models.User.objects.all()
     authentication_classes = (TokenAuthentication,)
-    # permission_classes = (permissions.UpdateOwnProfile,)
 
 
 class LoginViewSet(viewsets.ViewSet):
@@ -58,10 +54,10 @@ class InputViewSet(viewsets.ModelViewSet):
     create new input instance. set user as current authenticated user,
     fmu_model as current fmu_model related to user
     """
-    def perform_create(self, serializer):
+    def perform_create(self, serializer, **kwargs):
 
         # TODO add second get param of time/date to ensure the current model is returned
-        model = models.FmuModelParameters.objects.get(user=self.request.user)
+        model = models.FmuModelParameters.objects.get(model_name=self.request.data['fmu_model'])
         serializer.save(user=self.request.user, fmu_model=model)
 
 
@@ -76,8 +72,8 @@ class OutputViewSet(viewsets.ModelViewSet):
     create new output instance. set user as current authenticated user,
     fmu_model as current init_model related to user
     """
-    def perform_create(self, serializer):
+    def perform_create(self, serializer, **kwargs):
 
         # TODO add second get param of time/date to ensure the current model is returned
-        model = models.FmuModelParameters.objects.get(user=self.request.user)
+        model = models.FmuModelParameters.objects.get(model_name=self.request.data['fmu_model'])
         serializer.save(user=self.request.user, fmu_model=model)
