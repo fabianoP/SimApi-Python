@@ -1,58 +1,136 @@
 from django.urls import reverse
 
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIRequestFactory
 from rest_framework.views import status
-from rest_api.temp.models import User, InitModel
+from rest_api.models import User, FmuModelParameters, Input, Output
+from rest_api.views import LoginViewSet
+from rest_framework.authtoken.models import Token
 # TODO write tests
 
 
-class UserInitModelCreateAPIView(APITestCase):
+class FmuModelViewTest(APITestCase):
+    """
+    Test FmuModelParameters View
+    """
     def setUp(self) -> None:
-        self.url = reverse('api-timestep-list')
-        self.test_user = User(name='test_user2',
-                              email='testuser2@test.com',
-                              password='test user2 88')
+        self.test_user = User(name='test_user',
+                              email='test@test.com',
+                              password='test user 88')
 
-    def test_create_time_step(self):
-        self.assertEquals(
-            Timestep.objects.count(),
-            0
+        self.test_user.save()
+
+        self.token = Token.objects.create(
+            user=self.test_user
         )
+
+    def test_Model_Initialization(self):
+        self.client.force_login(user=self.test_user)
 
         data = {
-            'user': self.test_user,
-            'time_step': 600
+            "model_name": "test",
+            "step_size": "800",
+            "final_time": "72.0"
         }
-        response = self.client.post(self.url, data=data, format='json')
-        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
-        self.assertEquals(
-            Timestep.objects.count(),
-            1
+
+        response = self.client.post(
+            '/init_model/',
+            data=data,
+            format='json',
+            HTTP_AUTHORIZATION='Token ' + self.token.key
         )
 
-        timestep = Timestep.objects.first()
-        self.assertEquals(timestep.user,
-                          data['user'])
-        self.assertEquals(timestep.time_step,
-                          data['time_step'])
+        self.assertEqual(response.status_code, 201)
 
-    def test_get_time_step_list(self):
-        timestep = Timestep(user=self.test_user,
-                            time_step=600)
-        timestep.save()
 
-        response = self.client.get(self.url)
-        response_json = response.json()
+class InputViewTest(APITestCase):
+    """
+    Test Input View
+    """
+    def setUp(self) -> None:
+        self.test_user = User(name='test_user',
+                              email='test@test.com',
+                              password='test user 88')
 
-        self.assertEquals(response.status_code,
-                          status.HTTP_200_OK)
+        self.test_user.save()
 
-        self.assertEquals(len(response_json),
-                          1)
+        self.token = Token.objects.create(
+            user=self.test_user
+        )
 
-        data = response_json[0]
-        self.assertEquals(data['user'],
-                          timestep.user)
-        self.assertEquals(data['time_step'],
-                          timestep.time_step)
+        self.model = FmuModelParameters(
+            model_name="test_model",
+            user=self.test_user,
+            step_size=600,
+            final_time=72.0
+        )
 
+        self.model.save()
+
+    def test_input_create(self):
+        self.client.force_login(user=self.test_user)
+
+        data = {
+            'user': self.test_user.email,
+            'fmu_model': self.model.model_name,
+            'time_step': 600,
+            'yshade': 1.0
+        }
+
+        response = self.client.post(
+            '/input/',
+            data=data,
+            format='json',
+            HTTP_AUTHORIZATION='Token ' + self.token.key
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+
+class OutputViewTest(APITestCase):
+    """
+    Test Output View
+    """
+    def setUp(self) -> None:
+        self.test_user = User(name='test_user',
+                              email='test@test.com',
+                              password='test user 88')
+
+        self.test_user.save()
+
+        self.token = Token.objects.create(
+            user=self.test_user
+        )
+
+        self.model = FmuModelParameters(
+            model_name="test_model",
+            user=self.test_user,
+            step_size=600,
+            final_time=72.0
+        )
+
+        self.model.save()
+
+    def test_output_create(self):
+        self.client.force_login(user=self.test_user)
+
+        data = {
+            'user': self.test_user.email,
+            'fmu_model': self.model.model_name,
+            "time_step": "800",
+            "yshade": "2.4",
+            "dry_bulb": "5.0",
+            "troo": "7.0",
+            "isolext": "4.01",
+            "sout": "6.89",
+            "zonesens": "9.111",
+            "cool_rate": "18.9"
+        }
+
+        response = self.client.post(
+            '/output/',
+            data=data,
+            format='json',
+            HTTP_AUTHORIZATION='Token ' + self.token.key
+        )
+
+        self.assertEqual(response.status_code, 201)

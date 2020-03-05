@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'djcelery',
     'rest_api',
     'rest_framework_swagger',
+    'coverage'
 ]
 
 REST_FRAMEWORK = {

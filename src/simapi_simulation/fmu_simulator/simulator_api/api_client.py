@@ -9,17 +9,28 @@ login_url = 'http://127.0.0.1:8000/login/'
 init_url = 'http://127.0.0.1:8000/init_model/'
 input_url = 'http://127.0.0.1:8000/input/'
 output_url = 'http://127.0.0.1:8000/output/'
-"""
-
 user_url = 'http://web:8000/user/'
 login_url = 'http://web:8000/login/'
 init_url = 'http://web:8000/init_model/'
 input_url = 'http://web:8000/input/'
 output_url = 'http://web:8000/output/'
+"""
 
 
-resp = requests.get('http://web:8000/')
-print(resp.text)
+user_url = 'http://127.0.0.1:8000/user/'
+login_url = 'http://127.0.0.1:8000/login/'
+init_url = 'http://127.0.0.1:8000/init_model/'
+input_url = 'http://127.0.0.1:8000/input/'
+output_url = 'http://127.0.0.1:8000/output/'
+
+data = {"username": "test@test.com",
+        "password": "hello world88"}
+
+resp = requests.post(login_url, data=data)
+
+print(resp.content)
+
+json = resp.json()
 
 """
 data = {"username": "test@test.com",
