@@ -184,5 +184,52 @@ python run_energyplus_to_fmu.py
 EnergyPlusToFMU will run and some output will appear in the terminal. When EnergyPlusToFMU is finished running check
 the volume folder on the host machine to see the output.
 
+Some docker commands used frequently while developing
  
+```
+# detached mode run docker as a background process.
+docker-compose up -d
+
+# list running containers. Can be used to Get name/id of containers
+docker container ps
+
+# list docker images
+docker image ls
+
+# run bash terminal of container, container must be running. Replace curly braces with name/id.
+docker exec -it {name/id of container} /bin/bash
+```
+
+## Project Development
+
+If you would like to run the Django API or simulation scripts without docker the following steps are required.
+
+1. Install python Anaconda
+
+2. Create a virtual env python=3.7
+
+3. Run conda commands
+
+   conda config --append channels conda-forge
+   
+   conda install -c conda-forge assimulo
+   
+   conda install -c https://conda.binstar.org/chria pyfmi
+
+4. pip install -r [dev_requirements.txt](./dev_requirements.txt) to install project dependencies
+
+If running the Django project without Docker is all that is required then you can stop here. 
+
+If you would also like to run simulation scripts then it is necessary to install energyPlus on your machine. 
+
+Version 9 is required.
+
+For windows installation see [energyPlus windows](https://energyplus.net/installation-windows)
+
+For Linux installation see  [energyPlus windows](https://energyplus.net/installation-linux)
+
+
+
+
+
 
