@@ -10,32 +10,32 @@ services:
       - postgres_data:/var/lib/postgresql/data/
   web:
     container_name: web
-    build: .
+    build: ./simapi_web   # change to windows path syntax
     command:  bash -c "python manage.py runserver 0.0.0.0:8000"
     networks:
       - simapi
     volumes:
-      - ./simapi_web:/home/deb/code
+      - ./simapi_web:/home/deb/code # change ./simapi_web to windows path syntax
     ports:
       - 8000:8000
     depends_on:
       - db
   generator:
     container_name: generator
-    build: ./simapi_simulation/fmu_generator
+    build: ./simapi_simulation/fmu_generator  # change to windows path syntax
     command: bash -c "tail -f /dev/null" # "chmod +x run.sh"
     networks:
       - simapi
     volumes:
-      - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test
+      - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test # change ./simapi_simulation/fmu_generator/volume to windows path syntax
   simulator:
     container_name: simulator
-    build: ./simapi_simulation/fmu_simulator
+    build: ./simapi_simulation/fmu_simulator  # change to windows path syntax
     command: bash -c "tail -f /dev/null"
     networks:
       - simapi
     volumes:
-    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
+    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume    # change to ./simapi_simulation/fmu_simulator/volume windows path syntax
     ports:
       - 9000:9000
 

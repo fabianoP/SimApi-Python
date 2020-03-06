@@ -81,6 +81,12 @@ Docker-compose
 ![ER Diagram](doc/ER_Diagram.png)
 
 ## Instructions
+Create user defined bridge network
+```
+docker network create simapi
+```
+Command creates a network called simapi, a reference to a network called simapi exists in the docker-compose.yml.
+Create the network to be safe
 
 To build and run the containers navigate to src folder and type in a terminal
 

@@ -6,5 +6,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN mkdir /code
 WORKDIR /code
-COPY ./simapi_web /code
+COPY . /code
 RUN pip install -r requirements.txt
