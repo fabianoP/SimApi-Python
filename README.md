@@ -1,6 +1,10 @@
 # SimApi Building Energy Co-Simulation Platform
 
-This project aims to develop a RestFul API for building energy management systems (EMS).
+This project aims to update and re-design an existing project found at [SimAPI repo](https://github.com/ElsevierSoftwareX/SOFTX_2018_29).
+The objective of this project is to re-design and update the linked project using python, Django rest framework, 
+Celery, Docker, and pyFMI to create an application capable of co-simulation between an Energy Management System and
+a Functional Mock-Up Unit. The end goal is to deploy the project on a Docker swarm and simulate multiple fmu models
+simultaneously. 
 
 ## Prerequisites
 Having the correct versions of docker and docker-compose is essential
@@ -15,68 +19,62 @@ Docker-compose
 
 ### Project structure
 
-```
+``` 
 .
 └── src
-    ├── docker-compose.yml
-    ├── Dockerfile
-    ├── simapi_simulation **# root directory for fmu related containers**
-    │   ├── docker-compose.yml
-    │   ├── fmu_generator **# container generates a .fmu. Place .idf, .epw, .idd in this folder**
-    │   │   ├── docker-compose.yml
-    │   │   ├── Dockerfile
-    │   │   ├── Energy+.idd
-    │   │   ├── _fmu-export-variable.idf 
-    │   │   ├── run.sh
-    │   │   ├── USA.epw
-    │   │   └── volume **# .fmu and other energyPlusToFMU files generated here!**
-    │   └── fmu_simulator **# Container simulates .fmu using pyFMI framework**
-    │       ├── conda_requirements.txt
-    │       ├── docker-compose.yml
-    │       ├── Dockerfile
-    │       ├── __init__.py
-    │       ├── requirements.txt
-    │       ├── simulator **# Root folder for simulation scripts**
-    │       │   ├── _fmu_export_variable.fmu
-    │       │   ├── __init__.py
-    │       │   ├── json_generator.py
-    │       │   ├── simulation_obj.py **# simulation object, initialize fmu model and do time_step**
-    │       │   └── test_simulation_obj.py 
-    │       ├── simulator_api **# Root folder for api client. Interface with API**
-    │       │   └── __init__.py
-    |       |   └── api_client.py 
-    │       └── volume
-    └── simapi_web **# Django project root**
-        ├── manage.py
-        ├── __pycache__
-        │   └── manage.cpython-37.pyc
-        ├── requirements.txt
-        ├── rest_api **# Core of the Django project is the restAPI app**
-        │   ├── admin.py
-        │   ├── apps.py
-        │   ├── __init__.py
-        │   ├── middleware.py
-        │   ├── migrations
-        │   │   ├── 0001_initial.py
-        │   │   ├── __init__.py
-        │   ├── models.py **# See ER diagram for model overview**
-        │   ├── permissions.py
-        │   ├── serializers.py
-        │   ├── tests **# Test coverage is high and all tests pass**
-        │   │   ├── __init__.py
-        │   │   ├── test_models.py
-        │   │   └── test_views.py
-        │   ├── urls.py
-        │   └── views.py
-        ├── simapi_web
-        │   ├── asgi.py
-        │   ├── __init__.py
-        │   ├── settings.py
-        │   ├── urls.py
-        │   └── wsgi.py
-        └── TODO.py
-
-
+    ├── docker-compose.yml
+    ├── Dockerfile
+    ├── simapi_simulation   # root directory for fmu related containers
+    │   ├── docker-compose.yml
+    │   ├── fmu_generator   # container generates a .fmu. Place .idf, .epw, .idd in this folder
+    │   │   ├── docker-compose.yml
+    │   │   ├── Dockerfile
+    │   │   ├── Energy+.idd
+    │   │   ├── _fmu-export-variable.idf
+    │   │   ├── run_energyplus_to_fmu.py # run script to generate .fmu
+    │   │   ├── USA.epw
+    │   │   └── volume  # .fmu and other energyPlusToFMU files generated here!
+    │   └── fmu_simulator   # Root folder for simulation scripts
+    │       ├── conda_requirements.txt
+    │       ├── docker-compose.yml
+    │       ├── Dockerfile
+    │       ├── __init__.py
+    │       ├── requirements.txt
+    │       ├── simulator
+    │       │   ├── _fmu_export_variable.fmu
+    │       │   ├── __init__.py
+    │       │   ├── json_generator.py
+    │       │   ├── simulation_obj.py   # simulation object, initialize fmu model and do time_step
+    │       │   └── test_simulation_obj.py
+    │       ├── simulator_api
+    │       │   ├── api_client.py   # Root folder for api client. Interface with API
+    │       │   └── __init__.py
+    │       └── volume
+    └── simapi_web   # Django project root
+        ├── manage.py
+        ├── requirements.txt
+        ├── rest_api    # Core of the Django project is the restAPI
+        │   ├── admin.py
+        │   ├── apps.py
+        │   ├── __init__.py
+        │   ├── middleware.py
+        │   ├── migrations
+        │   ├── models.py   # See ER diagram for model overview
+        │   ├── permissions.py
+        │   ├── serializers.py
+        │   ├── tests   # Test coverage is high for Django project
+        │   │   ├── __init__.py
+        │   │   ├── test_models.py
+        │   │   └── test_views.py
+        │   ├── urls.py
+        │   └── views.py
+        ├── simapi_web
+        │   ├── asgi.py
+        │   ├── __init__.py
+        │   ├── settings.py
+        │   ├── urls.py
+        │   └── wsgi.py
+        └── TODO.py
 ```
 
 ### API Database ER Diagram
@@ -130,7 +128,7 @@ Test communication with web is possible
 ```
 curl -v http://web:8000/user/
 ```
-If the request is successful you will see json output of your superuser in the terminal.
+If the request is successful you will see json output of your superusers details in the terminal.
 There is two _sub-folders_ in the _current directory_, **simulator and simulator_api**.
 
 Type
@@ -144,7 +142,7 @@ Run **test_simulation_obj.py** to see the output of some calls to simulation_obj
 ```
 python test_simulation_obj.py
 ```
-go back one directory using
+Go back one directory using
 ```
 cd ..
 ```
@@ -164,4 +162,27 @@ python api_client.py
 
 
 #### generator
+
+The generator container holds the .idf, .idd, and .epw files needed to produce an FMU model at it's working directory. 
+A python script **run_energyplus_to_fmu.py** also located at the containers working directory runs the EnergyPlusToFMU 
+commands to generate a .fmu. The .fmu generated is placed in the volume folder along with other EnergyPlusToFMU output
+files which provide information on the .fmu variables.
+
+**run_energyplus_to_fmu.py** will be modified to take the .idf, .idd, and .epw files as command line arguments 
+enabling a more generic solution to .fmu model creation. It would be possible for the container to be used completely
+independent from the rest of the project as a tool for .fmu generation.
+
+To produce a .fmu model enter the generator container shell with
+```
+docker exec -it simulator /bin/bash
+``` 
+and run the python script
+```
+python run_energyplus_to_fmu.py
+```
+
+EnergyPlusToFMU will run and some output will appear in the terminal. When EnergyPlusToFMU is finished running check
+the volume folder on the host machine to see the output.
+
+ 
 
