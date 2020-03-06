@@ -101,7 +101,7 @@ The three main containers are web, simulator, and generator. The fourth is a pos
 ```
 Type "docker container ps" to ensure containers are running
 ```
-#### web
+### web
 The web container holds the Django restAPI. It is necessary to make database migrations and migrate.
 
 docker command to **makemigrations** and **migrate** using Django **manage.py**
@@ -118,7 +118,7 @@ docker exec -it web python manage.py createsuperuser
 Open http://127.0.0.1:8000/admin in a browser and log in as superuser to ensure everything is working.
 Once the web container is working we can move onto the simulator container to interact with the API.
 
-#### simulator
+### simulator
 run command to enter simulation container shell
 
 ```
@@ -161,7 +161,7 @@ python api_client.py
 ```
 
 
-#### generator
+### generator
 
 The generator container holds the .idf, .idd, and .epw files needed to produce an FMU model at it's working directory. 
 A python script **run_energyplus_to_fmu.py** also located at the containers working directory runs the EnergyPlusToFMU 
