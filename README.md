@@ -226,7 +226,7 @@ Version 9 is required.
 
 For windows installation see [energyPlus windows](https://energyplus.net/installation-windows)
 
-For Linux installation see  [energyPlus windows](https://energyplus.net/installation-linux)
+For Linux installation see  [energyPlus Linux](https://energyplus.net/installation-linux)
 
 
 
