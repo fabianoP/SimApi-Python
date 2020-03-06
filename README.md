@@ -116,7 +116,7 @@ Next create a superuser
 docker exec -it web python manage.py createsuperuser
 ```
 Open http://127.0.0.1:8000/admin in a browser and log in as superuser to ensure everything is working.
-Once the web container is working we can move onto the simulator container to interact with the API.
+Once the web container is working we can move onto the simulator container to run a simulation or interact with the API.
 
 ### simulator
 run command to enter simulation container shell
