@@ -129,7 +129,7 @@ Test communication with web is possible
 curl -v http://web:8000/user/
 ```
 If the request is successful you will see json output of your superusers details in the terminal.
-There is two _sub-folders_ in the _current directory_, **simulator and simulator_api**.
+There are two _sub-folders_ in the _current directory_, **simulator and simulator_api**.
 
 Type
 ```
