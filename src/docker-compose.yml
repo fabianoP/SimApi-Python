@@ -23,7 +23,7 @@ services:
   generator:
     container_name: generator
     build: ./simapi_simulation/fmu_generator
-    command: bash -c "tail -f /dev/null"
+    command: bash -c "tail -f /dev/null" # "chmod +x run.sh"
     networks:
       - simapi
     volumes:

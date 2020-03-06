@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'djcelery',
     'rest_api',
     'rest_framework_swagger',
-    'coverage'
+    'coverage',
+    'django_extensions',
 ]
 
 REST_FRAMEWORK = {

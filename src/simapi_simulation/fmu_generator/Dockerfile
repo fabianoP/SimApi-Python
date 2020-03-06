@@ -16,6 +16,7 @@ USER fmu
 RUN mkdir /home/fmu/code
 WORKDIR /home/fmu/code
 COPY . /home/fmu/code/
+
 # TODO add sudo chmod +x run.sh
 RUN mkdir /home/fmu/code/energy \
     && mkdir /home/fmu/code/energy/test \
