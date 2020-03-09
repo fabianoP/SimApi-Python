@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_api.models import Input, Output, User, FmuModelParameters
+from rest_api.models import Input, Output, User, FmuModelParameters, FileModel
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -63,4 +63,9 @@ class OutputSerializer(serializers.ModelSerializer):
                         'fmu_model': {'read_only': True}}
 
 
+class UploadSerializer(serializers.ModelSerializer):
+    """"""
+    class Meta:
+        model = FileModel
+        fields = ('file',)
 

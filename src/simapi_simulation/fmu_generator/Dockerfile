@@ -17,8 +17,13 @@ RUN mkdir /home/fmu/code
 WORKDIR /home/fmu/code
 COPY . /home/fmu/code/
 
-# TODO add sudo chmod +x run.sh
+ENV PATH=/home/fmu/.local/bin:$PATH
+
+
+RUN pip install -r requirements.txt
+
 RUN mkdir /home/fmu/code/energy \
+    && mkdir /home/fmu/code/simulator \
     && mkdir /home/fmu/code/energy/test \
     && wget https://github.com/lbl-srg/EnergyplusToFMU/releases/download/v2.1.0/EnergyPlusToFMU-v2.1.0.zip \
         -P /home/fmu/code/energy \

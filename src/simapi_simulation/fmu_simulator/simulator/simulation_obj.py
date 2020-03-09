@@ -1,4 +1,10 @@
+import os
+import sys
+
 from pyfmi import load_fmu
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from simulator.json_generator import JsonSerializer
 
 """SimulationObject class represents an FMU model and class methods to access and run the model"""

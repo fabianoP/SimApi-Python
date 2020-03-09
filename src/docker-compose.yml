@@ -1,6 +1,27 @@
 version: '3.7'
 
 services:
+  redis:
+    image: redis:latest
+    hostname: redis
+    # command:  # redis-server --requirepass pass
+    container_name: backend
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - simapi
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+        - "RABBITMQ_DEFAULT_PASS=pass"
+        - "RABBITMQ_DEFAULT_USER=user"
+        - "RABBITMQ_DEFAULT_VHOST=vhost"
+    container_name: broker
+    networks:
+      - simapi
   db:
     container_name: db
     image: postgres
@@ -23,21 +44,27 @@ services:
   generator:
     container_name: generator
     build: ./simapi_simulation/fmu_generator  # change to windows path syntax
-    command: bash -c "tail -f /dev/null" # "chmod +x run.sh"
+    command: bash -c "celery -A tasks worker -l info" # "tail -f /dev/null"
     networks:
       - simapi
     volumes:
       - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test # change ./simapi_simulation/fmu_generator/volume to windows path syntax
+      - ./simapi_simulation/fmu_simulator/volume:/home/fmu/code/simulator
+    ports:
+      - 8001:8000
+    depends_on:
+      - rabbitmq
+    restart: always
   simulator:
     container_name: simulator
     build: ./simapi_simulation/fmu_simulator  # change to windows path syntax
-    command: bash -c "tail -f /dev/null"
+    command: bash -c "python ./simulator_api/sim_api.py"
     networks:
       - simapi
     volumes:
     - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume    # change to ./simapi_simulation/fmu_simulator/volume windows path syntax
     ports:
-      - 9000:9000
+      - 8002:8000
 
 networks:
   simapi:

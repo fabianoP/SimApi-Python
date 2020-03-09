@@ -6,6 +6,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 
 # TODO make fat models
+from django.db.models import FileField
 
 
 class UserManager(BaseUserManager):
@@ -110,4 +111,8 @@ class Output(models.Model):
     cool_rate = models.DecimalField(max_digits=20, decimal_places=4)
 
     objects = models.Manager()
+
+
+class FileModel(models.Model):
+    file = FileField(upload_to='./Media/', default='')
 
