@@ -49,7 +49,7 @@ services:
       - simapi
     volumes:
       - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test # change ./simapi_simulation/fmu_generator/volume to windows path syntax
-      - ./simapi_simulation/fmu_simulator/volume:/home/fmu/code/simulator
+      - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
     ports:
       - 8001:8000
     depends_on:

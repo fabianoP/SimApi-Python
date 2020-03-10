@@ -1,17 +1,29 @@
 import requests
+import os
 
 
 class GeneratorClient:
 
     @staticmethod
-    def post_files():
-        url = "http://generator:8000/upload"
+    def post_files(model_name):
+        url = "http://generator:8000/upload/" + model_name
 
-        simulator_epw = open('/home/deb/code/volume/simulator.epw', 'rb')
-        simulator_idf = open('/home/deb/code/volume/simulator.idf', 'rb')
+        directory = os.listdir('/home/deb/code/volume/' + model_name)
 
-        files = {'epw': ('simulator.epw', simulator_epw),
-                 'idf': ('simulator.idf', simulator_idf)}
+        simulator_idf = None
+        simulator_epw = None
+
+        for file in directory:
+            if file.endswith('.idf'):
+                simulator_idf = open('/home/deb/code/volume/' + model_name + '/' + file, 'rb')
+            elif file.endswith('.epw'):
+                simulator_epw = open('/home/deb/code/volume/' + model_name + '/' + file, 'rb')
+
+        if simulator_idf is None or simulator_epw is None:
+            return 405
+
+        files = {'epw': (model_name+'.epw', simulator_epw),
+                 'idf': (model_name+'.idf', simulator_idf)}
 
         r = requests.post(url, files=files)
 
@@ -22,18 +34,10 @@ class GeneratorClient:
 
     # TODO make /simulator generic
     @staticmethod
-    def gen_fmu():
-        url = "http://generator:8000/fmu/simulator"
+    def gen_fmu(model_name):
+        url = "http://generator:8000/fmu/"+model_name
 
         r = requests.get(url)
         print(r.text)
         return r.status_code
 
-    # TODO make /simulator generic
-    @staticmethod
-    def get_fmu():
-        url = "http://generator:8000/get_fmu/simulator"
-
-        r = requests.get(url)
-        print(r.text)
-        return r.status_code

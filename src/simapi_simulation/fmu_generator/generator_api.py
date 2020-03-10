@@ -2,58 +2,65 @@ from bottle import request, route, run, response
 
 import os.path
 import tasks
-import time
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from energy_plus_to_fmu import RunEnergyPlusToFMU
-from simulator_client import SimulatorClient
 
-
-@route('/upload', method='POST')
+@route('/upload/<model_name>', method='POST')
 # upload from sim container.
-def do_upload():
+def do_upload(model_name):
     upload = request.files
-    save_path = '/home/fmu/code/energy/test/'
+    save_path = '/home/fmu/code/energy/test/' + model_name
 
-    for name, file in upload.iteritems():
-        file.save(save_path)
+    try:
+        os.mkdir(save_path)
+    except OSError:
+        print("Creation of the directory %s failed" % save_path)
+    else:
+        print("Successfully created the directory %s " % save_path)
 
-    return "Found {0} files".format(len(upload))
-
-
-@route('/fmu/<container>')
-# check task status on sim container for upload. when finished call this from sim
-def generate(container):
-    directory = os.listdir('/home/fmu/code/energy/test/')
-
-    if container + '.idf' in directory and container + '.epw' in directory:
-        epw = '/home/fmu/code/energy/test/' + container + '.epw'
-        idf = '/home/fmu/code/energy/test/' + container + '.idf'
+    if len(upload) == 2:
+        for name, file in upload.iteritems():
+            file.save(save_path)
+        response.status = 200
+        return '2 files uploaded'
     else:
         response.status = 400
-        return 'No such files'  # re-add task to queue?
+        return "Found {0} files. Expected 2".format(len(upload))
 
-    result = tasks.gen_fmu.apply_async((idf, epw))
+
+@route('/fmu/<model_name>')
+# check task status on sim container for upload. when finished call this from sim
+def generate(model_name):
+    directory = os.listdir('/home/fmu/code/energy/test/' + model_name)
+
+    if model_name + '.idf' in directory and model_name + '.epw' in directory:
+        epw = '/home/fmu/code/energy/test/' + model_name + '/' + model_name + '.epw'
+        idf = '/home/fmu/code/energy/test/' + model_name + '/' + model_name + '.idf'
+    else:
+        response.status = 400
+        return 'No such files'
+
+    fmu_store_dir = '/home/fmu/code/fmu_location/' + model_name
+
+    try:
+        os.mkdir(fmu_store_dir)
+    except OSError:
+        print("Creation of the directory %s failed" % fmu_store_dir)
+    else:
+        print("Successfully created the directory %s " % fmu_store_dir)
+
+    result = tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
     result.get()
 
-    if os.path.exists('/home/fmu/code/energy/test/' + container + '.fmu'):
+    if os.path.exists(fmu_store_dir + '/' + model_name + '.fmu'):
 
         response.status = 200
-        return 'FMU ready'  # re-add task to queue
+        return 'FMU ready'  # FMU Stored in shared volume
     else:
         response.status = 400
         return 'FMU not ready'  # re-add task to queue
-
-
-@route('/get_fmu/<name>', method='GET')
-def get_fmu(name):
-    print('IN GET FMU')
-    resp = SimulatorClient.put_fmu(name)
-    print('IN GET FMU AFTER POST_FMU')
-    response.status = resp
-    return 'Sent FMU'
 
 
 run(host='0.0.0.0', port=8000, debug=True, reloader=True)

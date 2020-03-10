@@ -15,57 +15,32 @@ def get_model_params():
     model_params = request.json
 
 
-@route('/upload', method='POST')
-def do_upload():
+@route('/upload/<model_name>', method='POST')
+def do_upload(model_name):
     upload = request.files
-    save_path = '/home/deb/code/volume'
+    save_path = '/home/deb/code/volume/' + model_name
+
+    try:
+        os.mkdir(save_path)
+    except OSError:
+        print("Creation of the directory %s failed" % save_path)
+    else:
+        print("Successfully created the directory %s " % save_path)
 
     for name, file in upload.iteritems():
         file.save(save_path)
 
-    """Do if len(upload) == 2 post_files elif len 1 start sim else error handling"""
     if len(upload) == 2:
-        resp = GeneratorClient.post_files()
-    elif len(upload) == 1:
-        response.status = 200
-        return "Found {0} files".format(len(upload))
+        resp = GeneratorClient.post_files(model_name)
     else:
         response.status = 400
-        return 'No files uploaded to sim_api/upload'
-
-    if resp == 201 or resp == 200:
-        resp = GeneratorClient.gen_fmu()
+        return 'Number of Files required = 2. Uploaded Files = {0}'.format(len(upload))
 
     if resp == 200:
-        resp = GeneratorClient.get_fmu()
+        resp = GeneratorClient.gen_fmu(model_name)
 
     response.status = resp
     return 'Success'
-
-
-@route('/test', method='POST')
-def test():
-    upload = request.files
-    print('IN TEST AFTER UPLOAD')
-    save_path = '/home/deb/code/volume'
-
-    for name, file in upload.iteritems():
-        print('IN ITERITEMS TEST')
-        file.save(save_path)
-
-    if len(upload) == 1:
-        response.status = 200
-        return "Found {0} files".format(len(upload))
-    else:
-        response.status = 400
-        return 'No files uploaded to sim_api/upload'
-
-
-@route('/test_get_fmu')
-def test():
-    resp = GeneratorClient.get_fmu()
-    response.status = resp
-    return 'test_get_fmu success'
 
 
 run(host='0.0.0.0', port=8000, debug=True, reloader=True)

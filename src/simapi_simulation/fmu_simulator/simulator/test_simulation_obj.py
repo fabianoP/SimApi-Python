@@ -8,7 +8,8 @@ from simulator.json_generator import JsonSerializer
 
 """ Simple test script to. Tests functionality of the simulation_obj class"""
 
-sim_obj = SimulationObject()  # instantiate simulation obj with default values
+#  instantiate simulation obj with default values
+sim_obj = SimulationObject(path_to_fmu='../fmu_location/simulator/simulator.fmu')
 sim_obj.model_init()  # initialize fmu model. Calls pyFMI model.init() and sets start and finish time
 
 # new dictionary with inputs for fmu time step

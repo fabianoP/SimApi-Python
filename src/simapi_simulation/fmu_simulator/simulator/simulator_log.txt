@@ -1,0 +1,2 @@
+FMIL: module = b'FMI1XML', log level = 2: b'Detected on line:59 of modelDescription.xml'
+FMIL: module = b'FMI1XML', log level = 2: b'Found capability flag canSignalEvents which have been deprecated as it fills no function'
