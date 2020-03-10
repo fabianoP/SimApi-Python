@@ -8,6 +8,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from simulator.simulation_obj import SimulationObject
 from simulator_api.generator_client import GeneratorClient
 
+model = None
+
 
 @route('/init_model', method='POST')
 # two separate uploads, one for files, one for json
@@ -38,7 +40,7 @@ def do_upload(model_name):
 
     if resp == 200:
         resp = GeneratorClient.gen_fmu(model_name)
-
+    # TODO fix return to return response of gen_fmu, add if resp == 200
     response.status = resp
     return 'Success'
 

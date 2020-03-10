@@ -44,7 +44,7 @@ services:
   generator:
     container_name: generator
     build: ./simapi_simulation/fmu_generator  # change to windows path syntax
-    command: bash -c "celery -A tasks worker -l info" # "tail -f /dev/null"
+    command: bash -c "celery -A generator_tasks worker -l info" # "tail -f /dev/null"
     networks:
       - simapi
     volumes:

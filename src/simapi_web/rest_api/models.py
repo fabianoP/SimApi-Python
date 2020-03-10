@@ -65,10 +65,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 # TODO possibly just store JSON in all models except user.
 
 
+class FileModel(models.Model):
+    file = FileField(upload_to='./Media/', default='')
+
+
 class FmuModelParameters(models.Model):
     """represents .fmu initialization parameters"""
     model_name = models.CharField(max_length=255, unique=True, primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    idf_file = FileField(upload_to='./Media/', default='')
+    epw_file = FileField(upload_to='./Media/', default='')
 
     # set as single json object
     step_size = models.IntegerField(default=0, unique=False)
@@ -113,6 +120,5 @@ class Output(models.Model):
     objects = models.Manager()
 
 
-class FileModel(models.Model):
-    file = FileField(upload_to='./Media/', default='')
+
 

@@ -1,7 +1,7 @@
 from bottle import request, route, run, response
 
 import os.path
-import tasks
+import generator_tasks
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -51,7 +51,7 @@ def generate(model_name):
     else:
         print("Successfully created the directory %s " % fmu_store_dir)
 
-    result = tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
+    result = generator_tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
     result.get()
 
     if os.path.exists(fmu_store_dir + '/' + model_name + '.fmu'):

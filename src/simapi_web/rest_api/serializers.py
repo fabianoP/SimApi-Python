@@ -26,7 +26,7 @@ class FmuModelParametersSerializer(serializers.ModelSerializer):
     """"""
     class Meta:
         model = FmuModelParameters
-        fields = ('model_name', 'user', 'step_size', 'final_time', 'created_on')
+        fields = ('model_name', 'user', 'idf_file', 'epw_file', 'step_size', 'final_time', 'created_on')
 
         """read-only field user. Can only be created by authenticated user"""
         extra_kwargs = {'user': {'read_only': True}}
@@ -44,7 +44,7 @@ class InputSerializer(serializers.ModelSerializer):
 
 
 class OutputSerializer(serializers.ModelSerializer):
-    """"""
+    """Outputs received from model time step"""
     class Meta:
         model = Output
         fields = ('user',
@@ -64,7 +64,7 @@ class OutputSerializer(serializers.ModelSerializer):
 
 
 class UploadSerializer(serializers.ModelSerializer):
-    """"""
+    """Test File upload model"""
     class Meta:
         model = FileModel
         fields = ('file',)

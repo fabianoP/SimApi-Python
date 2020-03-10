@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.parsers import FileUploadParser, JSONParser
 
 from rest_api import serializers
 from rest_api import models
@@ -37,10 +38,10 @@ class FmuModelViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     serializer_class = serializers.FmuModelParametersSerializer
+    # parser_classes = (FileUploadParser, JSONParser)
     queryset = models.FmuModelParameters.objects.all()
 
     def perform_create(self, serializer):
-
         serializer.save(user=self.request.user)
 
 
