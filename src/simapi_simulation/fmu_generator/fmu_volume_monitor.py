@@ -31,7 +31,7 @@ class MyHandler(PatternMatchingEventHandler):
                 epw = file
 
         if idf is not None and epw is not None:
-            fmu_store_dir = '/home/fmu/code/fmu_location/' + idf.
+            fmu_store_dir = '/home/fmu/code/fmu_location/'  # TODO
             result = generator_tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
             result.get()
 
