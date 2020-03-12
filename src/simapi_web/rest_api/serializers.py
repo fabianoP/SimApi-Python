@@ -36,7 +36,7 @@ class InputSerializer(serializers.ModelSerializer):
     """"""
     class Meta:
         model = Input
-        fields = ('user', 'fmu_model', 'time_step', 'yshade')
+        fields = ('user', 'fmu_model', 'created_on', 'time_step', 'yshade')
 
         """read-only fields user and model_name. Can only be created by authenticated user"""
         extra_kwargs = {'user': {'read_only': True},

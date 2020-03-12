@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'djcelery',
+    'celery',
     'rest_api',
     'coverage',
     'django_extensions',
@@ -55,6 +55,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+}
+
+CELERY_ROUTES = {
+    'rest_api.tasks': {'queue': 'web'},
 }
 
 MIDDLEWARE = [
@@ -138,3 +142,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'rest_api.User'
+
+CELERY_BROKER_URL = 'amqp://user:pass@broker:5672/vhost'
+
+CELERY_BACKEND_URL = 'amqp://user:pass@broker:5672/vhost'

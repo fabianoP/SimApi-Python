@@ -35,6 +35,7 @@ def do_upload(model_name):
 def generate(model_name):
     directory = os.listdir('/home/fmu/code/energy/test/' + model_name)
 
+    # maybe write to .json file and monitor for updates
     if model_name + '.idf' in directory and model_name + '.epw' in directory:
         epw = '/home/fmu/code/energy/test/' + model_name + '/' + model_name + '.epw'
         idf = '/home/fmu/code/energy/test/' + model_name + '/' + model_name + '.idf'
@@ -50,7 +51,7 @@ def generate(model_name):
         print("Creation of the directory %s failed" % fmu_store_dir)
     else:
         print("Successfully created the directory %s " % fmu_store_dir)
-
+    # TODO move to fmu monitor
     result = generator_tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
     result.get()
 

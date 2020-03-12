@@ -12,7 +12,7 @@ from simulator.json_generator import JsonSerializer
 
 class SimulationObject:
 
-    def __init__(self, step_size=600, final_time=72., path_to_fmu='_fmu_export_variable.fmu'):
+    def __init__(self,  model_name, step_size=600, final_time=72., path_to_fmu='_fmu_export_variable.fmu'):
 
         """
         fmu model initialize method. Parameters originate from API.
@@ -21,7 +21,7 @@ class SimulationObject:
                     converted to seconds by 60*60*final_time
         path_to_fmu: self explanatory
         """
-
+        self.model_name = model_name
         self.step_size = step_size
         self.final_time = 60*60*final_time
         self.model = load_fmu(path_to_fmu)

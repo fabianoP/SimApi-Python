@@ -94,6 +94,7 @@ class Input(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     # set as single json object
     time_step = models.BigIntegerField(unique=False, default=0)

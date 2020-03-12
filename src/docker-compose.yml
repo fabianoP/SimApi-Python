@@ -1,15 +1,16 @@
 version: '3.7'
 
 services:
-  redis:
-    image: redis:latest
-    hostname: redis
+  #redis:
+  #  image: redis:latest
+  #  hostname: redis
     # command:  # redis-server --requirepass pass
-    container_name: backend
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    networks:
-      - simapi
+  #  container_name: backend
+  #  environment:
+  #    - ALLOW_EMPTY_PASSWORD=yes
+  #  networks:
+  #    - simapi
+
   rabbitmq:
     image: rabbitmq:latest
     ports:
@@ -22,6 +23,8 @@ services:
     container_name: broker
     networks:
       - simapi
+    restart: always
+
   db:
     container_name: db
     image: postgres
@@ -29,6 +32,8 @@ services:
       - simapi
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    restart: always
+
   web:
     container_name: web
     build: ./simapi_web   # change to windows path syntax
@@ -40,21 +45,26 @@ services:
     ports:
       - 8000:8000
     depends_on:
+      - rabbitmq
       - db
+    restart: always
+
   generator:
     container_name: generator
     build: ./simapi_simulation/fmu_generator  # change to windows path syntax
-    command: bash -c "celery -A generator_tasks worker -l info" # "tail -f /dev/null"
+    command: bash -c "python generator_api.py" # "tail -f /dev/null"
     networks:
-      - simapi
-    volumes:
+      - simapi #  celery -A simapi_web worker -l info celery -A generator_tasks worker -l info
+    volumes: # celery -A simulator_tasks worker -l info
       - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test # change ./simapi_simulation/fmu_generator/volume to windows path syntax
       - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
     ports:
       - 8001:8000
     depends_on:
       - rabbitmq
+      - simulator
     restart: always
+
   simulator:
     container_name: simulator
     build: ./simapi_simulation/fmu_simulator  # change to windows path syntax
@@ -63,8 +73,13 @@ services:
       - simapi
     volumes:
     - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume    # change to ./simapi_simulation/fmu_simulator/volume windows path syntax
+    - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
     ports:
       - 8002:8000
+    depends_on:
+      - rabbitmq
+      - web
+    restart: always
 
 networks:
   simapi:

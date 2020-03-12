@@ -32,7 +32,7 @@ class GeneratorClient:
 
         return r.status_code
 
-    # TODO make /simulator generic
+    # TODO remove method and have monitor in gen container generate fmu
     @staticmethod
     def gen_fmu(model_name):
         url = "http://generator:8000/fmu/"+model_name

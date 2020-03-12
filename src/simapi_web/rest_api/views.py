@@ -3,10 +3,11 @@ from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.parsers import FileUploadParser, JSONParser
+from django.db import transaction
 
 from rest_api import serializers
 from rest_api import models
+from rest_api import tasks
 
 
 # Create your views here.
@@ -38,11 +39,15 @@ class FmuModelViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     serializer_class = serializers.FmuModelParametersSerializer
-    # parser_classes = (FileUploadParser, JSONParser)
     queryset = models.FmuModelParameters.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+        data = {'model_name': self.request.data['model_name'],
+                'step_size': self.request.data['step_size'],
+                'final_time': self.request.data['final_time']
+                }
+        transaction.on_commit(lambda: tasks.post_model.delay(data))
 
 
 class InputViewSet(viewsets.ModelViewSet):
@@ -61,6 +66,7 @@ class InputViewSet(viewsets.ModelViewSet):
         # TODO add second get param of time/date to ensure the current model is returned
         model = models.FmuModelParameters.objects.get(model_name=self.request.data['fmu_model'])
         serializer.save(user=self.request.user, fmu_model=model)
+        transaction.on_commit(lambda: tasks.post_input.delay(self.request.data))
 
 
 class OutputViewSet(viewsets.ModelViewSet):
