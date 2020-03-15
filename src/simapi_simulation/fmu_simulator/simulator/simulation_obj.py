@@ -50,7 +50,8 @@ class SimulationObject:
         self.model.set('yShadeFMU', yshade)
         self.model.do_step(current_t=time_step, step_size=self.step_size, new_step=True)
 
-        output = {'time_step': time_step}
+        output = {'model_name': self.model_name, 'time_step': time_step}
+
         for key in self.model_vars.keys():
             output[key] = self.model.get(key)[0]
 

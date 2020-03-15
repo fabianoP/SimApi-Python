@@ -1,8 +1,10 @@
 from bottle import request, route, run, response
 
+import sys
+import json
 import os.path
 import generator_tasks
-import sys
+
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -22,6 +24,7 @@ def do_upload(model_name):
 
     if len(upload) == 2:
         for name, file in upload.iteritems():
+            print("GEN API /UPLOAD FILE SAVE: " + name)
             file.save(save_path)
         response.status = 200
         return '2 files uploaded'
@@ -51,11 +54,20 @@ def generate(model_name):
         print("Creation of the directory %s failed" % fmu_store_dir)
     else:
         print("Successfully created the directory %s " % fmu_store_dir)
-    # TODO move to fmu monitor
-    result = generator_tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
-    result.get()
 
-    if os.path.exists(fmu_store_dir + '/' + model_name + '.fmu'):
+    # result = generator_tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
+    # result.get()
+
+    if os.path.exists(fmu_store_dir):
+        # write JSON file here '/home/fmu/code/energy/test/' + model_name + '/'
+        # model_name, epw, idf, fmu_store_dir
+        data = {'epw_path': epw,
+                'idf_path': idf,
+                'fmu_store_dir': fmu_store_dir}
+
+        with open('/home/fmu/code/energy/test/' + model_name + '/data.json', 'w') as f:
+            json.dump(data, f)
+            f.close()
 
         response.status = 200
         return 'FMU ready'  # FMU Stored in shared volume

@@ -21,26 +21,15 @@ class MyHandler(PatternMatchingEventHandler):
         """
 
         if event.src_path.endswith('inputs.json'):
+            print(event.src_path)
             with open(event.src_path, 'r') as json_file:
                 data = json.load(json_file)
+                print('INCOM JSON MONITOR DATA: ' + str(data))
+                input_json = data[-1]
+                print('INCOM JSON MONITOR TEMP: ' + str(data))
 
-                temp = data['inputs']
-
-                input_json = temp.slice(-1)
-
-            result = simulator_tasks.model_input.apply_async((input_json,))
-            result.forget()
-
-        elif event.src_path.endswith('model_params.json'):
-            with open(event.src_path, 'r') as json_file:
-                data = json.load(json_file)
-
-                temp = data['model_params']
-
-                params_json = temp.slice(-1)
-
-            result = simulator_tasks.set_model.apply_async((params_json,))  # problem here
-            result.forget()
+            result = simulator_tasks.model_input.apply_async((input_json,), queue='sim', routing_key='sim')
+            result.get()
 
     def on_modified(self, event):
         self.process(event)

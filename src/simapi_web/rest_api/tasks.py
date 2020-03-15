@@ -9,7 +9,7 @@ logger = get_task_logger(__name__)
 # TODO Major problem with workers receiving wrong jobs. Need separation
 
 
-@shared_task(bind=True)
+@shared_task
 def post_model(data):
     logger.info(f'post_model data {data}')
     model = models.FmuModelParameters.objects.get(model_name=data['model_name'])
@@ -19,23 +19,16 @@ def post_model(data):
 
         url = 'http://simulator:8000/upload/' + data['model_name']
 
-        file = {'epw': ('a.epw', open(model.epw_file.path, 'rb')),
-                'idf': ('a.idf', open(model.idf_file.path, 'rb'))}
+        file = {'epw':  ('a.epw', open(model.epw_file.path, 'rb'), 'application/octet-stream'),
+                'idf':  ('a.idf', open(model.idf_file.path, 'rb'), 'application/octet-stream'),
+                'json': (None, json.dumps(data), 'application/json')}
 
         r = requests.post(url, files=file)
 
-        if r.status_code == 200:
-            url = 'http://simulator:8000/set_model'
-
-            f_time = data['final_time']
-            print(type(f_time))
-
-            headers = {'Content-type': 'application/json'}
-
-            r = requests.post(url=url, json=json.dumps(data), headers=headers)
+        return r.content
 
 
-@shared_task(bind=True)
+@shared_task
 def post_input(data):
     logger.info(f'post_input data {data}')
     # TODO create middleware to add DateTime to data

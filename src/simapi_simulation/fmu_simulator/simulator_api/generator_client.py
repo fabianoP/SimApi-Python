@@ -6,6 +6,7 @@ class GeneratorClient:
 
     @staticmethod
     def post_files(model_name):
+        print("GEN CLIENT TRIGGERED")
         url = "http://generator:8000/upload/" + model_name
 
         directory = os.listdir('/home/deb/code/volume/' + model_name)
@@ -26,18 +27,17 @@ class GeneratorClient:
                  'idf': (model_name+'.idf', simulator_idf)}
 
         r = requests.post(url, files=files)
+        print("G CLIENT GEN /UPLOAD STATUS: " + str(r.status_code))
 
         simulator_epw.close()
         simulator_idf.close()
-
-        return r.status_code
-
-    # TODO remove method and have monitor in gen container generate fmu
-    @staticmethod
-    def gen_fmu(model_name):
-        url = "http://generator:8000/fmu/"+model_name
-
-        r = requests.get(url)
-        print(r.text)
-        return r.status_code
+        # TODO FMU confirmation system needed
+        if r.status_code == 200:
+            url = "http://generator:8000/fmu/" + model_name
+            print("G CLIENT GEN /FMU : " + str(r.status_code))
+            r = requests.get(url)
+            print(r.text)
+            return r.status_code
+        else:
+            return 400
 

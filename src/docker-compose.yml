@@ -37,7 +37,8 @@ services:
   web:
     container_name: web
     build: ./simapi_web   # change to windows path syntax
-    command:  bash -c "python manage.py runserver 0.0.0.0:8000"
+    command:  bash -c "python manage.py runserver 0.0.0.0:8000
+                      & celery -A simapi_web worker -l info --queues=web"
     networks:
       - simapi
     volumes:
@@ -52,7 +53,9 @@ services:
   generator:
     container_name: generator
     build: ./simapi_simulation/fmu_generator  # change to windows path syntax
-    command: bash -c "python generator_api.py" # "tail -f /dev/null"
+    command: bash -c "python generator_api.py
+                      & celery -A generator_tasks worker -l info --queues=gen
+                      & python fmu_volume_monitor.py /home/fmu/code/energy/test"
     networks:
       - simapi #  celery -A simapi_web worker -l info celery -A generator_tasks worker -l info
     volumes: # celery -A simulator_tasks worker -l info
@@ -61,14 +64,17 @@ services:
     ports:
       - 8001:8000
     depends_on:
-      - rabbitmq
-      - simulator
+      - web
     restart: always
 
   simulator:
     container_name: simulator
     build: ./simapi_simulation/fmu_simulator  # change to windows path syntax
-    command: bash -c "python ./simulator_api/sim_api.py"
+    command: bash -c "python ./simulator_api/sim_api.py
+                      & celery -A simulator_tasks worker -l info --queues=sim
+                      & python incoming_json_monitor.py /home/deb/code/store_incoming_json
+                      & python volume_monitor.py /home/deb/code/volume
+                      & python fmu_location_monitor.py /home/deb/code/fmu_location" #
     networks:
       - simapi
     volumes:
@@ -77,8 +83,7 @@ services:
     ports:
       - 8002:8000
     depends_on:
-      - rabbitmq
-      - web
+      - generator
     restart: always
 
 networks:

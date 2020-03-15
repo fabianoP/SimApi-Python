@@ -16,10 +16,7 @@ class RunEnergyPlusToFMU:
                       -d \
                       -i  /home/fmu/code/Energy+.idd \
                       -w " + self.epw +  \
-                      " " + self.idf +  \
-                      " && ./idf-to-fmu-export-prep-linux \
-                      /home/fmu/code/Energy+.idd \
-                      " + self.idf
+                      " " + self.idf
 
         os.system(eplus_command)
 

@@ -47,7 +47,7 @@ class FmuModelViewSet(viewsets.ModelViewSet):
                 'step_size': self.request.data['step_size'],
                 'final_time': self.request.data['final_time']
                 }
-        transaction.on_commit(lambda: tasks.post_model.delay(data))
+        transaction.on_commit(lambda: tasks.post_model.apply_async((data,), queue='web', routing_key='web'))
 
 
 class InputViewSet(viewsets.ModelViewSet):
@@ -66,7 +66,9 @@ class InputViewSet(viewsets.ModelViewSet):
         # TODO add second get param of time/date to ensure the current model is returned
         model = models.FmuModelParameters.objects.get(model_name=self.request.data['fmu_model'])
         serializer.save(user=self.request.user, fmu_model=model)
-        transaction.on_commit(lambda: tasks.post_input.delay(self.request.data))
+        transaction.on_commit(lambda: tasks.post_input.apply_async((self.request.data,),
+                                                                   queue='web',
+                                                                   routing_key='web'))
 
 
 class OutputViewSet(viewsets.ModelViewSet):

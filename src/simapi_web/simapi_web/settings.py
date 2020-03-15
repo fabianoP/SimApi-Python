@@ -58,7 +58,7 @@ REST_FRAMEWORK = {
 }
 
 CELERY_ROUTES = {
-    'rest_api.tasks': {'queue': 'web'},
+    'rest_api.tasks.*': {'queue': 'web'},
 }
 
 MIDDLEWARE = [

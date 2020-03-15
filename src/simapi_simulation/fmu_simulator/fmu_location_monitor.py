@@ -1,11 +1,14 @@
 import sys
 import time
+import json
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
+import simulator_tasks
+
 
 class MyHandler(PatternMatchingEventHandler):
-    patterns = ["*.xml"]
+    patterns = ["*.zip"]
 
     def process(self, event):
         """
@@ -17,7 +20,28 @@ class MyHandler(PatternMatchingEventHandler):
             path/to/observed/file
         """
 
-        # TODO handle FMU generated here
+        # TODO handle FMU generated here ensure trigger is .fmu in folder and not just folder
+        print("EVENT IN FMU LOC MONITOR: " + str(event.src_path))
+        if event.src_path.endswith('.zip'):
+
+            fmu_name = event.src_path.rsplit('/', 1)[1]
+            model_name = str(fmu_name).rsplit('.', 1)[0]
+            print("MODEL NAME IN FMU LOC MONITOR: " + str(model_name))
+            # directory_path should be volume
+            with open('/home/deb/code/volume/' + model_name + '/model_params.json', 'r') as json_file:
+
+                data = json.load(json_file)
+
+                temp = data['model_params']
+
+                params_json = temp[-1]
+                print(params_json)
+
+            result = simulator_tasks.set_model.apply_async((params_json,), queue='sim',
+                                                           routing_key='sim')  # problem here
+            result.get()
+
+            print("FMU location handler COMPLETE")
 
     def on_created(self, event):
         self.process(event)

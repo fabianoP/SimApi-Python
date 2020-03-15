@@ -8,7 +8,7 @@ from simulator_api.generator_client import GeneratorClient
 
 
 class MyHandler(PatternMatchingEventHandler):
-    # patterns = ["*.idf", "*.epw"]
+    patterns = ["*.json"]
 
     def process(self, event):
         """
@@ -19,19 +19,33 @@ class MyHandler(PatternMatchingEventHandler):
         event.src_path
             path/to/observed/file
         """
-        directory = os.listdir(event.src_path)
-        idf = None
-        epw = None
 
-        for file in directory:
-            if file.endswith('.idf'):
-                idf = file
-            elif file.endswith('.epw'):
-                epw = file
+        if event.src_path.endswith('.json'):
+            print("PATH IN VOLUME MONITOR " + event.src_path)
+            directory_path = event.src_path.rsplit('/', 1)[0]  # TODO this works
+            directory = os.listdir(str(directory_path))
+            idf = None
+            epw = None
+            json_file = None
 
-        if idf is not None and epw is not None:
-            model_name = event.src_path.rsplit('/', 1)[1]  # TODO this works
-            GeneratorClient.post_files(model_name)
+            for file in directory:
+                if file.endswith('.idf'):
+                    print("IDF FOUND IN VOL MON")
+                    idf = file
+                elif file.endswith('.epw'):
+                    print("EPW FOUND IN VOL MON")
+                    epw = file
+                elif file.endswith('.json'):
+                    print("JSON FOUND IN VOL MON")
+                    json_file = file
+
+            if idf is not None and epw is not None and json_file is not None:
+                model_name = str(directory_path).rsplit('/', 1)[1]
+
+                print("VOLUME MONITOR: GEN CLIENT MODEL NAME: " + model_name)
+                GeneratorClient.post_files(model_name)
+
+        # TODO else pass failure message
 
     def on_created(self, event):
         self.process(event)

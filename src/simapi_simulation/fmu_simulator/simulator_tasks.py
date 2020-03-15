@@ -1,5 +1,6 @@
 from celery import Celery, Task
 import requests
+import time
 import os.path
 import json
 import sys
@@ -16,14 +17,14 @@ rabbit_path = 'amqp://user:pass@broker:5672/vhost'
 redis_path = 'redis://redis:6379/0'
 app = Celery('simulator_tasks', broker=rabbit_path, backend=rabbit_path)
 
-app.conf.task_routes = {'simulator_tasks': {'queue': 'sim'}}
+app.conf.task_routes = {'simulator_tasks.*': {'queue': 'sim'}}
 
 login_url = 'http://web:8000/login/'
 # replace with your superuser
-data = {"username": "test@test.com",  # username = email
+login_data = {"username": "test@test.com",  # username = email
         "password": "test user88"}
 
-resp = requests.post(login_url, data=data)
+resp = requests.post(login_url, data=login_data)
 
 print(resp.content)
 
@@ -31,6 +32,11 @@ json_resp = resp.json()
 
 token = json_resp['token']  # get validation token
 header = {'Authorization':  'Token ' + token}  # set request header
+
+
+def write_json(data, filename):
+    with open(filename, 'a+') as f:
+        json.dump(data, f, indent=4)
 
 
 class ModelInitTask(Task):
@@ -50,28 +56,33 @@ class ModelInitTask(Task):
 model_instance = ModelInitTask()
 
 
-@app.task(bind=True)
+@app.task
 def set_model(model_params):
     model_params = json.loads(model_params)
     model_name = model_params['model_name']
     step_size = model_params['step_size']
     final_time = model_params['final_time']
     fmu_path = '/home/deb/code/fmu_location/' + model_name + '/' + model_name + '.fmu'
-
-    model = SimulationObject(step_size=int(step_size),
+    logger.info(f'PATH TO FMU IN SET_MODEL: {fmu_path}')
+    time.sleep(10)
+    model = SimulationObject(model_name=model_name, step_size=int(step_size),
                              final_time=float(final_time),
-                             path_to_fmu=fmu_path,
-                             model_name=model_name)
+                             path_to_fmu=fmu_path)
 
     model.model_init()
     model_instance.model_setter(model=model)
 
 
-@app.task(bind=True)
+@app.task
 def model_input(input_json):
     logger.info(f'model_input -> input_json {input_json}')
     output_data = model_instance.model.do_time_step(input_json)
     # TODO write output to .json, move below to monitor
-    output_url = 'http://web:8000/output/'
+    with open('/home/deb/code/store_outgoing_json/outputs.json') as json_file:
+        data = json.load(json_file)
 
-    requests.post(output_url, headers=header, json=output_data)
+        temp = data['outputs']
+
+        temp.append(output_data)
+
+    write_json(data, '/home/deb/code/store_outgoing_json/outputs.json')

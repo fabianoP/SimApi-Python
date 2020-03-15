@@ -28,7 +28,7 @@ class MyHandler(PatternMatchingEventHandler):
 
                 input_json = temp.slice(-1)
 
-            result = simulator_tasks.model_input.apply_async((input_json,))
+            result = simulator_tasks.model_input.apply_async((input_json,), queue='sim', routing_key='sim')
             result.forget()
 
     def on_modified(self, event):
