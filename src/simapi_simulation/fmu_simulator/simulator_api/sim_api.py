@@ -16,13 +16,14 @@ def write_json(data, filename):
 def get_input():
     with open('/home/deb/code/store_incoming_json/inputs.json') as json_file:
         # TODO NEEDS TO BE REFACTORED
+
         data = json.load(json_file)
-        print('DATA IN GET_INPUT' + str(data))
-        temp = data['inputs']
-        print('TEMP DATA IN GET_INPUT' + str(temp))
-        temp.append(request.json)
-        print('TEMP APPEND DATA IN GET_INPUT: ' + str(temp))
-    write_json(temp, '/home/deb/code/store_incoming_json/inputs.json')
+
+        data['inputs'].append(request.json)
+
+        print('TEMP APPEND DATA IN GET_INPUT: ' + str(data))
+
+    write_json(data, '/home/deb/code/store_incoming_json/inputs.json')
     # TODO return code
 
 

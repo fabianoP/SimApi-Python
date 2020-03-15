@@ -24,9 +24,12 @@ class MyHandler(PatternMatchingEventHandler):
             print(event.src_path)
             with open(event.src_path, 'r') as json_file:
                 data = json.load(json_file)
+
                 print('INCOM JSON MONITOR DATA: ' + str(data))
-                input_json = data[-1]
-                print('INCOM JSON MONITOR TEMP: ' + str(data))
+
+                input_json = data['inputs'][-1]
+
+                print('INCOM JSON MONITOR TEMP: ' + str(input_json))
 
             result = simulator_tasks.model_input.apply_async((input_json,), queue='sim', routing_key='sim')
             result.get()
