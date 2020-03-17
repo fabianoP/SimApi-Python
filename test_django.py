@@ -21,7 +21,7 @@ header = {'Authorization':  'Token ' + token}  # set request header
 file = {'idf_file': ('a.idf', open('test_setup_files/a.idf', 'rb')),
         'epw_file': ('a.epw', open('test_setup_files/a.epw', 'rb'))}
 
-init_data = {"model_name": "work91",
+init_data = {"model_name": "work94",
              "step_size": 600,
              "final_time": 72.0}
 

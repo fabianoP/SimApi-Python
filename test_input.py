@@ -20,7 +20,7 @@ header = {'Authorization':  'Token ' + token}  # set request header
 
 
 input_data = {
-  "fmu_model": "work88",
+  "fmu_model": "work94",
   "time_step": "0",
   "yshade": "6.5"
 }

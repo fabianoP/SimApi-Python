@@ -5,6 +5,9 @@ from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
 import simulator_tasks
+# TODO will trigger a background script and pass the path of fmu as arg.
+#  Background script will monitor inputs and set model params, do_step ... etc.
+#  post output to API
 
 
 class MyHandler(PatternMatchingEventHandler):

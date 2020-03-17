@@ -1,8 +1,9 @@
 import os
 import sys
 
+import pyfmi
 from pyfmi import load_fmu
-
+from pyfmi.fmi import FMUModelCS2
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from simulator.json_generator import JsonSerializer
@@ -11,6 +12,8 @@ from simulator.json_generator import JsonSerializer
 
 
 class SimulationObject:
+
+    model: pyfmi.fmi.FMUModelCS1
 
     def __init__(self,  model_name, step_size=600, final_time=72., path_to_fmu='_fmu_export_variable.fmu'):
 
@@ -24,7 +27,7 @@ class SimulationObject:
         self.model_name = model_name
         self.step_size = step_size
         self.final_time = 60*60*final_time
-        self.model = load_fmu(path_to_fmu)
+        self.model = load_fmu(path_to_fmu, kind='CS')
 
         # store dict of current model variables. Key is variable name, used in do_time_step()
         self.model_vars = self.model.get_model_variables()
@@ -56,3 +59,15 @@ class SimulationObject:
             output[key] = self.model.get(key)[0]
 
         return JsonSerializer.to_json(output)
+
+    def save_state(self):
+        current_state = self.model.get_fmu_state()
+        serialized_state = self.model.serialize_fmu_state(current_state)
+        self.model.free_fmu_state(current_state)
+
+        return serialized_state
+
+    def load_state(self, serialized_state):
+        current_state = self.model.deserialize_fmu_state(serialized_state)
+        self.model.set_fmu_state(current_state)
+        self.model.free_fmu_state(current_state)
