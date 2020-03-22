@@ -1,4 +1,4 @@
-from celery import Celery, Task
+from celery import Celery
 import requests
 import time
 import os.path
@@ -7,7 +7,6 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from simulator.simulation_obj import SimulationObject
 from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
@@ -20,8 +19,8 @@ app.conf.task_routes = {'simulator_tasks.*': {'queue': 'sim'}}
 # TODO PASS TOKEN AND SET USER FROM DJANGO
 login_url = 'http://web:8000/login/'
 # replace with your superuser
-login_data = {"username": "test@test.com",  # username = email
-              "password": "test user88"}
+login_data = {"username": "user@user.com",  # username = email
+              "password": "user user88"}
 
 resp = requests.post(login_url, data=login_data)
 
@@ -34,36 +33,11 @@ header = {'Authorization': 'Token ' + token}  # set request header
 
 
 def write_json(data, filename):
-    with open(filename, 'a+') as f:
+    with open(filename, 'w') as f:
         json.dump(data, f, indent=4)
 
 
-class ModelInitTask:
-    _model = None
-
-    def run(self, *args, **kwargs):
-        pass
-
-    def model_get(self):
-        return self._model
-
-
-class ModelTask(Task):
-    def run(self, *args, **kwargs):
-        pass
-
-    _model_instance = None
-
-    def model_setter(self, model):
-        if self._model is None:
-            self._model_instance = model
-
-    @property
-    def model_instance(self):
-        return self._model_instance
-
-
-@app.task(base=ModelTask)
+@app.task
 def set_model(model_params):
     model_params = json.loads(model_params)
     model_name = model_params['model_name']
@@ -72,26 +46,27 @@ def set_model(model_params):
     fmu_path = '/home/deb/code/fmu_location/' + model_name + '/' + model_name + '.fmu'
     logger.info(f'PATH TO FMU IN SET_MODEL: {fmu_path}')
     time.sleep(5)
-    sim_obj = SimulationObject(model_name=model_name, step_size=int(step_size),
-                               final_time=float(final_time),
-                               path_to_fmu=fmu_path)
-    # TODO serialize model and store
-    sim_obj.model_init()
-    set_model.model_setter(sim_obj)
 
+    params = {'model_name': model_name,
+              'step_size': step_size,
+              'final_time': final_time,
+              'fmu_path': fmu_path}
 
-@app.task(base=ModelTask)
-def model_input(input_json):
-    logger.info(f'model_input -> input_json {input_json}')
-    # TODO de-serialize model, do_step, save outputs, serialize model, and save
-    output_data = model_input.model_instance().do_time_step(input_json)
-    logger.info(f'MODELTASK.MODEL_INSTANCE TYPE {output_data}')
-    # TODO write output to .json, move below to monitor
-    with open('/home/deb/code/store_outgoing_json/outputs.json') as json_file:
+    with open('./store_incoming_json/model_params.json', 'r') as json_file:
         data = json.load(json_file)
+        logger.info(f'DATA JSON LOAD IN SET MODEL TASK {data}')
 
-        temp = data['outputs']
+        data['model_params'].append(params)
 
-        temp.append(output_data)
+        logger.info(f'DATA PARAMS IN SET MODEL TASK AFTER APPEND {data}')
 
-    write_json(data, '/home/deb/code/store_outgoing_json/outputs.json')
+    write_json(data, './store_incoming_json/model_params.json')
+
+
+@app.task
+def post_output(output_json):  # TODO refactor to send output data to api db
+    logger.info(f'post_output -> output_json {output_json}')
+    output_url = 'http://web:8000/output/'
+
+    r = requests.post(output_url, headers=header, data=json.dumps(output_json))
+    logger.info(f'post_output -> request status {r.status_code}')

@@ -34,8 +34,8 @@ class GeneratorClient:
         # TODO FMU confirmation system needed
         if r.status_code == 200:
             url = "http://generator:8000/fmu/" + model_name
-            print("G CLIENT GEN /FMU : " + str(r.status_code))
             r = requests.get(url)
+            print("G CLIENT GEN /FMU : " + str(r.status_code))
             print(r.text)
             return r.status_code
         else:

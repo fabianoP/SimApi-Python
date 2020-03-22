@@ -22,6 +22,9 @@ docker exec -it {name/id of container} /bin/bash
 # stop all running containers
 docker stop $(docker ps -q)
 
+# remove volume data
+docker-compose down --volumes
+
 # DOCKER NETWORK COMMANDS
 
 # create user-defined bridge called my-net

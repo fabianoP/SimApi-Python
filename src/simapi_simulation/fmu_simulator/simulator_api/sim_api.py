@@ -15,13 +15,12 @@ def write_json(data, filename):
 @route('/model_input', method='POST')
 def get_input():
     with open('/home/deb/code/store_incoming_json/inputs.json') as json_file:
-        # TODO NEEDS TO BE REFACTORED
 
         data = json.load(json_file)
 
         data['inputs'].append(request.json)
 
-        print('TEMP APPEND DATA IN GET_INPUT: ' + str(data))
+        print('TEMP APPEND DATA IN GET_INPUT SIM_API: ' + str(data))
 
     write_json(data, '/home/deb/code/store_incoming_json/inputs.json')
     # TODO return code

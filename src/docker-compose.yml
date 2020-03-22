@@ -25,11 +25,14 @@ services:
       - simapi
     restart: always
 
+
   db:
     container_name: db
     image: postgres
     networks:
       - simapi
+    ports:
+    - 5433:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     restart: always
@@ -39,8 +42,6 @@ services:
     build: ./simapi_web   # change to windows path syntax
     command:  bash -c "python manage.py runserver 0.0.0.0:8000
                       & celery -A simapi_web worker -l info --queues=web"
-    networks:
-      - simapi
     volumes:
       - ./simapi_web:/home/deb/code # change ./simapi_web to windows path syntax
     ports:
@@ -48,6 +49,8 @@ services:
     depends_on:
       - rabbitmq
       - db
+    networks:
+      - simapi
     restart: always
 
   generator:
@@ -56,8 +59,6 @@ services:
     command: bash -c "python generator_api.py
                       & celery -A generator_tasks worker -l info --queues=gen
                       & python fmu_volume_monitor.py /home/fmu/code/energy/test"
-    networks:
-      - simapi #  celery -A simapi_web worker -l info celery -A generator_tasks worker -l info
     volumes: # celery -A simulator_tasks worker -l info
       - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test # change ./simapi_simulation/fmu_generator/volume to windows path syntax
       - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
@@ -65,6 +66,8 @@ services:
       - 8001:8000
     depends_on:
       - web
+    networks:
+      - simapi
     restart: always
 
   simulator:
@@ -72,11 +75,8 @@ services:
     build: ./simapi_simulation/fmu_simulator  # change to windows path syntax
     command: bash -c "python ./simulator_api/sim_api.py
                       & celery -A simulator_tasks worker -l info --queues=sim
-                      & python incoming_json_monitor.py /home/deb/code/store_incoming_json
                       & python volume_monitor.py /home/deb/code/volume
-                      & python fmu_location_monitor.py /home/deb/code/fmu_location" #
-    networks:
-      - simapi
+                      & python fmu_location_monitor.py /home/deb/code/fmu_location"  # & python incoming_json_monitor.py /home/deb/code/store_incoming_json
     volumes:
     - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume    # change to ./simapi_simulation/fmu_simulator/volume windows path syntax
     - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
@@ -84,6 +84,8 @@ services:
       - 8002:8000
     depends_on:
       - generator
+    networks:
+      - simapi
     restart: always
 
 networks:

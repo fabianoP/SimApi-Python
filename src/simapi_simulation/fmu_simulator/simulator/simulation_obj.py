@@ -45,13 +45,13 @@ class SimulationObject:
         calls model.do_step,
         creates new dict with output then returns output dict as json to pass back to API
         """
-
+        print("JSON INPUT IN SIM OBJ TIMESTEP: " + str(json_input))
         fmu_input = JsonSerializer.to_dict(json_input)
-        time_step = fmu_input.get('timestep')
-        yshade = fmu_input.get('yshade')
+        time_step = fmu_input['time_step']
+        yshade = fmu_input['yshade']
 
-        self.model.set('yShadeFMU', yshade)
-        self.model.do_step(current_t=time_step, step_size=self.step_size, new_step=True)
+        self.model.set('yShadeFMU', float(yshade))
+        self.model.do_step(current_t=int(time_step), step_size=self.step_size, new_step=True)
 
         output = {'model_name': self.model_name, 'time_step': time_step}
 
@@ -60,14 +60,3 @@ class SimulationObject:
 
         return JsonSerializer.to_json(output)
 
-    def save_state(self):
-        current_state = self.model.get_fmu_state()
-        serialized_state = self.model.serialize_fmu_state(current_state)
-        self.model.free_fmu_state(current_state)
-
-        return serialized_state
-
-    def load_state(self, serialized_state):
-        current_state = self.model.deserialize_fmu_state(serialized_state)
-        self.model.set_fmu_state(current_state)
-        self.model.free_fmu_state(current_state)
