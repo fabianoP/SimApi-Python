@@ -1,16 +1,5 @@
 {
     "inputs": [
-        {
-            "time_step": 0,
-            "yShadeFMU": 1.0
-        },
-        {
-            "time_step": 0,
-            "yShadeFMU": 1.0
-        },
-        {
-            "time_step": 0,
-            "yShadeFMU": 1.0
-        }
+
     ]
 }
