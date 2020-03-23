@@ -31,12 +31,15 @@ class MyHandler(PatternMatchingEventHandler):
             for file in directory:
                 if file.endswith('.idf'):
                     print("IDF FOUND IN VOL MON")
+                    print(file)
                     idf = file
                 elif file.endswith('.epw'):
                     print("EPW FOUND IN VOL MON")
+                    print(file)
                     epw = file
                 elif file.endswith('.json'):
                     print("JSON FOUND IN VOL MON")
+                    print(file)
                     json_file = file
 
             if idf is not None and epw is not None and json_file is not None:

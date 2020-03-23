@@ -23,7 +23,7 @@ def write_json(data, filename):
         json.dump(data, f, indent=4)
 
 
-@app.task(ignore_result=True)
+@app.task  # (ignore_result=True)
 def set_model(model_params):
     # model_params = json.loads(model_params)
     model_name = model_params['model_name']
@@ -32,7 +32,7 @@ def set_model(model_params):
     fmu_path = '/home/deb/code/fmu_location/' + model_name + '/' + model_name + '.fmu'
     auth_token = model_params['Authorization']
     logger.info(f'PATH TO FMU IN SET_MODEL: {fmu_path}')
-    time.sleep(5)
+    time.sleep(10)
 
     params = {'model_name': model_name,
               'step_size': step_size,
@@ -51,7 +51,7 @@ def set_model(model_params):
     write_json(data, './store_incoming_json/model_params.json')
 
 
-@app.task(ignore_result=True)
+@app.task  # (ignore_result=True)
 def post_output(output_json, header):  # TODO refactor to send output data to api db
     logger.info(f'post_output -> output_json {output_json}')
     output_url = 'http://web:8000/output/'

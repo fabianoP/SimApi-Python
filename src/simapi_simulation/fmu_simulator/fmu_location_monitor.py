@@ -31,8 +31,8 @@ class MyHandler(PatternMatchingEventHandler):
                 temp = data['model_params']
                 params_json = temp[-1]
 
-            simulator_tasks.set_model.apply_async((params_json,), queue='sim', routing_key='sim')
-
+            result = simulator_tasks.set_model.apply_async((params_json,), queue='sim', routing_key='sim')
+            result.get()
             print("FMU location handler COMPLETE")
 
     def on_created(self, event):

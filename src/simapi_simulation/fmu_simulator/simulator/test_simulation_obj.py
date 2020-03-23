@@ -4,12 +4,11 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from simulator.simulation_obj import SimulationObject
-from simulator.json_generator import JsonSerializer
 
 """ Simple test script to. Tests functionality of the simulation_obj class"""
 
 #  instantiate simulation obj with default values
-sim_obj = SimulationObject(model_name='nearly84.fmu', path_to_fmu='nearly84.fmu')
+sim_obj = SimulationObject(model_name='nearly85.fmu', path_to_fmu='nearly85.fmu')
 sim_obj.model_init()  # initialize fmu model. Calls pyFMI model.init() and sets start and finish time
 # new dictionary with inputs for fmu time step
 

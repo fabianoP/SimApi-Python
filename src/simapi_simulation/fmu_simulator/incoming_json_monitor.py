@@ -16,6 +16,7 @@ class MyHandler(PatternMatchingEventHandler):
     header = None
     current_input = None
     previous_inputs = []
+    model_params_set = False
 
     def process(self, event):
         """
@@ -44,13 +45,15 @@ class MyHandler(PatternMatchingEventHandler):
 
                 print(output_json)
 
-                simulator_tasks.post_output.apply_async((output_json, self.header),
-                                                        queue='sim',
-                                                        routing_key='sim')
+                result = simulator_tasks.post_output.apply_async((output_json, self.header),
+                                                                 queue='sim',
+                                                                 routing_key='sim')
+
+                result.get()
             else:
                 print("Input already seen!")
 
-        elif event.src_path.endswith('model_params.json'):
+        elif event.src_path.endswith('model_params.json') and self.model_params_set is False:
             with open(str(event.src_path), 'r') as json_file:
                 data = json.load(json_file)
 
@@ -67,6 +70,7 @@ class MyHandler(PatternMatchingEventHandler):
                                                 final_time=float(final_time),
                                                 path_to_fmu=fmu_path)
                 self.sim_obj.model_init()
+                self.model_params_set = True
 
     def on_modified(self, event):
         self.process(event)

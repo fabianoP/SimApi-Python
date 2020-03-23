@@ -7,7 +7,6 @@ from pyfmi import load_fmu
 from pyfmi.fmi import FMUModelCS2
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from simulator.json_generator import JsonSerializer
 
 """ SimulationObject class represents an FMU model and class methods to access and run the model """
 
@@ -52,6 +51,11 @@ class SimulationObject:
         print(json_input)
         time_step = json_input['time_step']
         print(type(time_step))
+        print(self.model_output_vars)
+        print(self.model_real_vars)
+        print(self.model_int_vars)
+        print(type(self.step_size))
+        print(type(self.final_time))
 
         for key in json_input:
             if key in self.model_real_vars:
@@ -61,7 +65,6 @@ class SimulationObject:
                 print(json_input[key])
                 self.model.set(key, int(json_input[key]))
 
-        print(type(self.step_size))
         self.model.do_step(current_t=time_step, step_size=self.step_size, new_step=True)
 
         output = {'model_name': self.model_name, 'time_step': time_step}
@@ -69,5 +72,5 @@ class SimulationObject:
         for key in self.model_output_vars:
             output[key] = self.model.get(key)[0]
 
-        return JsonSerializer.to_json(output)
+        return output
 

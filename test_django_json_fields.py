@@ -20,12 +20,12 @@ json_resp = resp.json()
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
 i = 0
-shade = 4.0
+shade = 1.0
 
 input_dict = {'time_step': i, 'yShadeFMU': shade}
 
 input_data = {
-    'fmu_model': 'nearly81',
+    'fmu_model': 'nearly88',
     'input': json.dumps(input_dict)
 }
 resp = requests.post(input_url, headers=header, data=input_data)
