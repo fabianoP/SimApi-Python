@@ -45,7 +45,8 @@ class FmuModelViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
         data = {'model_name': self.request.data['model_name'],
                 'step_size': self.request.data['step_size'],
-                'final_time': self.request.data['final_time']
+                'final_time': self.request.data['final_time'],
+                'Authorization': 'Token ' + str(self.request.auth)
                 }
         transaction.on_commit(lambda: tasks.post_model.apply_async((data,), queue='web', routing_key='web'))
 
@@ -65,8 +66,12 @@ class InputViewSet(viewsets.ModelViewSet):
 
         # TODO add second get param of time/date to ensure the current model is returned
         model = models.FmuModelParameters.objects.get(model_name=self.request.data['fmu_model'])
-        serializer.save(user=self.request.user, fmu_model=model)
-        transaction.on_commit(lambda: tasks.post_input.apply_async((self.request.data,),
+
+        input_json_field = self.request.data['input']
+
+        serializer.save(user=self.request.user, fmu_model=model, input=input_json_field)
+
+        transaction.on_commit(lambda: tasks.post_input.apply_async((input_json_field,),
                                                                    queue='web',
                                                                    routing_key='web'))
 
@@ -86,7 +91,8 @@ class OutputViewSet(viewsets.ModelViewSet):
 
         # TODO add second get param of time/date to ensure the current model is returned
         model = models.FmuModelParameters.objects.get(model_name=self.request.data['fmu_model'])
-        serializer.save(user=self.request.user, fmu_model=model)
+        output_json_field = self.request.data['output']
+        serializer.save(user=self.request.user, fmu_model=model, output=output_json_field)
 
 
 class FileUploadView(viewsets.ModelViewSet):

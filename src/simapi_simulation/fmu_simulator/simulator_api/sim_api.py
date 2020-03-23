@@ -8,6 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
 def write_json(data, filename):
+    # TODO already json at this point no need to dump
     with open(filename, 'w') as f:
         json.dump(data, f, indent=4)
 
@@ -18,9 +19,7 @@ def get_input():
 
         data = json.load(json_file)
 
-        data['inputs'].append(request.json)
-
-        print('TEMP APPEND DATA IN GET_INPUT SIM_API: ' + str(data))
+        data['inputs'].append(json.loads(request.json))
 
     write_json(data, '/home/deb/code/store_incoming_json/inputs.json')
     # TODO return code
@@ -46,7 +45,7 @@ def do_upload(model_name):
     if len(upload) == 2:
         j_dict = {'model_params': []}
 
-        j_dict['model_params'].append(json_data)
+        j_dict['model_params'].append(json.loads(json_data))
         write_json(j_dict, save_path + '/model_params.json')
         response.status = 200
         return 'File upload success in sim container for model_name = {0}'.format(model_name)

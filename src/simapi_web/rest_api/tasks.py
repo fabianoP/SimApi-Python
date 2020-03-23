@@ -1,17 +1,18 @@
 from celery import shared_task
-from rest_api import models
 from celery.utils.log import get_task_logger
 import requests
 import json
 
-logger = get_task_logger(__name__)
+from rest_api import models
 
-# TODO Major problem with workers receiving wrong jobs. Need separation
+logger = get_task_logger(__name__)
 
 
 @shared_task
 def post_model(data):
     logger.info(f'post_model data {data}')
+    auth_t = data['Authorization']
+    logger.info(f'post_model data AUTH {auth_t}')
     model = models.FmuModelParameters.objects.get(model_name=data['model_name'])
 
     # TODO set simulator generic for multiple containers
@@ -39,4 +40,4 @@ def post_input(data):
 
         headers = {'Content-type': 'application/json'}
 
-        r = requests.post(url=url, json=json.dumps(data), headers=headers)
+        r = requests.post(url=url, json=data, headers=headers)

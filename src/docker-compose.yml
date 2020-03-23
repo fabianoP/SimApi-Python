@@ -39,11 +39,11 @@ services:
 
   web:
     container_name: web
-    build: ./simapi_web   # change to windows path syntax
+    build: ./simapi_web
     command:  bash -c "python manage.py runserver 0.0.0.0:8000
                       & celery -A simapi_web worker -l info --queues=web"
     volumes:
-      - ./simapi_web:/home/deb/code # change ./simapi_web to windows path syntax
+      - ./simapi_web:/code
     ports:
       - 8000:8000
     depends_on:
@@ -59,7 +59,7 @@ services:
     command: bash -c "python generator_api.py
                       & celery -A generator_tasks worker -l info --queues=gen
                       & python fmu_volume_monitor.py /home/fmu/code/energy/test"
-    volumes: # celery -A simulator_tasks worker -l info
+    volumes:
       - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test # change ./simapi_simulation/fmu_generator/volume to windows path syntax
       - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
     ports:
@@ -78,8 +78,7 @@ services:
                       & python volume_monitor.py /home/deb/code/volume
                       & python fmu_location_monitor.py /home/deb/code/fmu_location"  # & python incoming_json_monitor.py /home/deb/code/store_incoming_json
     volumes:
-    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume    # change to ./simapi_simulation/fmu_simulator/volume windows path syntax
-    - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
+    - ./simapi_simulation/fmu_simulator:/home/deb/code
     ports:
       - 8002:8000
     depends_on:

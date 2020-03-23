@@ -96,13 +96,9 @@ class Input(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
-    created_on = models.DateTimeField(auto_now_add=True)
 
     # set as single json object
     input = JSONField()
-
-    time_step = models.BigIntegerField(unique=False, default=0)
-    yshade = models.DecimalField(max_digits=20, decimal_places=4)
 
     objects = models.Manager()
 
@@ -114,15 +110,6 @@ class Output(models.Model):
 
     # set as single json object
     output = JSONField()
-
-    time_step = models.BigIntegerField(unique=False, default=0)
-    yshade = models.DecimalField(max_digits=20, decimal_places=4)
-    dry_bulb = models.DecimalField(max_digits=20, decimal_places=4)
-    troo = models.DecimalField(max_digits=20, decimal_places=4)
-    isolext = models.DecimalField(max_digits=20, decimal_places=4)
-    sout = models.DecimalField(max_digits=20, decimal_places=4)
-    zonesens = models.DecimalField(max_digits=20, decimal_places=4)
-    cool_rate = models.DecimalField(max_digits=20, decimal_places=4)
 
     objects = models.Manager()
 
