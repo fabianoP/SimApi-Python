@@ -1,5 +1,25 @@
 {
     "model_params": [
-
+        {
+            "model_name": "nearly99",
+            "step_size": "600",
+            "final_time": "24.0",
+            "fmu_path": "/home/deb/code/fmu_location/nearly99/nearly99.fmu",
+            "Authorization": "Token 59173ed1836cc6733288f3099aa1e5fd84ab170b"
+        },
+        {
+            "model_name": "nearly100",
+            "step_size": "600",
+            "final_time": "24.0",
+            "fmu_path": "/home/deb/code/fmu_location/nearly100/nearly100.fmu",
+            "Authorization": "Token 59173ed1836cc6733288f3099aa1e5fd84ab170b"
+        },
+        {
+            "model_name": "nearly101",
+            "step_size": "600",
+            "final_time": "24.0",
+            "fmu_path": "/home/deb/code/fmu_location/nearly101/nearly101.fmu",
+            "Authorization": "Token 59173ed1836cc6733288f3099aa1e5fd84ab170b"
+        }
     ]
 }

@@ -32,7 +32,7 @@ def set_model(model_params):
     fmu_path = '/home/deb/code/fmu_location/' + model_name + '/' + model_name + '.fmu'
     auth_token = model_params['Authorization']
     logger.info(f'PATH TO FMU IN SET_MODEL: {fmu_path}')
-    time.sleep(10)
+    time.sleep(5)
 
     params = {'model_name': model_name,
               'step_size': step_size,
@@ -56,6 +56,11 @@ def post_output(output_json, header):  # TODO refactor to send output data to ap
     logger.info(f'post_output -> output_json {output_json}')
     output_url = 'http://web:8000/output/'
     logger.info(f'post_output -> output_json {type(output_json)}')
-    logger.info(f'post_output -> output_json {header}')
+
+    header['Content-Type'] = 'application/json'
+    logger.info(f'post_output -> output_json header {header}')
+    logger.info(f'post_output -> output_json header type {type(header)}')
+
     r = requests.post(output_url, headers=header, data=output_json)
     logger.info(f'post_output -> request status {r.status_code}')
+    logger.info(f'post_output -> request text {r.text}')

@@ -25,7 +25,7 @@ shade = 1.0
 input_dict = {'time_step': i, 'yShadeFMU': shade}
 
 input_data = {
-    'fmu_model': 'nearly88',
+    'fmu_model': 'nearly101',
     'input': json.dumps(input_dict)
 }
 resp = requests.post(input_url, headers=header, data=input_data)

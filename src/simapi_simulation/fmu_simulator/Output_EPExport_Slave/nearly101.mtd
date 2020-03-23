@@ -1,0 +1,188 @@
+
+ Meters for 8,EAST ZONE LIGHTS 1:Lights Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:EAST ZONE [J]
+  OnMeter=InteriorLights:Electricity [J]
+  OnMeter=InteriorLights:Electricity:Zone:EAST ZONE [J]
+  OnMeter=GeneralLights:InteriorLights:Electricity [J]
+
+ Meters for 81,NORTH ZONE LIGHTS 1:Lights Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:NORTH ZONE [J]
+  OnMeter=InteriorLights:Electricity [J]
+  OnMeter=InteriorLights:Electricity:Zone:NORTH ZONE [J]
+  OnMeter=GeneralLights:InteriorLights:Electricity [J]
+
+ Meters for 106,WEST ZONE ELECEQ 1:Electric Equipment Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:WEST ZONE [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:WEST ZONE [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 155,EAST ZONE ELECEQ 1:Electric Equipment Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:EAST ZONE [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:EAST ZONE [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 168,NORTH ZONE ELECEQ 1:Electric Equipment Electric Energy [J]
+  OnMeter=Electricity:Facility [J]
+  OnMeter=Electricity:Building [J]
+  OnMeter=Electricity:Zone:NORTH ZONE [J]
+  OnMeter=InteriorEquipment:Electricity [J]
+  OnMeter=InteriorEquipment:Electricity:Zone:NORTH ZONE [J]
+  OnMeter=General:InteriorEquipment:Electricity [J]
+
+ Meters for 200,WEST ZONE:Zone Air System Sensible Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:WEST ZONE [J]
+  OnMeter=Heating:EnergyTransfer [J]
+  OnMeter=Heating:EnergyTransfer:Zone:WEST ZONE [J]
+
+ Meters for 261,WEST ZONE:Zone Air System Sensible Cooling Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:WEST ZONE [J]
+  OnMeter=Cooling:EnergyTransfer [J]
+  OnMeter=Cooling:EnergyTransfer:Zone:WEST ZONE [J]
+
+ Meters for 290,EAST ZONE:Zone Air System Sensible Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:EAST ZONE [J]
+  OnMeter=Heating:EnergyTransfer [J]
+  OnMeter=Heating:EnergyTransfer:Zone:EAST ZONE [J]
+
+ Meters for 315,EAST ZONE:Zone Air System Sensible Cooling Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:EAST ZONE [J]
+  OnMeter=Cooling:EnergyTransfer [J]
+  OnMeter=Cooling:EnergyTransfer:Zone:EAST ZONE [J]
+
+ Meters for 332,NORTH ZONE:Zone Air System Sensible Heating Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:NORTH ZONE [J]
+  OnMeter=Heating:EnergyTransfer [J]
+  OnMeter=Heating:EnergyTransfer:Zone:NORTH ZONE [J]
+
+ Meters for 357,NORTH ZONE:Zone Air System Sensible Cooling Energy [J]
+  OnMeter=EnergyTransfer:Facility [J]
+  OnMeter=EnergyTransfer:Building [J]
+  OnMeter=EnergyTransfer:Zone:NORTH ZONE [J]
+  OnMeter=Cooling:EnergyTransfer [J]
+  OnMeter=Cooling:EnergyTransfer:Zone:NORTH ZONE [J]
+
+ Meters for 374,ZONE1AIR:Zone Ideal Loads Supply Air Total Heating Energy [J]
+  OnMeter=DistrictHeating:Facility [J]
+  OnMeter=DistrictHeating:HVAC [J]
+  OnMeter=Heating:DistrictHeating [J]
+
+ Meters for 411,ZONE1AIR:Zone Ideal Loads Supply Air Total Cooling Energy [J]
+  OnMeter=DistrictCooling:Facility [J]
+  OnMeter=DistrictCooling:HVAC [J]
+  OnMeter=Cooling:DistrictCooling [J]
+
+ Meters for 448,ZONE2AIR:Zone Ideal Loads Supply Air Total Heating Energy [J]
+  OnMeter=DistrictHeating:Facility [J]
+  OnMeter=DistrictHeating:HVAC [J]
+  OnMeter=Heating:DistrictHeating [J]
+
+ Meters for 449,ZONE2AIR:Zone Ideal Loads Supply Air Total Cooling Energy [J]
+  OnMeter=DistrictCooling:Facility [J]
+  OnMeter=DistrictCooling:HVAC [J]
+  OnMeter=Cooling:DistrictCooling [J]
+
+ Meters for 450,ZONE3AIR:Zone Ideal Loads Supply Air Total Heating Energy [J]
+  OnMeter=DistrictHeating:Facility [J]
+  OnMeter=DistrictHeating:HVAC [J]
+  OnMeter=Heating:DistrictHeating [J]
+
+ Meters for 451,ZONE3AIR:Zone Ideal Loads Supply Air Total Cooling Energy [J]
+  OnMeter=DistrictCooling:Facility [J]
+  OnMeter=DistrictCooling:HVAC [J]
+  OnMeter=Cooling:DistrictCooling [J]
+
+ Meters for 452,Whole Building:Facility Total Purchased Electric Energy [J]
+  OnMeter=ElectricityPurchased:Facility [J]
+  OnMeter=ElectricityPurchased:Plant [J]
+  OnMeter=Cogeneration:ElectricityPurchased [J]
+
+ Meters for 489,Whole Building:Facility Total Surplus Electric Energy [J]
+  OnMeter=ElectricitySurplusSold:Facility [J]
+  OnMeter=ElectricitySurplusSold:Plant [J]
+  OnMeter=Cogeneration:ElectricitySurplusSold [J]
+
+ Meters for 526,Whole Building:Facility Net Purchased Electric Energy [J]
+  OnMeter=ElectricityNet:Facility [J]
+  OnMeter=ElectricityNet:Plant [J]
+  OnMeter=Cogeneration:ElectricityNet [J]
+
+ Meters for 566,Site:Environmental Impact Total N2O Emissions Carbon Equivalent Mass [kg]
+  OnMeter=Carbon Equivalent:Facility [kg]
+  OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
+
+ Meters for 591,Site:Environmental Impact Total CH4 Emissions Carbon Equivalent Mass [kg]
+  OnMeter=Carbon Equivalent:Facility [kg]
+  OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
+
+ Meters for 592,Site:Environmental Impact Total CO2 Emissions Carbon Equivalent Mass [kg]
+  OnMeter=Carbon Equivalent:Facility [kg]
+  OnMeter=CarbonEquivalentEmissions:Carbon Equivalent [kg]
+
+ For Meter=Electricity:Facility [J], ResourceType=Electricity, contents are:
+  EAST ZONE LIGHTS 1:Lights Electric Energy
+  NORTH ZONE LIGHTS 1:Lights Electric Energy
+  WEST ZONE ELECEQ 1:Electric Equipment Electric Energy
+  EAST ZONE ELECEQ 1:Electric Equipment Electric Energy
+  NORTH ZONE ELECEQ 1:Electric Equipment Electric Energy
+
+ For Meter=Electricity:Building [J], ResourceType=Electricity, Group=Building, contents are:
+  EAST ZONE LIGHTS 1:Lights Electric Energy
+  NORTH ZONE LIGHTS 1:Lights Electric Energy
+  WEST ZONE ELECEQ 1:Electric Equipment Electric Energy
+  EAST ZONE ELECEQ 1:Electric Equipment Electric Energy
+  NORTH ZONE ELECEQ 1:Electric Equipment Electric Energy
+
+ For Meter=Electricity:Zone:EAST ZONE [J], ResourceType=Electricity, Group=Zone, contents are:
+  EAST ZONE LIGHTS 1:Lights Electric Energy
+  EAST ZONE ELECEQ 1:Electric Equipment Electric Energy
+
+ For Meter=InteriorLights:Electricity [J], ResourceType=Electricity, EndUse=InteriorLights, contents are:
+  EAST ZONE LIGHTS 1:Lights Electric Energy
+  NORTH ZONE LIGHTS 1:Lights Electric Energy
+
+ For Meter=InteriorLights:Electricity:Zone:EAST ZONE [J], ResourceType=Electricity, EndUse=InteriorLights, Group=Zone, contents are:
+  EAST ZONE LIGHTS 1:Lights Electric Energy
+
+ For Meter=GeneralLights:InteriorLights:Electricity [J], ResourceType=Electricity, EndUse=InteriorLights, contents are:
+  EAST ZONE LIGHTS 1:Lights Electric Energy
+  NORTH ZONE LIGHTS 1:Lights Electric Energy
+
+ For Meter=Electricity:Zone:NORTH ZONE [J], ResourceType=Electricity, Group=Zone, contents are:
+  NORTH ZONE LIGHTS 1:Lights Electric Energy
+  NORTH ZONE ELECEQ 1:Electric Equipment Electric Energy
+
+ For Meter=InteriorLights:Electricity:Zone:NORTH ZONE [J], ResourceType=Electricity, EndUse=InteriorLights, Group=Zone, contents are:
+  NORTH ZONE LIGHTS 1:Lights Electric Energy
+
+ For Meter=Electricity:Zone:WEST ZONE [J], ResourceType=Electricity, Group=Zone, contents are:
+  WEST ZONE ELECEQ 1:Electric Equipment Electric Energy
+
+ For Meter=InteriorEquipment:Electricity [J], ResourceType=Electricity, EndUse=InteriorEquipment, contents are:
+  WEST ZONE ELECEQ 1:Electric Equipment Electric Energy
+  EAST ZONE ELECEQ 1:Electric Equipment Electric Energy
+  NORTH ZONE ELECEQ 1:Electric Equipment Electric Energy
+
+ For Meter=InteriorEquipment:Electricity:Zone:WEST ZONE [J], ResourceType=Electricity, EndUse=InteriorEquipment, Group=Zone, contents are:
+  WEST ZONE ELECEQ 1:Electric Equipment Electric Energy
+
+ For Meter=General:InteriorEquipment:Electricity [J]

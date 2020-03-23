@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
@@ -90,9 +92,10 @@ class OutputViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer, **kwargs):
 
         # TODO add second get param of time/date to ensure the current model is returned
-        model = models.FmuModelParameters.objects.get(model_name=self.request.data['fmu_model'])
-        output_json_field = self.request.data['output']
-        serializer.save(user=self.request.user, fmu_model=model, output=output_json_field)
+        output = self.request.data
+        model = models.FmuModelParameters.objects.get(model_name=output['fmu_model'])
+        output_json_field = output['output']
+        serializer.save(user=self.request.user, fmu_model=model, output=json.dumps(output_json_field))
 
 
 class FileUploadView(viewsets.ModelViewSet):

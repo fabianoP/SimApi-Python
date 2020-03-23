@@ -67,10 +67,14 @@ class SimulationObject:
 
         self.model.do_step(current_t=time_step, step_size=self.step_size, new_step=True)
 
-        output = {'model_name': self.model_name, 'time_step': time_step}
+        do_step_outputs = {'fmu_model': self.model_name}
+
+        output = {'time_step': time_step}
 
         for key in self.model_output_vars:
             output[key] = self.model.get(key)[0]
 
-        return output
+        do_step_outputs['output'] = output
+        print("OUTPUTS CHANGED")
+        return json.dumps(do_step_outputs)
 
