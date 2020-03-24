@@ -26,7 +26,7 @@ def post_model(data):
 
         r = requests.post(url, files=file)
 
-        return r.content
+        return r.status_code
 
 
 @shared_task

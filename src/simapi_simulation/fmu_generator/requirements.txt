@@ -5,3 +5,5 @@ kombu==4.6.8
 requests==2.22.0
 redis==3.4.1
 watchdog==0.10.2
+sqlalchemy
+psycopg2-binary==2.8.4

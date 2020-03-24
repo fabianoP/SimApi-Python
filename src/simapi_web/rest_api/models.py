@@ -96,7 +96,7 @@ class Input(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
-
+    time_step = models.IntegerField(null=False)
     # set as single json object
     input = JSONField()
 

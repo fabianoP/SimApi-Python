@@ -25,6 +25,16 @@ services:
       - simapi
     restart: always
 
+  celery_result_db:
+    container_name: backend
+    image: postgres
+    networks:
+      - simapi
+    ports:
+      - 5434:5432
+    volumes:
+      - postgres_celery_data:/var/lib/postgresql/data/
+    restart: always
 
   db:
     container_name: db
@@ -76,7 +86,8 @@ services:
     command: bash -c "python ./simulator_api/sim_api.py
                       & celery -A simulator_tasks worker -l info --queues=sim
                       & python volume_monitor.py /home/deb/code/volume
-                      & python fmu_location_monitor.py /home/deb/code/fmu_location"  # & python incoming_json_monitor.py /home/deb/code/store_incoming_json
+                      & python fmu_location_monitor.py /home/deb/code/fmu_location"
+    # & python incoming_json_monitor.py /home/deb/code/store_incoming_json
     volumes:
     - ./simapi_simulation/fmu_simulator:/home/deb/code
     ports:
@@ -92,3 +103,4 @@ networks:
     driver: bridge
 volumes:
   postgres_data:
+  postgres_celery_data:

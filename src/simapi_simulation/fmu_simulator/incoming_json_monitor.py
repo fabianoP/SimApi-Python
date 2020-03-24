@@ -1,12 +1,17 @@
 import sys
 import time
 import json
+from json import JSONDecodeError
+
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
 from simulator.simulation_obj import SimulationObject
 
 import simulator_tasks
+
+# TODO each time triggered request from db with model name and time step
+#  instead of json upload time step and query
 
 
 class MyHandler(PatternMatchingEventHandler):
@@ -17,44 +22,11 @@ class MyHandler(PatternMatchingEventHandler):
     current_input = None
     previous_inputs = []
     model_params_set = False
+    input_set = False
 
-    def process(self, event):
-        """
-        event.event_type
-            'modified' | 'created' | 'moved' | 'deleted'
-        event.is_directory
-            True | False
-        event.src_path
-            path/to/observed/file
-        """
-        # TODO inputs triggered twice. NEED FIX!
-        if event.src_path.endswith('inputs.json'):
-            with open(str(event.src_path), 'r') as json_file:
-                data = json.load(json_file)
-
-                print('data: ' + str(data))
-
-                self.current_input = data['inputs'][-1]
-
-            if self.current_input not in self.previous_inputs:
-                self.previous_inputs.append(self.current_input)
-
-                print(self.previous_inputs)
-
-                output_json = self.sim_obj.do_time_step(self.current_input)
-
-                print(output_json)
-
-                result = simulator_tasks.post_output.apply_async((output_json, self.header),
-                                                                 queue='sim',
-                                                                 routing_key='sim')
-
-                result.get()
-            else:
-                print("Input already seen!")
-
-        elif event.src_path.endswith('model_params.json') and self.model_params_set is False:
-            with open(str(event.src_path), 'r') as json_file:
+    def on_modified(self, event):
+        if event.src_path.endswith('model_params.json') and self.model_params_set is False:
+            with open(str(event.src_path)) as json_file:
                 data = json.load(json_file)
 
                 params = data['model_params'][-1]
@@ -62,8 +34,7 @@ class MyHandler(PatternMatchingEventHandler):
                 step_size = params['step_size']
                 final_time = params['final_time']
                 fmu_path = params['fmu_path']
-                print(f'model_params type {type(step_size)}')
-                print(f'model_params type {type(final_time)}')
+
                 self.header = {'Authorization': params['Authorization']}
 
                 self.sim_obj = SimulationObject(model_name=model_name, step_size=int(step_size),
@@ -72,14 +43,30 @@ class MyHandler(PatternMatchingEventHandler):
                 self.sim_obj.model_init()
                 self.model_params_set = True
 
-    def on_modified(self, event):
-        self.process(event)
+        if event.src_path.endswith('inputs.json') and self.input_set is False:
+            self.input_set = True
+            with open(str(event.src_path)) as json_file:
+
+                data = json.load(json_file)
+
+                self.current_input = data['inputs'][-1]
+                print(self.current_input)
+
+            output_json = self.sim_obj.do_time_step(self.current_input)
+            print(output_json)
+            result = simulator_tasks.post_output.apply_async((output_json, self.header),
+                                                             queue='sim',
+                                                             routing_key='sim')
+            result.get()
+
+        elif self.input_set is True:
+            self.input_set = False
 
 
 if __name__ == '__main__':
-    args = sys.argv[1:]
+    path = '/home/deb/code/store_incoming_json'
     observer = Observer()
-    observer.schedule(MyHandler(), path=args[0] if args else '.')
+    observer.schedule(MyHandler(), path)
     observer.start()
 
     try:

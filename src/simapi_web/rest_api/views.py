@@ -1,6 +1,7 @@
 import json
 
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -64,18 +65,39 @@ class InputViewSet(viewsets.ModelViewSet):
     create new input instance. set user as current authenticated user,
     fmu_model as current fmu_model related to user
     """
+
     def perform_create(self, serializer, **kwargs):
 
         # TODO add second get param of time/date to ensure the current model is returned
         model = models.FmuModelParameters.objects.get(model_name=self.request.data['fmu_model'])
 
         input_json_field = self.request.data['input']
+        time_step = self.request.data['time_step']
 
-        serializer.save(user=self.request.user, fmu_model=model, input=input_json_field)
+        serializer.save(user=self.request.user, fmu_model=model, time_step=time_step, input=input_json_field)
 
         transaction.on_commit(lambda: tasks.post_input.apply_async((input_json_field,),
                                                                    queue='web',
                                                                    routing_key='web'))
+
+
+class GetTimeStepInput(viewsets.ViewSet):
+    """
+    A simple ViewSet for listing or retrieving users.
+    """
+    def list(self, request):
+        queryset = models.Input.objects.all()
+        serializer = serializers.InputSerializer(queryset, many=True)
+        return HttpResponse(serializer.data)
+
+    def retrieve(self, request):
+        user = self.request.user
+        model_name = self.request.data['fmu_model']
+        time_step = self.request.data['time_step']
+        queryset = models.Input.objects.all()
+        user = get_object_or_404(queryset, user=user, fmu_model=model_name, time_step=time_step)
+        serializer = serializers.InputSerializer(user)
+        return HttpResponse(serializer.data)
 
 
 class OutputViewSet(viewsets.ModelViewSet):
@@ -89,13 +111,15 @@ class OutputViewSet(viewsets.ModelViewSet):
     create new output instance. set user as current authenticated user,
     fmu_model as current init_model related to user
     """
+
     def perform_create(self, serializer, **kwargs):
 
         # TODO add second get param of time/date to ensure the current model is returned
         output = self.request.data
         model = models.FmuModelParameters.objects.get(model_name=output['fmu_model'])
         output_json_field = output['output']
-        serializer.save(user=self.request.user, fmu_model=model, output=json.dumps(output_json_field))
+        time_step = output['time_step']
+        serializer.save(user=self.request.user, fmu_model=model, time_step=time_step, output=json.dumps(output_json_field))
 
 
 class FileUploadView(viewsets.ModelViewSet):

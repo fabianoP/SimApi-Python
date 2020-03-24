@@ -48,14 +48,7 @@ class SimulationObject:
             creates new dict with output then returns output dict as json to pass back to API
         """
 
-        print(json_input)
         time_step = json_input['time_step']
-        print(type(time_step))
-        print(self.model_output_vars)
-        print(self.model_real_vars)
-        print(self.model_int_vars)
-        print(type(self.step_size))
-        print(type(self.final_time))
 
         for key in json_input:
             if key in self.model_real_vars:
@@ -67,9 +60,9 @@ class SimulationObject:
 
         self.model.do_step(current_t=time_step, step_size=self.step_size, new_step=True)
 
-        do_step_outputs = {'fmu_model': self.model_name}
+        do_step_outputs = {'fmu_model': self.model_name, 'time_step': time_step}
 
-        output = {'time_step': time_step}
+        output = {}
 
         for key in self.model_output_vars:
             output[key] = self.model.get(key)[0]

@@ -1,4 +1,6 @@
 import requests
+import random
+import time
 import json
 
 user_url = 'http://0.0.0.0:8000/user/'
@@ -22,22 +24,11 @@ header = {'Authorization': 'Token ' + token}  # set request header
 i = 0
 shade = 1.0
 
-input_dict = {'time_step': i, 'yShadeFMU': shade}
-
-input_data = {
-    'fmu_model': 'nearly101',
-    'input': json.dumps(input_dict)
-}
-resp = requests.post(input_url, headers=header, data=input_data)
-print(resp.text)
-
-"""
-while i < 86400:
-
+while i <= 600:
     input_dict = {'time_step': i, 'yShadeFMU': shade}
 
     input_data = {
-        'fmu_model': 'nearly28',
+        'fmu_model': 'full_sim_test24',
         'input': json.dumps(input_dict)
     }
 
@@ -46,7 +37,5 @@ while i < 86400:
     print(resp.text)
 
     i += 600
-    shade += 0.1
-    time.sleep(1)
-"""
+
 

@@ -31,7 +31,7 @@ class GeneratorClient:
 
         simulator_epw.close()
         simulator_idf.close()
-        # TODO FMU confirmation system needed
+        # TODO FMU confirmation system needed make task
         if r.status_code == 200:
             url = "http://generator:8000/fmu/" + model_name
             r = requests.get(url)

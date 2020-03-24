@@ -12,15 +12,16 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 rabbit_path = 'amqp://user:pass@broker:5672/vhost'
-redis_path = 'redis://redis:6379/0'
-app = Celery('simulator_tasks', broker=rabbit_path, backend=rabbit_path)
+backend = 'db+postgresql://postgres:postgres@backend/postgres'
+
+app = Celery('simulator_tasks', broker=rabbit_path, backend=backend)
 
 app.conf.task_routes = {'simulator_tasks.*': {'queue': 'sim'}}
 
 
 def write_json(data, filename):
     with open(filename, 'w') as f:
-        json.dump(data, f, indent=4)
+        json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 @app.task  # (ignore_result=True)
@@ -40,7 +41,7 @@ def set_model(model_params):
               'fmu_path': fmu_path,
               'Authorization': auth_token}
 
-    with open('./store_incoming_json/model_params.json', 'r') as json_file:
+    with open('./store_incoming_json/model_params.json') as json_file:
         data = json.load(json_file)
         logger.info(f'DATA JSON LOAD IN SET MODEL TASK {data}')
 
@@ -64,3 +65,4 @@ def post_output(output_json, header):  # TODO refactor to send output data to ap
     r = requests.post(output_url, headers=header, data=output_json)
     logger.info(f'post_output -> request status {r.status_code}')
     logger.info(f'post_output -> request text {r.text}')
+    return r.text

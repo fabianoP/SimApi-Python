@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '7rab5b9_ic_^)&hg2e!f@v-9__$=6*-)v3j_xvk2$t%+z=2rzf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['0.0.0.0',
                  '127.0.0.1',
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_api',
     'coverage',
     'django_extensions',
+    'sqlalchemy',
 ]
 
 REST_FRAMEWORK = {
@@ -148,4 +149,4 @@ AUTH_USER_MODEL = 'rest_api.User'
 
 CELERY_BROKER_URL = 'amqp://user:pass@broker:5672/vhost'
 
-CELERY_BACKEND_URL = 'amqp://user:pass@broker:5672/vhost'
+CELERY_BACKEND_URL = 'db+postgresql://postgres:postgres@backend/postgres'

@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 def write_json(data, filename):
     # TODO already json at this point no need to dump
     with open(filename, 'w') as f:
-        json.dump(data, f, indent=4)
+        json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 @route('/model_input', method='POST')

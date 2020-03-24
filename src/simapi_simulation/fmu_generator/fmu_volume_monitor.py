@@ -40,10 +40,11 @@ class MyHandler(PatternMatchingEventHandler):
                 data = json.load(json_file)
                 json_file.close()
 
-            result = generator_tasks.gen_fmu.apply_async((data['idf_path'],
-                                                          data['epw_path'],
-                                                          data['fmu_store_dir']), queue='gen', routing_key='gen')
-            result.get()
+            # result = \
+            generator_tasks.gen_fmu.apply_async((data['idf_path'],
+                                                 data['epw_path'],
+                                                 data['fmu_store_dir']), queue='gen', routing_key='gen')
+            # result.get()
 
     def on_created(self, event):
         self.process(event)

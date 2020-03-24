@@ -1,4 +1,4 @@
-import os
+import subprocess
 
 
 class RunEnergyPlusToFMU:
@@ -9,20 +9,12 @@ class RunEnergyPlusToFMU:
         self.directory = directory
 
     def run(self):
-        print(self.idf)
-        print(self.epw)
-        print(self.directory)
 
         eplus_command = "cd " + self.directory + " && \
-                      python  /home/fmu/code/energy/Scripts/EnergyPlusToFMU.py \
-                      -d \
-                      -i  /home/fmu/code/Energy+.idd \
-                      -w " + self.epw + \
-                        " " + self.idf + \
-                        " && ./idf-to-fmu-export-prep-linux \
-                      /home/fmu/code/Energy+.idd \
-                      " + self.idf
+                      python /home/fmu/code/energy/Scripts/EnergyPlusToFMU.py -d -i  /home/fmu/code/Energy+.idd \
+                      -w " + self.epw + " " + self.idf + " && ./idf-to-fmu-export-prep-linux \
+                      /home/fmu/code/Energy+.idd " + self.idf
 
-        print(eplus_command)
+        subprocess.check_output(eplus_command, shell=True)
+        return 'success'
 
-        os.system(eplus_command)
