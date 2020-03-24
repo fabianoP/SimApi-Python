@@ -25,12 +25,11 @@ router.register('user', views.UserViewSet)
 router.register('login', views.LoginViewSet, basename='login')
 router.register('init_model', views.FmuModelViewSet)
 router.register('input', views.InputViewSet)
-# router.register('get_input', views.GetTimeStepInput,  basename='get-input')
 router.register('output', views.OutputViewSet)
 router.register('upload', views.FileUploadView, basename='upload')
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
+
 ]
