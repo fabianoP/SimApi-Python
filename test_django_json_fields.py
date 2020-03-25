@@ -24,11 +24,11 @@ header = {'Authorization': 'Token ' + token}  # set request header
 i = 0
 shade = 1.0
 
-while i < 600:
+while i <= 86400:
     input_dict = {'time_step': i, 'yShadeFMU': shade}
 
     input_data = {
-        'fmu_model': 'full_sim',
+        'fmu_model': 'full_sim8',
         'time_step': i,
         'input': json.dumps(input_dict)
     }
@@ -38,5 +38,6 @@ while i < 600:
     print(resp.text)
 
     i += 600
+    time.sleep(2)
 
 

@@ -29,8 +29,9 @@ class MyHandler(PatternMatchingEventHandler):
     current_time_step = None
     current_input = None
     model_params_set = False
-    input_set = False
+    first_input_set = False
     step_size = None
+    prev_time_step = 0
 
     def on_modified(self, event):
         connection = None
@@ -54,8 +55,7 @@ class MyHandler(PatternMatchingEventHandler):
                 self.model_params_set = True
 
         # TODO romove bool condition and replace with if curr step != prev step + step size
-        if event.src_path.endswith('time_step.txt') and self.input_set is False:
-            self.input_set = True
+        if event.src_path.endswith('time_step.txt'):
             with open(str(event.src_path)) as text_file:
 
                 text_file.seek(0)
@@ -66,50 +66,51 @@ class MyHandler(PatternMatchingEventHandler):
 
                 print(self.current_time_step)
 
-            try:
-                connection = psycopg2.connect(user="postgres",
-                                              host="db",
-                                              port="5432",
-                                              database="postgres")
-                cursor = connection.cursor()
+            if self.current_time_step == self.prev_time_step + int(self.step_size) or not self.first_input_set:
+                self.first_input_set = True
+                self.prev_time_step = self.current_time_step
 
-                """
-                select_input_query = "SELECT * " \
-                                     "FROM rest_api_input;"
+                try:
+                    connection = psycopg2.connect(user="postgres",
+                                                  host="db",
+                                                  port="5432",
+                                                  database="postgres")
+                    cursor = connection.cursor()
 
-                cursor.execute(select_input_query)
+                    """
+                    select_input_query = "SELECT * " \
+                                         "FROM rest_api_input;"
+    
+                    cursor.execute(select_input_query)
+    
+                    self.current_input = cursor.fetchall()
+                    for col in self.current_input:
+                        print(col)
+                    """
 
-                self.current_input = cursor.fetchall()
-                for col in self.current_input:
-                    print(col)
-                """
+                    select_input_query = "SELECT input FROM rest_api_input WHERE fmu_model_id = %s AND time_step = %s;"
 
-                select_input_query = "SELECT input FROM rest_api_input WHERE fmu_model_id = %s AND time_step = %s;"
+                    cursor.execute(select_input_query, (self.model_name, self.current_time_step))
 
-                cursor.execute(select_input_query, (self.model_name, self.current_time_step))
+                    self.current_input = cursor.fetchone()
 
-                self.current_input = cursor.fetchone()
+                except (Exception, psycopg2.Error) as error:
+                    print("Error while getting data from PostgreSQL", error)
+                finally:
+                    # closing database connection.
+                    if connection:
+                        cursor.close()
+                        connection.close()
+                        print("PostgreSQL connection is closed")
 
-            except (Exception, psycopg2.Error) as error:
-                print("Error while getting data from PostgreSQL", error)
-            finally:
-                # closing database connection.
-                if connection:
-                    cursor.close()
-                    connection.close()
-                    print("PostgreSQL connection is closed")
-
-            self.current_input = self.current_input[0]
-            print(self.current_input)
-            output_json = self.sim_obj.do_time_step(json.loads(self.current_input))
-            print(output_json)
-            result = simulator_tasks.post_output.apply_async((output_json, self.header),
-                                                             queue='sim',
-                                                             routing_key='sim')
-            result.get()
-
-        elif self.input_set is True:
-            self.input_set = False
+                self.current_input = self.current_input[0]
+                print(self.current_input)
+                output_json = self.sim_obj.do_time_step(json.loads(self.current_input))
+                print(output_json)
+                result = simulator_tasks.post_output.apply_async((output_json, self.header),
+                                                                 queue='sim',
+                                                                 routing_key='sim')
+                result.get()
 
 
 if __name__ == '__main__':

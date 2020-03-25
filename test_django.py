@@ -23,7 +23,7 @@ header = {'Authorization': 'Token ' + token}  # set request header
 file = {'idf_file': ('a.idf', open('test_setup_files/a.idf', 'rb')),
         'epw_file': ('a.epw', open('test_setup_files/a.epw', 'rb'))}
 
-init_data = {'model_name': 'full_sim',
+init_data = {'model_name': 'full_sim8',
              'step_size': 600,
              'final_time': 24.0}
 
