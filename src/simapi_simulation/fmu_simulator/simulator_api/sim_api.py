@@ -13,15 +13,18 @@ def write_json(data, filename):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
+def write_time_step(t_step, filename):
+    # TODO already json at this point no need to dump
+    with open(filename, 'w') as f:
+        f.seek(0)
+        f.write(t_step)
+
+
 @route('/model_input', method='POST')
 def get_input():
-    with open('/home/deb/code/store_incoming_json/inputs.json') as json_file:
-
-        data = json.load(json_file)
-
-        data['inputs'].append(json.loads(request.json))
-
-    write_json(data, '/home/deb/code/store_incoming_json/inputs.json')
+    data = json.loads(request.json)
+    t_step = data['time_step']
+    write_time_step(t_step, '/home/deb/code/store_incoming_json/time_step.txt')
     # TODO return code
 
 

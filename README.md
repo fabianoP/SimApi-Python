@@ -7,13 +7,13 @@ a Functional Mock-Up Unit. The end goal is to deploy the project on a Docker swa
 simultaneously. 
 
 ## Prerequisites
-Having the correct versions of docker and docker-compose is essential
+Version of docker and docker-compose 
 ```
 Docker
-- version 18.09.9
+- version >= 18.09.9
 
 Docker-compose
-- version 1.25.0
+- version >= 1.25.0
 ```
 
 

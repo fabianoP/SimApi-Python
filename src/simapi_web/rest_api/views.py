@@ -75,7 +75,7 @@ class InputViewSet(viewsets.ModelViewSet):
 
         serializer.save(user=self.request.user, fmu_model=model, time_step=time_step, input=input_json_field)
 
-        transaction.on_commit(lambda: tasks.post_input.apply_async((input_json_field,),
+        transaction.on_commit(lambda: tasks.post_input.apply_async((time_step,),
                                                                    queue='web',
                                                                    routing_key='web'))
 

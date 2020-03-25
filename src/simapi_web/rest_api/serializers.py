@@ -53,7 +53,7 @@ class OutputSerializer(serializers.ModelSerializer):
         model = Output
         fields = ('user',
                   'fmu_model',
-                  'time_step,'
+                  'time_step',
                   'output')
 
         """read-only fields user and model_name. Can only be created by authenticated user"""

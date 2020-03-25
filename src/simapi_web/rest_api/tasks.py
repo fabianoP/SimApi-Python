@@ -39,5 +39,5 @@ def post_input(data):
         url = 'http://simulator:8000/model_input'
 
         headers = {'Content-type': 'application/json'}
-
-        r = requests.post(url=url, json=data, headers=headers)
+        data = {'time_step': data}
+        r = requests.post(url=url, json=json.dumps(data), headers=headers)

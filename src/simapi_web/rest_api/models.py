@@ -107,7 +107,7 @@ class Output(models.Model):
     """represents output received from an fmu time step"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
-
+    time_step = models.IntegerField(null=False)
     # set as single json object
     output = JSONField()
 
