@@ -31,7 +31,7 @@ while i < 86400:
     input_dict = {'time_step': i, 'yShadeFMU': shade}
 
     input_data = {
-        'fmu_model': 'sim7',    # Change name each time script is run!
+        'fmu_model': 'sim',    # Change name each time script is run!
         'time_step': i,     # 0 to 86400
         'input': json.dumps(input_dict)     # dumps input dict as json string to store in db
     }
