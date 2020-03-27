@@ -52,10 +52,8 @@ class SimulationObject:
 
         for key in json_input:
             if key in self.model_real_vars:
-                print(json_input[key])
                 self.model.set(key, float(json_input[key]))
             elif key in self.model_int_vars:
-                print(json_input[key])
                 self.model.set(key, int(json_input[key]))
 
         self.model.do_step(current_t=time_step, step_size=self.step_size, new_step=True)
@@ -68,6 +66,6 @@ class SimulationObject:
             output[key] = self.model.get(key)[0]
 
         do_step_outputs['output'] = output
-        print("OUTPUTS CHANGED")
+
         return json.dumps(do_step_outputs)
 

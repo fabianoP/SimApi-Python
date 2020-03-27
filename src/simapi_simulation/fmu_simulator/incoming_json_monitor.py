@@ -9,9 +9,6 @@ from simulator.simulation_obj import SimulationObject
 import simulator_tasks
 
 
-# TODO each time triggered request from db with model name and time step
-#  instead of json upload time step and query
-
 def isint(value):
     try:
         time_step = int(value)
@@ -36,6 +33,8 @@ class MyHandler(PatternMatchingEventHandler):
     def on_modified(self, event):
         connection = None
         cursor = None
+
+        #  Model initialized here when model_params.json is updated
         if event.src_path.endswith('model_params.json') and self.model_params_set is False:
             with open(str(event.src_path)) as json_file:
                 data = json.load(json_file)
@@ -54,7 +53,7 @@ class MyHandler(PatternMatchingEventHandler):
                 self.sim_obj.model_init()
                 self.model_params_set = True
 
-        # TODO romove bool condition and replace with if curr step != prev step + step size
+        # simulation time steps run here when time_step.txt is updated
         if event.src_path.endswith('time_step.txt'):
             with open(str(event.src_path)) as text_file:
 
@@ -64,29 +63,17 @@ class MyHandler(PatternMatchingEventHandler):
 
                 self.current_time_step = isint(data)
 
-                print(self.current_time_step)
-
             if self.current_time_step == self.prev_time_step + int(self.step_size) or not self.first_input_set:
                 self.first_input_set = True
                 self.prev_time_step = self.current_time_step
 
+                # connect to postgres db container and retrieve input for current model and current time_step
                 try:
                     connection = psycopg2.connect(user="postgres",
                                                   host="db",
                                                   port="5432",
                                                   database="postgres")
                     cursor = connection.cursor()
-
-                    """
-                    select_input_query = "SELECT * " \
-                                         "FROM rest_api_input;"
-    
-                    cursor.execute(select_input_query)
-    
-                    self.current_input = cursor.fetchall()
-                    for col in self.current_input:
-                        print(col)
-                    """
 
                     select_input_query = "SELECT input FROM rest_api_input WHERE fmu_model_id = %s AND time_step = %s;"
 
@@ -101,16 +88,25 @@ class MyHandler(PatternMatchingEventHandler):
                     if connection:
                         cursor.close()
                         connection.close()
-                        print("PostgreSQL connection is closed")
+                        # print("PostgreSQL connection closed successful")
 
                 self.current_input = self.current_input[0]
-                print(self.current_input)
+                print("\ninput: " + str(self.current_input))
+
+                # run do_step for current time step with current inputs
                 output_json = self.sim_obj.do_time_step(json.loads(self.current_input))
+
                 print(output_json)
+                # task uploads output to db
                 result = simulator_tasks.post_output.apply_async((output_json, self.header),
                                                                  queue='sim',
                                                                  routing_key='sim')
                 result.get()
+
+                # when last time step has completed free and terminate instance
+                if self.current_time_step == self.sim_obj.final_time - int(self.step_size):
+                    self.sim_obj.model.free_instance()
+                    self.sim_obj.model.terminate()
 
 
 if __name__ == '__main__':
