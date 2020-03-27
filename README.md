@@ -124,15 +124,13 @@ The three main containers are web, simulator, and generator. The fourth is a pos
 Type "docker container ps" to ensure containers are running
 ```
 ### web
-The web container holds the Django restAPI. It is necessary to make database migrations and migrate.
+The web container holds the Django restAPI. Run commands below for one time setup of the web container.
 
-docker command to **makemigrations** and **migrate** using Django **manage.py**
 ```
 Access web shell
 docker exec -it web /bin/bash
 
-python manage.py makemigrations
-
+Run
 python manage.py migrate
 ```
 
@@ -223,7 +221,7 @@ python test_django.py
 The script will output a login token and the initialize data for the model. 
 
 Check the cmd window running the **simulator container** shell. It will take time for output.
-Eventually the FMU initialization outputs will appear. The last two lines of output should be the text below.
+Eventually the FMU initialization outputs will appear. The last two lines of output should be the as the text below.
 ```
 Starting Simulation at 01/01/2011 for RUNPERIOD 1
 ExternalInterface starts first data exchange.
