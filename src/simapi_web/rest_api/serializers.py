@@ -1,6 +1,6 @@
 from django.db import models
 from rest_framework import serializers
-from rest_api.models import Input, Output, User, FmuModelParameters, FileModel
+from rest_api.models import Input, Output, User, FmuModel, FileModel
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 class FmuModelParametersSerializer(serializers.ModelSerializer):
     """"""
     class Meta:
-        model = FmuModelParameters
+        model = FmuModel
         fields = ('model_name', 'user', 'idf_file', 'epw_file', 'step_size', 'final_time', 'created_on')
 
         """read-only field user. Can only be created by authenticated user"""
@@ -37,7 +37,7 @@ class InputSerializer(serializers.ModelSerializer):
     """"""
     class Meta:
         model = Input
-        fields = ('user', 'fmu_model', 'time_step', 'input')
+        fields = ('user', 'fmu_model', 'time_step', 'input_json')
 
         constraints = [
             models.UniqueConstraint(fields=['fmu_model', 'time_step'], name='unique time step')
@@ -54,7 +54,7 @@ class OutputSerializer(serializers.ModelSerializer):
         fields = ('user',
                   'fmu_model',
                   'time_step',
-                  'output')
+                  'output_json')
 
         """read-only fields user and model_name. Can only be created by authenticated user"""
         extra_kwargs = {'user': {'read_only': True},

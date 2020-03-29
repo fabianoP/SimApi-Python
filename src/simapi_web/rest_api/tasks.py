@@ -13,7 +13,7 @@ def post_model(data):
     logger.info(f'post_model data {data}')
     auth_t = data['Authorization']
     logger.info(f'post_model data AUTH {auth_t}')
-    model = models.FmuModelParameters.objects.get(model_name=data['model_name'])
+    model = models.FmuModel.objects.get(model_name=data['model_name'])
 
     # TODO set simulator generic for multiple containers
     if model is not None:

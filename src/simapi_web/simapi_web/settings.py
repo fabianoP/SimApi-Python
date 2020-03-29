@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'coverage',
     'django_extensions',
     'sqlalchemy',
+    'graphene_django'
 ]
 
 REST_FRAMEWORK = {
@@ -59,6 +60,10 @@ REST_FRAMEWORK = {
 
 CELERY_ROUTES = {
     'rest_api.tasks.*': {'queue': 'web'},
+}
+
+GRAPHENE = {
+    'SCHEMA': 'simapi_web.schema.schema'  # Where your Graphene schema lives
 }
 
 MIDDLEWARE = [

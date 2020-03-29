@@ -17,8 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
+from graphene_django.views import GraphQLView
 from rest_api import views
-
 
 router = routers.DefaultRouter()
 router.register('user', views.UserViewSet)
@@ -31,5 +31,5 @@ router.register('upload', views.FileUploadView, basename='upload')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-
+    path('graphql/', GraphQLView.as_view(graphiql=True)),
 ]

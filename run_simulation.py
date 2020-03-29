@@ -1,5 +1,6 @@
 import time
 
+import polling2
 import requests
 import json
 
@@ -9,6 +10,7 @@ login_url = 'http://0.0.0.0:8000/login/'
 init_url = 'http://0.0.0.0:8000/init_model/'
 input_url = 'http://0.0.0.0:8000/input/'
 output_url = 'http://0.0.0.0:8000/output/'
+graphql_url = 'http://0.0.0.0:8000/graphql/'
 
 # replace with your superuser
 data = {"username": "user@user.com",  # username = email
@@ -30,9 +32,12 @@ init_data = {'model_name': 'sim88',
              'step_size': 600,
              'final_time': 24.0}
 
+
 resp = requests.post(init_url, headers=header, data=init_data, files=file)
 
 print(resp.text)
+
+# TODO poll here for success fmu gen
 
 header = {'Authorization': 'Token ' + token}  # set request header
 i = 0
@@ -47,9 +52,21 @@ while i <= 86400:
         'input': json.dumps(input_dict)
     }
 
-    resp = requests.post(input_url, headers=header, data=input_data)
+    requests.post(input_url, headers=header, data=input_data)
 
-    print(resp.text)
+    j = """
+    {
+        outputs(modelN: "sim88", tStep: {0}) {
+            outputJson
+        }
+    }
+    """
 
+    polling2.poll(
+        lambda: len(requests.get(url=graphql_url, json={'query': j.format(i)}).json()['data']['outputs']) == 1,
+        step=0.1,
+        poll_forever=True)
+
+    print(requests.get(url=graphql_url, json={'query': j.format(i)}).json()['data']['outputs'])
     i += 600
-    time.sleep(1)
+    # time.sleep(1)

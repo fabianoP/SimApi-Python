@@ -65,7 +65,7 @@ class SimulationObject:
         for key in self.model_output_vars:
             output[key] = self.model.get(key)[0]
 
-        do_step_outputs['output'] = output
+        do_step_outputs['output_json'] = output
 
         return json.dumps(do_step_outputs)
 

@@ -1,5 +1,11 @@
 {
     "model_params": [
-
+        {
+            "model_name": "sim88",
+            "step_size": "600",
+            "final_time": "24.0",
+            "fmu_path": "/home/deb/code/fmu_location/sim88/sim88.fmu",
+            "Authorization": "Token 84e2b09a500235f5d0d67880e9b5ac216d9ad127"
+        }
     ]
 }

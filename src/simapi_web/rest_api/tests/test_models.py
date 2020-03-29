@@ -1,5 +1,5 @@
 from django.test import TestCase
-from rest_api.models import Input, Output, User, FmuModelParameters
+from rest_api.models import Input, Output, User, FmuModel
 # TODO rewrite tests to suit new models
 
 
@@ -67,11 +67,11 @@ class FmuModelTestCase(TestCase):
         )
 
         self.assertEquals(
-            FmuModelParameters.objects.count(),
+            FmuModel.objects.count(),
             0
         )
 
-        self.model = FmuModelParameters.objects.create(
+        self.model = FmuModel.objects.create(
             model_name="test_model",
             user=self.user,
             step_size=600,
@@ -84,11 +84,11 @@ class FmuModelTestCase(TestCase):
         )
 
         self.assertEquals(
-            FmuModelParameters.objects.count(),
+            FmuModel.objects.count(),
             1
         )
 
-        FmuModelParameters.objects.create(
+        FmuModel.objects.create(
             model_name="test_model1",
             user=self.user,
             step_size=800,
@@ -96,7 +96,7 @@ class FmuModelTestCase(TestCase):
         )
 
         self.assertEquals(
-            FmuModelParameters.objects.count(),
+            FmuModel.objects.count(),
             2
         )
 
@@ -114,7 +114,7 @@ class InputTestCase(TestCase):
         )
 
         # and model
-        self.model = FmuModelParameters.objects.create(
+        self.model = FmuModel.objects.create(
             model_name="test_model",
             user=self.user,
             step_size=600,
@@ -151,7 +151,7 @@ class OutputTestCase(TestCase):
             password='test user 88'
         )
         # and model
-        self.model = FmuModelParameters.objects.create(
+        self.model = FmuModel.objects.create(
             model_name="test_model",
             user=self.user,
             step_size=600,

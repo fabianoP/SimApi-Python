@@ -71,7 +71,7 @@ class FileModel(models.Model):
     file = FileField(upload_to='./Media/', default='')
 
 
-class FmuModelParameters(models.Model):
+class FmuModel(models.Model):
     """represents .fmu initialization parameters"""
     model_name = models.CharField(max_length=255, unique=True, primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -95,10 +95,10 @@ class Input(models.Model):
     """represents inputs from web api going to an fmu model"""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
+    fmu_model = models.ForeignKey(FmuModel, on_delete=models.CASCADE)
     time_step = models.IntegerField(null=False)
     # set as single json object
-    input = JSONField()
+    input_json = JSONField()
 
     objects = models.Manager()
 
@@ -106,10 +106,10 @@ class Input(models.Model):
 class Output(models.Model):
     """represents output received from an fmu time step"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    fmu_model = models.ForeignKey(FmuModelParameters, on_delete=models.CASCADE)
+    fmu_model = models.ForeignKey(FmuModel, on_delete=models.CASCADE)
     time_step = models.IntegerField(null=False)
     # set as single json object
-    output = JSONField()
+    output_json = JSONField()
 
     objects = models.Manager()
 

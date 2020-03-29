@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from rest_framework.test import APITestCase, APIRequestFactory
 from rest_framework.views import status
-from rest_api.models import User, FmuModelParameters, Input, Output
+from rest_api.models import User, FmuModel, Input, Output
 from rest_api.views import LoginViewSet
 from rest_framework.authtoken.models import Token
 # TODO write tests
@@ -57,7 +57,7 @@ class InputViewTest(APITestCase):
             user=self.test_user
         )
 
-        self.model = FmuModelParameters(
+        self.model = FmuModel(
             model_name="test_model",
             user=self.test_user,
             step_size=600,
@@ -101,7 +101,7 @@ class OutputViewTest(APITestCase):
             user=self.test_user
         )
 
-        self.model = FmuModelParameters(
+        self.model = FmuModel(
             model_name="test_model",
             user=self.test_user,
             step_size=600,

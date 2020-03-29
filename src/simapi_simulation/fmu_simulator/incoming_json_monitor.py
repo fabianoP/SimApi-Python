@@ -75,7 +75,7 @@ class MyHandler(PatternMatchingEventHandler):
                                                   database="postgres")
                     cursor = connection.cursor()
 
-                    select_input_query = "SELECT input FROM rest_api_input WHERE fmu_model_id = %s AND time_step = %s;"
+                    select_input_query = "SELECT input_json FROM rest_api_input WHERE fmu_model_id = %s AND time_step = %s;"
 
                     cursor.execute(select_input_query, (self.model_name, self.current_time_step))
 

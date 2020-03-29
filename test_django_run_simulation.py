@@ -1,3 +1,4 @@
+import polling2
 import requests
 import random
 import time
@@ -8,6 +9,7 @@ login_url = 'http://0.0.0.0:8000/login/'
 init_url = 'http://0.0.0.0:8000/init_model/'
 input_url = 'http://0.0.0.0:8000/input/'
 output_url = 'http://0.0.0.0:8000/output/'
+graphql_url = 'http://0.0.0.0:8000/graphql/'
 
 # login details for super user
 data = {"username": "user@user.com",  # username = email
@@ -26,26 +28,31 @@ i = 0   # first step
 shade = 1.0  # input value. Stays same on each iteration. Will change on next update
 
 # run 24 hour (86400sec) simulation at 10 minute (600sec) time steps
-while i < 86400:
-    # Actual inputs for simulation object. Stores as json in db
+while i <= 86400:
     input_dict = {'time_step': i, 'yShadeFMU': shade}
 
     input_data = {
-        'fmu_model': 'sim',    # Change name each time script is run!
-        'time_step': i,     # 0 to 86400
-        'input': json.dumps(input_dict)     # dumps input dict as json string to store in db
+        'fmu_model': 'sim88',
+        'time_step': i,
+        'input': json.dumps(input_dict)
     }
 
-    resp = requests.post(input_url, headers=header, data=input_data)
+    requests.post(input_url, headers=header, data=input_data)
 
-    # prints input_data on successful post
-    print(resp.text)
+    j = """
+    {
+        outputs(modelN: "sim88", tStep: {0}) {
+            outputJson
+        }
+    }
+    """
 
-    # increment time_step
+    polling2.poll(
+        lambda: len(requests.get(url=graphql_url, json={'query': j.format(i)}).json()['data']['outputs']) == 1,
+        step=0.1,
+        poll_forever=True)
+
+    print(requests.get(url=graphql_url, json={'query': j.format(i)}).json()['data']['outputs'])
     i += 600
-
-    # wait for 1 second to allow data to propagate through the system and simulation to process time step.
-    # Will change next update
-    time.sleep(1)
 
 
