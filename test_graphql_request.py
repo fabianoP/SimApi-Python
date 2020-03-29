@@ -38,3 +38,15 @@ for d in r.json()['data']['outputs']:
 
 with open('outputs.json', 'w') as f:
     json.dump(out_dict, f, ensure_ascii=False, indent=4, sort_keys=True)
+
+
+j = """
+    {{
+        outputs(modelN: "sim2", tStep: {0}) {{
+            outputJson
+        }}
+    }}
+    """.format(600)
+
+print(len(requests.get(url=graphql_url, json={'query': j}).json()['data']['outputs']))
+print(r)

@@ -28,7 +28,7 @@ header = {'Authorization': 'Token ' + token}  # set request header
 file = {'idf_file': ('a.idf', open('test_setup_files/a.idf', 'rb')),
         'epw_file': ('a.epw', open('test_setup_files/a.epw', 'rb'))}
 
-init_data = {'model_name': 'sim88',
+init_data = {'model_name': 'sim88888',
              'step_size': 600,
              'final_time': 24.0}
 
@@ -47,7 +47,7 @@ while i <= 86400:
     input_dict = {'time_step': i, 'yShadeFMU': shade}
 
     input_data = {
-        'fmu_model': 'sim88',
+        'fmu_model': 'sim88888',
         'time_step': i,
         'input': json.dumps(input_dict)
     }
@@ -55,15 +55,15 @@ while i <= 86400:
     requests.post(input_url, headers=header, data=input_data)
 
     j = """
-    {
-        outputs(modelN: "sim88", tStep: {0}) {
+    {{
+        outputs(modelN: "sim88888", tStep: {0}) {{
             outputJson
-        }
-    }
-    """
+        }}
+    }}
+    """.format(i)
 
     polling2.poll(
-        lambda: len(requests.get(url=graphql_url, json={'query': j.format(i)}).json()['data']['outputs']) == 1,
+        lambda: len(requests.get(url=graphql_url, json={'query': j}).json()['data']['outputs']) == 1,
         step=0.1,
         poll_forever=True)
 
