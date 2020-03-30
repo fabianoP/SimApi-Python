@@ -1,6 +1,5 @@
 import json
 
-from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -38,9 +37,15 @@ class FmuModelViewSet(viewsets.ModelViewSet):
     queryset = models.FmuModel.objects.all()
 
     def perform_create(self, serializer):
-        if self.request.data['container_id'] is None:
+        id_instance = None
+
+        if self.request.POST.get('container_id') is None:
             if models.ContainerHostNames.objects.all().count() > 0:
-                self.request.data['container_id'] = models.ContainerHostNames.objects.first()
+                id_instance = models.ContainerHostNames.objects.first()
+
+        if id_instance is not None:
+            self.request.data['container_id'] = id_instance.hostname
+            models.ContainerHostNames.objects.all().delete()
 
         serializer.save(user=self.request.user, container_id=self.request.data['container_id'])
         data = {'model_name': self.request.data['model_name'],
@@ -71,9 +76,14 @@ class InputViewSet(viewsets.ModelViewSet):
         input_json_field = self.request.data['input_json']
         time_step = self.request.data['time_step']
 
+        data = {
+            'time_step': time_step,
+            'container_id': model.container_id
+        }
+
         serializer.save(user=self.request.user, fmu_model=model, time_step=time_step, input_json=input_json_field)
 
-        transaction.on_commit(lambda: tasks.post_input.apply_async((time_step,),
+        transaction.on_commit(lambda: tasks.post_input.apply_async((data,),
                                                                    queue='web',
                                                                    routing_key='web'))
 
@@ -106,5 +116,4 @@ class HostNameViewSet(viewsets.ModelViewSet):
     queryset = models.ContainerHostNames.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(self.request.data['hostname'])
-        return HttpResponse(status=200)
+        serializer.save(hostname=self.request.data['hostname'])

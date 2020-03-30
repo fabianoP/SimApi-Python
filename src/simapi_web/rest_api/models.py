@@ -118,7 +118,7 @@ class Output(models.Model):
 
 
 class ContainerHostNames(models.Model):
-    hostname = models.CharField(max_length=255, primary_key=True)
+    hostname = models.CharField(max_length=255)
 
     objects = models.Manager()
 

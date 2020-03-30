@@ -19,7 +19,7 @@ def post_model(data):
     if model is not None:
 
         url = 'http://{0}:8000/upload/{1}'.format(data['container_id'], data['model_name'])
-
+        logger.info(f'post_model url {url}')
         file = {'epw':  ('a.epw', open(model.epw_file.path, 'rb'), 'application/octet-stream'),
                 'idf':  ('a.idf', open(model.idf_file.path, 'rb'), 'application/octet-stream'),
                 'json': (None, json.dumps(data), 'application/json')}
@@ -36,8 +36,8 @@ def post_input(data):
     input_instance = models.Input.objects.last()
 
     if input_instance is not None:
-        url = 'http://simulator:8000/model_input'
-
+        url = 'http://{0}:8000/model_input'.format(data['container_id'])
+        logger.info(f'post_input url {url}')
         headers = {'Content-type': 'application/json'}
-        data = {'time_step': data}
+        data = {'time_step': data['time_step']}
         r = requests.post(url=url, json=json.dumps(data), headers=headers)

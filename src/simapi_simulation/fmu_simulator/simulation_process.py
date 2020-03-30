@@ -1,3 +1,4 @@
+import subprocess
 import time
 import json
 import requests
@@ -86,9 +87,10 @@ class MyHandler(PatternMatchingEventHandler):
 
                 print(output_json)
                 # task uploads output to db
+                hostname = subprocess.getoutput("cat /etc/hostname")
                 result = simulator_tasks.post_output.apply_async((output_json, self.header),
-                                                                 queue='sim',
-                                                                 routing_key='sim')
+                                                                 queue=hostname,
+                                                                 routing_key=hostname)
                 result.get()
 
                 # when last time step has completed free and terminate instance

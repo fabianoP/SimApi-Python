@@ -1,3 +1,4 @@
+import subprocess
 import sys
 import time
 import json
@@ -21,7 +22,7 @@ class MyHandler(PatternMatchingEventHandler):
         """
 
         if event.src_path.endswith('.zip'):
-
+            print("FMU LOCATION!")
             fmu_name = event.src_path.rsplit('/', 1)[1]
             model_name = str(fmu_name).rsplit('.', 1)[0]
 
@@ -31,7 +32,9 @@ class MyHandler(PatternMatchingEventHandler):
                 temp = data['model_params']
                 params_json = temp[-1]
 
-            result = simulator_tasks.set_model.apply_async((params_json,), queue='sim', routing_key='sim')
+            print("FMU LOCATION BEFORE TASK!")
+            hostname = subprocess.getoutput("cat /etc/hostname")
+            result = simulator_tasks.set_model.apply_async((params_json,), queue=hostname, routing_key=hostname)
             result.get()
             print("FMU location handler COMPLETE")
 

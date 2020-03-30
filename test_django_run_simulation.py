@@ -30,7 +30,7 @@ while i < 86400:
     input_dict = {'time_step': i, 'yShadeFMU': shade}
 
     input_data = {
-        'fmu_model': 'sim8888',
+        'fmu_model': 'sim91',
         'time_step': i,
         'input_json': json.dumps(input_dict)
     }
@@ -39,7 +39,7 @@ while i < 86400:
     print(r.text)
     j = """
     {{
-        outputs(modelN: "sim8888", tStep: {0}) {{
+        outputs(modelN: "sim91", tStep: {0}) {{
             outputJson
         }}
     }}

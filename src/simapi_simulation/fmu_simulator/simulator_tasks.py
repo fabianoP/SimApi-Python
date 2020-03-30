@@ -18,7 +18,7 @@ backend = 'db+postgresql://postgres:backend@backend/backend_db'
 
 app = Celery('simulator_tasks', broker=rabbit_path, backend=backend)
 
-queue_name = subprocess.check_output("cat /etc/hostname", shell=True)
+queue_name = subprocess.getoutput("cat /etc/hostname")
 
 app.conf.task_routes = {'simulator_tasks.*': {'queue': queue_name}}
 
@@ -42,8 +42,8 @@ def set_model(model_params):
     swarm_check = Path('/home/deb/code/isSwarm.txt')
     if not swarm_check.exists():
         init_url = 'http://0.0.0.0:8000/init_model/'
-        hostname = subprocess.check_output("cat /etc/hostname", shell=True)
-        model_name = model_name + '_' + str(hostname)
+        hostname = subprocess.getoutput("cat /etc/hostname")
+        model_name = model_name + '_' + hostname
 
         init_data = {
             'model_name': model_name,  # change name each time script is run!
