@@ -30,7 +30,7 @@ while i < 86400:
     input_dict = {'time_step': i, 'yShadeFMU': shade}
 
     input_data = {
-        'fmu_model': 'sim20',
+        'fmu_model': 'sim8888',
         'time_step': i,
         'input_json': json.dumps(input_dict)
     }
@@ -39,7 +39,7 @@ while i < 86400:
     print(r.text)
     j = """
     {{
-        outputs(modelN: "sim20", tStep: {0}) {{
+        outputs(modelN: "sim8888", tStep: {0}) {{
             outputJson
         }}
     }}
@@ -50,5 +50,5 @@ while i < 86400:
         step=0.1,
         poll_forever=True)
 
-    print(requests.get(url=graphql_url, json={'query': j}).json()['data']['outputs'])
+    print("grapghql output: " + str(requests.get(url=graphql_url, json={'query': j}).json()['data']['outputs']))
     i += 600

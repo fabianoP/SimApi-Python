@@ -1,16 +1,6 @@
 version: '3.7'
 
 services:
-  #redis:
-  #  image: redis:latest
-  #  hostname: redis
-    # command:  # redis-server --requirepass pass
-  #  container_name: backend
-  #  environment:
-  #    - ALLOW_EMPTY_PASSWORD=yes
-  #  networks:
-  #    - simapi
-
   rabbitmq:
     image: rabbitmq:latest
     ports:
@@ -28,6 +18,9 @@ services:
   celery_result_db:
     container_name: backend
     image: postgres
+    environment:
+      POSTGRES_DB: "backend_db"
+      POSTGRES_PASSWORD: "backend"
     networks:
       - simapi
     ports:
@@ -39,6 +32,9 @@ services:
   db:
     container_name: db
     image: postgres
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_PASSWORD: "db_pass"
     networks:
       - simapi
     ports:
@@ -66,9 +62,7 @@ services:
   generator:
     container_name: generator
     build: ./simapi_simulation/fmu_generator  # change to windows path syntax
-    command: bash -c "python generator_api.py
-                      & celery -A generator_tasks worker -l info --queues=gen
-                      & python fmu_volume_monitor.py /home/fmu/code/energy/test"
+    command: bash -c "/run.sh"
     volumes:
       - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test # change ./simapi_simulation/fmu_generator/volume to windows path syntax
       - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
@@ -83,15 +77,12 @@ services:
   simulator:
     container_name: simulator
     build: ./simapi_simulation/fmu_simulator  # change to windows path syntax
-    command: bash -c "python ./simulator_api/sim_api.py
-                      & celery -A simulator_tasks worker -l info --queues=sim
-                      & python volume_monitor.py /home/deb/code/volume
-                      & python fmu_location_monitor.py /home/deb/code/fmu_location"
+    command: bash -c "/run.sh" #
     # & python incoming_json_monitor.py /home/deb/code/store_incoming_json
     volumes:
     - ./simapi_simulation/fmu_simulator:/home/deb/code
     ports:
-      - 8002:8000
+      - 8002-8005:8000
     depends_on:
       - generator
     networks:

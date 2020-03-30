@@ -1,9 +1,10 @@
 from celery import Celery
 import requests
 import time
-import os.path
 import json
+import subprocess
 import sys
+import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -12,11 +13,17 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 rabbit_path = 'amqp://user:pass@broker:5672/vhost'
-backend = 'db+postgresql://postgres:postgres@backend/postgres'
+backend = 'db+postgresql://postgres:backend@backend/backend_db'
 
 app = Celery('simulator_tasks', broker=rabbit_path, backend=backend)
 
+# queue_name = subprocess.check_output("cat /etc/hostname", shell=True)
+
 app.conf.task_routes = {'simulator_tasks.*': {'queue': 'sim'}}
+
+# start_queue = 'celery -A simulator_tasks worker -l info --queues={0}'.format(queue_name)
+
+# os.system(start_queue)
 
 
 def write_json(data, filename):
@@ -26,7 +33,6 @@ def write_json(data, filename):
 
 @app.task  # (ignore_result=True)
 def set_model(model_params):
-    # model_params = json.loads(model_params)
     model_name = model_params['model_name']
     step_size = model_params['step_size']
     final_time = model_params['final_time']

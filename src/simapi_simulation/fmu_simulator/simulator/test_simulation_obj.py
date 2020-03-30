@@ -7,8 +7,10 @@ from simulator.simulation_obj import SimulationObject
 
 """ Simple test script to. Tests functionality of the simulation_obj class"""
 
+
+
 #  instantiate simulation obj with default values
-sim_obj = SimulationObject(model_name='sim4.fmu', final_time=24.0, path_to_fmu='sim4.fmu')
+sim_obj = SimulationObject(model_name='nearly.fmu', final_time=24.0, path_to_fmu='nearly.fmu')
 sim_obj.model_init()  # initialize fmu model. Calls pyFMI model.init() and sets start and finish time
 # new dictionary with inputs for fmu time step
 

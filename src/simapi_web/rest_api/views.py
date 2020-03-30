@@ -1,13 +1,11 @@
 import json
 
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.db import transaction
-from rest_framework.decorators import action
 
 from rest_api import serializers
 from rest_api import models

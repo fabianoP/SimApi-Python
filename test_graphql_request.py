@@ -1,3 +1,5 @@
+import ast
+
 import requests
 import json
 
@@ -5,7 +7,7 @@ graphql_url = 'http://0.0.0.0:8000/graphql/'
 
 j = """
 {
-    inputs(modelN: "sim1") {
+    inputs(modelN: "sim1", tStep: 0) {
         inputJson
     }
 }
@@ -14,39 +16,11 @@ j = """
 r = requests.get(url=graphql_url, json={'query': j})
 print(r.text)
 
-j = """
-{
-    outputs(modelN: "sim56", tStep: 600) {
-        outputJson
-    }
-}
-"""
+d = r.json()['data']['inputs'][0]['inputJson']
 
-r = requests.get(url=graphql_url, json={'query': j})
-print(r.status_code)
-print(r.text)
+g = json.loads(json.loads(d))
 
-print(r.json())
-
-print(type(r.json()))
-print(len(r.json()['data']['outputs']))
-out_dict = {'output': []}
-
-for d in r.json()['data']['outputs']:
-    #  print(json.loads(d['outputJson']))
-    out_dict['output'].append(json.loads(d['outputJson']))
-
-with open('outputs.json', 'w') as f:
-    json.dump(out_dict, f, ensure_ascii=False, indent=4, sort_keys=True)
-
-
-j = """
-    {{
-        outputs(modelN: "sim2", tStep: {0}) {{
-            outputJson
-        }}
-    }}
-    """.format(600)
-
-print(len(requests.get(url=graphql_url, json={'query': j}).json()['data']['outputs']))
-print(r)
+print(g['time_step'])
+print(g['yShadeFMU'])
+print(g)
+print(type(g))

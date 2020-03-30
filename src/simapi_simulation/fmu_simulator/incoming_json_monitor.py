@@ -1,6 +1,6 @@
 import time
 import json
-import psycopg2
+import requests
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
@@ -31,9 +31,6 @@ class MyHandler(PatternMatchingEventHandler):
     prev_time_step = 0
 
     def on_modified(self, event):
-        connection = None
-        cursor = None
-
         #  Model initialized here when model_params.json is updated
         if event.src_path.endswith('model_params.json') and self.model_params_set is False:
             with open(str(event.src_path)) as json_file:
@@ -67,34 +64,25 @@ class MyHandler(PatternMatchingEventHandler):
                 self.first_input_set = True
                 self.prev_time_step = self.current_time_step
 
-                # connect to postgres db container and retrieve input for current model and current time_step
-                try:
-                    connection = psycopg2.connect(user="postgres",
-                                                  host="db",
-                                                  port="5432",
-                                                  database="postgres")
-                    cursor = connection.cursor()
+                graphql_url = 'http://web:8000/graphql/'
 
-                    select_input_query = "SELECT input_json FROM rest_api_input WHERE fmu_model_id = %s AND time_step = %s;"
+                input_query = """
+                {{
+                    inputs(modelN: "{0}", tStep: {1}) {{
+                        inputJson
+                    }}
+                }}
+                """.format(str(self.model_name), self.current_time_step)
+                r = requests.get(url=graphql_url, json={'query': input_query})
 
-                    cursor.execute(select_input_query, (self.model_name, self.current_time_step))
+                graphql_response = r.json()['data']['inputs'][0]['inputJson']
 
-                    self.current_input = cursor.fetchone()
+                self.current_input = json.loads(json.loads(graphql_response))
 
-                except (Exception, psycopg2.Error) as error:
-                    print("Error while getting data from PostgreSQL", error)
-                finally:
-                    # closing database connection.
-                    if connection:
-                        cursor.close()
-                        connection.close()
-                        # print("PostgreSQL connection closed successful")
-
-                self.current_input = self.current_input[0]
                 print("\ninput: " + str(self.current_input))
 
                 # run do_step for current time step with current inputs
-                output_json = self.sim_obj.do_time_step(json.loads(self.current_input))
+                output_json = self.sim_obj.do_time_step(self.current_input)
 
                 print(output_json)
                 # task uploads output to db

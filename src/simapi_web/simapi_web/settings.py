@@ -103,7 +103,8 @@ WSGI_APPLICATION = 'simapi_web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'db',
+        'PASSWORD': 'db_pass',
         'USER': 'postgres',
         'HOST': 'db',  # set in docker-compose.yml
         'PORT': 5432  # default postgres port
@@ -153,4 +154,4 @@ AUTH_USER_MODEL = 'rest_api.User'
 
 CELERY_BROKER_URL = 'amqp://user:pass@broker:5672/vhost'
 
-CELERY_BACKEND_URL = 'db+postgresql://postgres:postgres@backend/postgres'
+CELERY_BACKEND_URL = 'db+postgresql://postgres:backend@backend/backend_db'
