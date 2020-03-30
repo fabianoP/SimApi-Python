@@ -80,7 +80,9 @@ services:
     command: bash -c "/run.sh" #
     # & python simulation_process.py /home/deb/code/store_incoming_json
     volumes:
-    - ./simapi_simulation/fmu_simulator:/home/deb/code
+    # - ./simapi_simulation/fmu_simulator:/home/deb/code
+    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
+    - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
     ports:
       - 8002-8005:8000
     depends_on:

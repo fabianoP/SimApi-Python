@@ -15,10 +15,10 @@ def post_model(data):
     logger.info(f'post_model data AUTH {auth_t}')
     model = models.FmuModel.objects.get(model_name=data['model_name'])
 
-    # TODO set simulator generic for multiple containers
+    # TODO set simulator to hostname for multiple containers
     if model is not None:
 
-        url = 'http://simulator:8000/upload/' + data['model_name']
+        url = 'http://{0}:8000/upload/{1}'.format(data['container_id'], data['model_name'])
 
         file = {'epw':  ('a.epw', open(model.epw_file.path, 'rb'), 'application/octet-stream'),
                 'idf':  ('a.idf', open(model.idf_file.path, 'rb'), 'application/octet-stream'),

@@ -281,7 +281,7 @@ If you would like to run the Django API or simulation scripts without docker the
    
    conda install -c https://conda.binstar.org/chria pyfmi
 
-4. pip install -r [dev_requirements.txt](./dev_requirements.txt) to install project dependencies
+4. pip install -r [dev_requirements.txt](doc/dev_requirements.txt) to install project dependencies
 
 If running the Django project without Docker is all that is required then you can stop here. 
 

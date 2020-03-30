@@ -1,8 +1,9 @@
 from celery import Celery
+from pathlib import Path
+import subprocess
 import requests
 import time
 import json
-import subprocess
 import sys
 import os
 
@@ -17,13 +18,9 @@ backend = 'db+postgresql://postgres:backend@backend/backend_db'
 
 app = Celery('simulator_tasks', broker=rabbit_path, backend=backend)
 
-# queue_name = subprocess.check_output("cat /etc/hostname", shell=True)
+queue_name = subprocess.check_output("cat /etc/hostname", shell=True)
 
-app.conf.task_routes = {'simulator_tasks.*': {'queue': 'sim'}}
-
-# start_queue = 'celery -A simulator_tasks worker -l info --queues={0}'.format(queue_name)
-
-# os.system(start_queue)
+app.conf.task_routes = {'simulator_tasks.*': {'queue': queue_name}}
 
 
 def write_json(data, filename):
@@ -31,7 +28,7 @@ def write_json(data, filename):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-@app.task  # (ignore_result=True)
+@app.task
 def set_model(model_params):
     model_name = model_params['model_name']
     step_size = model_params['step_size']
@@ -40,6 +37,22 @@ def set_model(model_params):
     auth_token = model_params['Authorization']
     logger.info(f'PATH TO FMU IN SET_MODEL: {fmu_path}')
     time.sleep(5)
+
+    # TODO if file not in /home/deb/code post new model here with modified model_name.append(hostname)
+    swarm_check = Path('/home/deb/code/isSwarm.txt')
+    if not swarm_check.exists():
+        init_url = 'http://0.0.0.0:8000/init_model/'
+        hostname = subprocess.check_output("cat /etc/hostname", shell=True)
+        model_name = model_name + '_' + str(hostname)
+
+        init_data = {
+            'model_name': model_name,  # change name each time script is run!
+            'step_size': step_size,  # step size in seconds. 600 secs = 10 mins
+            'final_time': final_time,  # 24 hours = 86400 secs
+            'container_id': hostname
+        }
+        header = {'Authorization': auth_token}
+        requests.post(init_url, headers=header, data=init_data)
 
     params = {'model_name': model_name,
               'step_size': step_size,

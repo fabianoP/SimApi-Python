@@ -12,11 +12,6 @@ from rest_api import models
 from rest_api import tasks
 
 
-# Create your views here.
-# TODO  Add exception handling.
-# Possibly have master script in while(time < final_time) and have the pauses inside the loop.
-
-
 class UserViewSet(viewsets.ModelViewSet):
     """retrieve list of or create new user"""
 
@@ -43,10 +38,15 @@ class FmuModelViewSet(viewsets.ModelViewSet):
     queryset = models.FmuModel.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if self.request.data['container_id'] is None:
+            if models.ContainerHostNames.objects.all().count() > 0:
+                self.request.data['container_id'] = models.ContainerHostNames.objects.first()
+
+        serializer.save(user=self.request.user, container_id=self.request.data['container_id'])
         data = {'model_name': self.request.data['model_name'],
                 'step_size': self.request.data['step_size'],
                 'final_time': self.request.data['final_time'],
+                'container_id': self.request.data['container_id'],
                 'Authorization': 'Token ' + str(self.request.auth)
                 }
         transaction.on_commit(lambda: tasks.post_model.apply_async((data,), queue='web', routing_key='web'))
@@ -100,17 +100,11 @@ class OutputViewSet(viewsets.ModelViewSet):
                         output_json=json.dumps(output_json_field))
 
 
-class FileUploadView(viewsets.ModelViewSet):
-    serializer_class = serializers.UploadSerializer
-    queryset = models.FileModel.objects.all()
+class HostNameViewSet(viewsets.ModelViewSet):
 
-    def post(self, request):
-        file_model = models.FileModel()
-        _, file = request.FILES.popitem()  # get first element of the uploaded files
+    serializer_class = serializers.HostNameSerializer
+    queryset = models.ContainerHostNames.objects.all()
 
-        file = file[0]  # get the file from MultiValueDict
-
-        file_model.file = file
-        file_model.save()
-
-        return HttpResponse(content_type='text/plain', content='File uploaded')
+    def perform_create(self, serializer):
+        serializer.save(self.request.data['hostname'])
+        return HttpResponse(status=200)

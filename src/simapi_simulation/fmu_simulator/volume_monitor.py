@@ -1,6 +1,8 @@
 import os
 import sys
 import time
+from pathlib import Path
+
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
@@ -9,6 +11,7 @@ from simulator_api.generator_client import GeneratorClient
 
 class MyHandler(PatternMatchingEventHandler):
     patterns = ["*.json"]
+    swarm_check = Path('/home/deb/code/isSwarm.txt')
 
     def process(self, event):
         """
@@ -20,9 +23,9 @@ class MyHandler(PatternMatchingEventHandler):
             path/to/observed/file
         """
 
-        if event.src_path.endswith('.json'):
+        if event.src_path.endswith('.json') and self.swarm_check.exists():
             print("PATH IN VOLUME MONITOR " + event.src_path)
-            directory_path = event.src_path.rsplit('/', 1)[0]  # TODO this works
+            directory_path = event.src_path.rsplit('/', 1)[0]
             directory = os.listdir(str(directory_path))
             idf = None
             epw = None
@@ -47,8 +50,6 @@ class MyHandler(PatternMatchingEventHandler):
 
                 print("VOLUME MONITOR: GEN CLIENT MODEL NAME: " + model_name)
                 GeneratorClient.post_files(model_name)
-
-        # TODO else pass failure message
 
     def on_created(self, event):
         self.process(event)

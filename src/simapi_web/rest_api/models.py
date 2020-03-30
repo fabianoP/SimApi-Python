@@ -64,11 +64,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return self.email
 
-# TODO possibly just store JSON in all models except user.
 
-
-class FileModel(models.Model):
-    file = FileField(upload_to='./Media/', default='')
+# TODO on up each sim container posts hostname.
+#  polling script inside each container until post == 200
+#  One hostname picked and used to generate FMU.
+#
 
 
 class FmuModel(models.Model):
@@ -76,8 +76,11 @@ class FmuModel(models.Model):
     model_name = models.CharField(max_length=255, unique=True, primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    idf_file = FileField(upload_to='./Media/', default='')
-    epw_file = FileField(upload_to='./Media/', default='')
+    # TODO if null and hostname table not empty add container id in view
+    container_id = models.CharField(max_length=255, null=True)
+
+    idf_file = FileField(upload_to='./Media/', default='', null=True)
+    epw_file = FileField(upload_to='./Media/', default='', null=True)
 
     # set as single json object
     step_size = models.IntegerField(default=0, unique=False)
@@ -113,6 +116,11 @@ class Output(models.Model):
 
     objects = models.Manager()
 
+
+class ContainerHostNames(models.Model):
+    hostname = models.CharField(max_length=255, primary_key=True)
+
+    objects = models.Manager()
 
 
 

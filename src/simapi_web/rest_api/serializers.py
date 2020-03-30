@@ -1,6 +1,6 @@
 from django.db import models
 from rest_framework import serializers
-from rest_api.models import Input, Output, User, FmuModel, FileModel
+from rest_api.models import Input, Output, User, FmuModel, ContainerHostNames
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -61,9 +61,10 @@ class OutputSerializer(serializers.ModelSerializer):
                         'fmu_model': {'read_only': True}}
 
 
-class UploadSerializer(serializers.ModelSerializer):
-    """Test File upload model"""
+class HostNameSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = FileModel
-        fields = ('file',)
+        model = ContainerHostNames
+        fields = ('hostname',)
+
 

@@ -25,16 +25,18 @@ def get_input():
     data = json.loads(request.json)
     t_step = data['time_step']
     write_time_step(t_step, '/home/deb/code/store_incoming_json/time_step.txt')
-    # TODO return code
 
 
 @route('/upload/<model_name>', method='POST')
 def do_upload(model_name):
     upload = request.files
     save_path = '/home/deb/code/volume/' + model_name
-
+    
+    with open('/home/deb/code/isSwarm.txt', 'w') as f:
+        f.write("isSwarm?")
+    
     json_data = request.forms.pop('json')
-    print("IN SIM UPLOAD TEST JSON " + json_data)
+    
     try:
         os.mkdir(save_path)
     except OSError:
