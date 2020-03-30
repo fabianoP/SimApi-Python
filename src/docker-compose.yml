@@ -78,7 +78,7 @@ services:
     container_name: simulator
     build: ./simapi_simulation/fmu_simulator  # change to windows path syntax
     command: bash -c "/run.sh" #
-    # & python incoming_json_monitor.py /home/deb/code/store_incoming_json
+    # & python simulation_process.py /home/deb/code/store_incoming_json
     volumes:
     - ./simapi_simulation/fmu_simulator:/home/deb/code
     ports:
