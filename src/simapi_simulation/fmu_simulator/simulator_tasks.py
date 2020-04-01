@@ -41,9 +41,10 @@ def set_model(model_params):
     # TODO if file not in /home/deb/code post new model here with modified model_name.append(hostname)
     swarm_check = Path('/home/deb/code/isSwarm.txt')
     if not swarm_check.exists():
-        init_url = 'http://0.0.0.0:8000/init_model/'
+        init_url = 'http://web:8000/init_model/'
         hostname = subprocess.getoutput("cat /etc/hostname")
         model_name = model_name + '_' + hostname
+        print('MODEL_NAME IN EXTRA CONTAINER: {0}'.format(model_name))
 
         init_data = {
             'model_name': model_name,  # change name each time script is run!

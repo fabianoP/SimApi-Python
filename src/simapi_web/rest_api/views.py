@@ -5,6 +5,8 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.db import transaction
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from rest_api import serializers
 from rest_api import models
@@ -54,7 +56,9 @@ class FmuModelViewSet(viewsets.ModelViewSet):
                 'container_id': self.request.data['container_id'],
                 'Authorization': 'Token ' + str(self.request.auth)
                 }
-        transaction.on_commit(lambda: tasks.post_model.apply_async((data,), queue='web', routing_key='web'))
+
+        if self.request.data['container_id'] not in self.request.data['model_name']:
+            transaction.on_commit(lambda: tasks.post_model.apply_async((data,), queue='web', routing_key='web'))
 
 
 class InputViewSet(viewsets.ModelViewSet):

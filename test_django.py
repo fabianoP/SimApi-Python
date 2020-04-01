@@ -26,7 +26,7 @@ file = {'idf_file': ('update.idf', open('test_setup_files/update.idf', 'rb')),
 
 # model initialization parameters
 init_data = {
-    'model_name': 'sim91',   # change name each time script is run!
+    'model_name': 'xyz',   # change name each time script is run!
     'container_id': None,
     'step_size': 600,   # step size in seconds. 600 secs = 10 mins
     'final_time': 24.0  # 24 hours = 86400 secs

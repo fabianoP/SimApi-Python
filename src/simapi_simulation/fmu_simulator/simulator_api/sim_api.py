@@ -31,7 +31,7 @@ def get_input():
 def do_upload(model_name):
     upload = request.files
     save_path = '/home/deb/code/volume/' + model_name
-    
+    print('UPLOAD SIM')
     with open('/home/deb/code/isSwarm.txt', 'w') as f:
         f.write("isSwarm?")
     
