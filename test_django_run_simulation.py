@@ -23,8 +23,7 @@ json_resp = resp.json()
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
 
-
-sim_names = ['xyz']
+initial_model_name = 'bhn'
 
 model_query = """
            {{
@@ -32,25 +31,31 @@ model_query = """
                     modelName
                 }}
            }}
-           """.format(sim_names[0])
+           """.format(initial_model_name)
 
 r = requests.get(url=graphql_url, json={'query': model_query})
-i = 1
-while i < 3:
+
+i = 0
+sim_names = []
+while i < len(r.json()['data']['fmuModels']):
     name = r.json()['data']['fmuModels'][i]['modelName']
     sim_names.append(name)
     i += 1
 
+
+shade = 1.0  # input value. Stays same on each iteration.
+shade_1 = 2.0
+shade_2 = 3.0
+shade_3 = 4.0
+shade_4 = 5.0
+input_list = [shade, shade_1, shade_2, shade_3, shade_4] * 2
+
 i = 0  # first step
-shade = 2.0  # input value. Stays same on each iteration. Will change on next update
-shade_1 = 3.0
-shade_2 = 4.0
-input_list = [shade, shade_1, shade_2]
 # run 24 hour (86400sec) simulation at 10 minute (600sec) time steps
 while i < 86400:
 
     j = 0
-    while j < 3:
+    while j < 10:
         input_dict = {'time_step': i, 'yShadeFMU': input_list[j]}
 
         input_data = {
@@ -70,6 +75,7 @@ while i < 86400:
         }}
         """.format(sim_names[j], i)
 
+        # move outside loop and poll once for len() = n, where n is number of simulations!
         polling2.poll(
             lambda: len(requests.get(url=graphql_url, json={'query': output_query}).json()['data']['outputs']) == 1,
             step=0.1,

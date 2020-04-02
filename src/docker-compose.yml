@@ -47,7 +47,7 @@ services:
     container_name: web
     build: ./simapi_web
     command:  bash -c "python manage.py runserver 0.0.0.0:8000
-                      & celery -A simapi_web worker -l info --queues=web"
+                      & celery -A simapi_web worker -l info --concurrency=1 --queues=web"
     volumes:
       - ./simapi_web:/code
     ports:
@@ -83,7 +83,7 @@ services:
     - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
     - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
     ports:
-      - 8002-8005:8000
+      - 8002-8102:8000
     depends_on:
       - web
       - generator

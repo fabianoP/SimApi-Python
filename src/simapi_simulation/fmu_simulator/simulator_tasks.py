@@ -1,5 +1,6 @@
 from celery import Celery
 from pathlib import Path
+import celeryconfig
 import subprocess
 import requests
 import time
@@ -13,14 +14,8 @@ from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
 
-rabbit_path = 'amqp://user:pass@broker:5672/vhost'
-backend = 'db+postgresql://postgres:backend@backend/backend_db'
-
-app = Celery('simulator_tasks', broker=rabbit_path, backend=backend)
-
-queue_name = subprocess.getoutput("cat /etc/hostname")
-
-app.conf.task_routes = {'simulator_tasks.*': {'queue': queue_name}}
+app = Celery('simulator_tasks')
+app.config_from_object(celeryconfig)
 
 
 def write_json(data, filename):
@@ -38,7 +33,6 @@ def set_model(model_params):
     logger.info(f'PATH TO FMU IN SET_MODEL: {fmu_path}')
     time.sleep(5)
 
-    # TODO if file not in /home/deb/code post new model here with modified model_name.append(hostname)
     swarm_check = Path('/home/deb/code/isSwarm.txt')
     if not swarm_check.exists():
         init_url = 'http://web:8000/init_model/'
@@ -72,7 +66,7 @@ def set_model(model_params):
     write_json(data, './store_incoming_json/model_params.json')
 
 
-@app.task  # (ignore_result=True)
+@app.task
 def post_output(output_json, header):  # TODO refactor to send output data to api db
     logger.info(f'post_output -> output_json {output_json}')
     output_url = 'http://web:8000/output/'
