@@ -1,6 +1,9 @@
+import os
 import subprocess
 import time
 import json
+from pathlib import Path
+
 import requests
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -96,6 +99,13 @@ class MyHandler(PatternMatchingEventHandler):
                 # when last time step has completed free and terminate instance
                 if self.current_time_step == self.sim_obj.final_time - int(self.step_size):
                     self.sim_obj.model.free_instance()
+
+                    swarm_check = Path('/home/deb/code/isSwarm.txt')
+                    if swarm_check.exists():
+                        os.system('rm /home/deb/code/isSwarm.txt')
+
+                    os.system('chmod -R  a+rw *')
+
                     self.sim_obj.model.terminate()
 
 

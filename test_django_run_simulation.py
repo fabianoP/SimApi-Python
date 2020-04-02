@@ -23,7 +23,7 @@ json_resp = resp.json()
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
 
-initial_model_name = 'bhn'
+initial_model_name = 'qwe'
 
 model_query = """
            {{
@@ -37,7 +37,8 @@ r = requests.get(url=graphql_url, json={'query': model_query})
 
 i = 0
 sim_names = []
-while i < len(r.json()['data']['fmuModels']):
+number_of_sims = len(r.json()['data']['fmuModels'])
+while i < number_of_sims:
     name = r.json()['data']['fmuModels'][i]['modelName']
     sim_names.append(name)
     i += 1
@@ -48,14 +49,17 @@ shade_1 = 2.0
 shade_2 = 3.0
 shade_3 = 4.0
 shade_4 = 5.0
-input_list = [shade, shade_1, shade_2, shade_3, shade_4] * 2
+input_list = [shade, shade_1, shade_2, shade_3, shade_4]  # * 2
+
+print(sim_names)
+print(number_of_sims)
 
 i = 0  # first step
 # run 24 hour (86400sec) simulation at 10 minute (600sec) time steps
 while i < 86400:
 
     j = 0
-    while j < 10:
+    while j < number_of_sims:
         input_dict = {'time_step': i, 'yShadeFMU': input_list[j]}
 
         input_data = {
@@ -66,7 +70,7 @@ while i < 86400:
 
         r = requests.post(input_url, headers=header, data=input_data)
         print(r.text)
-        print('\n')
+
         output_query = """
         {{
             outputs(modelN: "{0}", tStep: {1}) {{
@@ -76,7 +80,7 @@ while i < 86400:
         """.format(sim_names[j], i)
 
         # move outside loop and poll once for len() = n, where n is number of simulations!
-        polling2.poll(
+        polling2.poll(  # issue with extra sim names returned causing poll to get stuck
             lambda: len(requests.get(url=graphql_url, json={'query': output_query}).json()['data']['outputs']) == 1,
             step=0.1,
             poll_forever=True)
@@ -84,6 +88,7 @@ while i < 86400:
         json_output = requests.get(url=graphql_url, json={'query': output_query}).json()['data']['outputs']
 
         print('Sim: {0} | Output: {1}'.format(sim_names[j], str(json_output)))
+        print('\n')
         j += 1
 
     i += 600

@@ -43,11 +43,10 @@ class FmuModelViewSet(viewsets.ModelViewSet):
 
         if self.request.POST.get('container_id') is None:
             if models.ContainerHostNames.objects.all().count() > 0:
-                id_instance = models.ContainerHostNames.objects.first()
+                id_instance = models.ContainerHostNames.objects.last()
 
         if id_instance is not None:
             self.request.data['container_id'] = id_instance.hostname
-            models.ContainerHostNames.objects.all().delete()
 
         serializer.save(user=self.request.user, container_id=self.request.data['container_id'])
         data = {'model_name': self.request.data['model_name'],
