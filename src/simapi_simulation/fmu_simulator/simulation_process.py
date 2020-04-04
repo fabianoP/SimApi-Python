@@ -88,7 +88,7 @@ class MyHandler(PatternMatchingEventHandler):
                 # run do_step for current time step with current inputs
                 output_json = self.sim_obj.do_time_step(self.current_input)
 
-                print(output_json)
+                print('OUTPUT FOR MODEL: ' + self.model_name + ' | ' + output_json)
                 # task uploads output to db
                 hostname = subprocess.getoutput("cat /etc/hostname")
                 result = simulator_tasks.post_output.apply_async((output_json, self.header),
@@ -103,8 +103,6 @@ class MyHandler(PatternMatchingEventHandler):
                     swarm_check = Path('/home/deb/code/isSwarm.txt')
                     if swarm_check.exists():
                         os.system('rm /home/deb/code/isSwarm.txt')
-
-                    os.system('chmod -R  a+rw *')
 
                     self.sim_obj.model.terminate()
 

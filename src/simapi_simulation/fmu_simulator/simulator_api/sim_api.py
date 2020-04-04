@@ -1,3 +1,5 @@
+import subprocess
+
 from bottle import request, route, run, response
 
 import os.path
@@ -8,13 +10,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
 def write_json(data, filename):
-    # TODO already json at this point no need to dump
     with open(filename, 'w') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 def write_time_step(t_step, filename):
-    # TODO already json at this point no need to dump
     with open(filename, 'w') as f:
         f.seek(0)
         f.write(t_step)
@@ -46,6 +46,8 @@ def do_upload(model_name):
 
     for name, file in upload.iteritems():
         file.save(save_path)
+
+    subprocess.getoutput('chmod -R  a+rw /home/deb/code/volume/ *')
 
     if len(upload) == 2:
         j_dict = {'model_params': []}

@@ -39,16 +39,12 @@ class FmuModelViewSet(viewsets.ModelViewSet):
     queryset = models.FmuModel.objects.all()
 
     def perform_create(self, serializer):
-        id_instance = None
 
         if self.request.POST.get('container_id') is None:
-            if models.ContainerHostNames.objects.all().count() > 0:
-                id_instance = models.ContainerHostNames.objects.last()
-
-        if id_instance is not None:
-            self.request.data['container_id'] = id_instance.hostname
+            self.request.data['container_id'] = 'src_simulator_1'
 
         serializer.save(user=self.request.user, container_id=self.request.data['container_id'])
+
         data = {'model_name': self.request.data['model_name'],
                 'step_size': self.request.data['step_size'],
                 'final_time': self.request.data['final_time'],
@@ -114,7 +110,6 @@ class OutputViewSet(viewsets.ModelViewSet):
 
 
 class HostNameViewSet(viewsets.ModelViewSet):
-
     serializer_class = serializers.HostNameSerializer
     queryset = models.ContainerHostNames.objects.all()
 

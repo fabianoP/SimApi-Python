@@ -47,13 +47,13 @@ services:
     container_name: web
     build: ./simapi_web
     command:  bash -c "python manage.py runserver 0.0.0.0:8000
-                      & celery -A simapi_web worker -l info --concurrency=1 --queues=web"
+                    & python manage.py migrate
+                    & celery -A simapi_web worker -l info --concurrency=1 --queues=web"
     volumes:
       - ./simapi_web:/code
     ports:
       - 8000:8000
     depends_on:
-      - rabbitmq
       - db
     networks:
       - simapi

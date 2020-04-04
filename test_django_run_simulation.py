@@ -23,7 +23,7 @@ json_resp = resp.json()
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
 
-initial_model_name = 'qwe'
+initial_model_name = 'sim88'
 
 model_query = """
            {{
@@ -49,7 +49,7 @@ shade_1 = 2.0
 shade_2 = 3.0
 shade_3 = 4.0
 shade_4 = 5.0
-input_list = [shade, shade_1, shade_2, shade_3, shade_4]  # * 2
+input_list = [shade, shade_1, shade_2, shade_3, shade_4, shade, shade_1, shade_2, shade_3, shade_4]  # * 2
 
 print(sim_names)
 print(number_of_sims)
@@ -69,7 +69,7 @@ while i < 86400:
         }
 
         r = requests.post(input_url, headers=header, data=input_data)
-        print(r.text)
+        print(r.text + ' ' + str(r.status_code))
 
         output_query = """
         {{
@@ -79,6 +79,8 @@ while i < 86400:
         }}
         """.format(sim_names[j], i)
 
+        print(output_query)
+
         # move outside loop and poll once for len() = n, where n is number of simulations!
         polling2.poll(  # issue with extra sim names returned causing poll to get stuck
             lambda: len(requests.get(url=graphql_url, json={'query': output_query}).json()['data']['outputs']) == 1,
@@ -86,8 +88,7 @@ while i < 86400:
             poll_forever=True)
 
         json_output = requests.get(url=graphql_url, json={'query': output_query}).json()['data']['outputs']
-
-        print('Sim: {0} | Output: {1}'.format(sim_names[j], str(json_output)))
+        print('After Poll = Sim: {0} | Output: {1}'.format(sim_names[j], str(json_output)))
         print('\n')
         j += 1
 

@@ -45,7 +45,6 @@ class MyHandler(PatternMatchingEventHandler):
                                                  data['epw_path'],
                                                  data['fmu_store_dir']), queue='gen', routing_key='gen')
             # result.get()
-            os.system('chmod -R  a+rw /code/volume *')
 
     def on_created(self, event):
         self.process(event)
