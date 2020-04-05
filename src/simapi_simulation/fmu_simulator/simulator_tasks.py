@@ -18,9 +18,12 @@ app = Celery('simulator_tasks')
 app.config_from_object(celeryconfig)
 
 
-def write_json(data, filename):
+def write_json(params, filename):
     with open(filename, 'w') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        data_dict = {"model_params": [params]}
+
+        logger.info("HERE: {0}".format(str(data_dict)))
+        json.dump(data_dict, f, indent=4)
 
 
 @app.task
@@ -55,19 +58,11 @@ def set_model(model_params):
               'fmu_path': fmu_path,
               'Authorization': auth_token}
 
-    with open('./store_incoming_json/model_params.json') as json_file:
-        data = json.load(json_file)
-        logger.info(f'DATA JSON LOAD IN SET MODEL TASK {data}')
-
-        data['model_params'].append(params)
-
-        logger.info(f'DATA PARAMS IN SET MODEL TASK AFTER APPEND {data}')
-
-    write_json(data, './store_incoming_json/model_params.json')
+    write_json(params, './store_incoming_json/model_params.json')
 
     swarm_check = Path('/home/deb/code/isSwarm.txt')
 
-    if swarm_check:
+    if swarm_check.exists():
         os.system('rm /home/deb/code/isSwarm.txt')
 
 

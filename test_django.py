@@ -43,7 +43,7 @@ file = {'idf_file': ('update.idf', idf_file),
 
 # model initialization parameters
 init_data = {
-    'model_name': 'poiu',   # change name each time script is run!
+    'model_name': 'cheese',   # change name each time script is run!
     'container_id': None,
     'step_size': 600,   # step size in seconds. 600 secs = 10 mins
     'final_time': 24.0  # 24 hours = 86400 secs

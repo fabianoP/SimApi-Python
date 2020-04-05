@@ -23,7 +23,7 @@ json_resp = resp.json()
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
 
-initial_model_name = 'poiu'
+initial_model_name = 'cheese'
 
 model_query = """
            {{
@@ -46,7 +46,7 @@ while i < number_of_sims:
 
 shade = 1.0  # input value. Stays same on each iteration.
 
-input_list = [shade] * 20
+input_list = [shade] * 25
 
 print(sim_names)
 print(number_of_sims)

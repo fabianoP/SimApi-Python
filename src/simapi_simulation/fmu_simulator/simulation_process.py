@@ -39,25 +39,27 @@ class MyHandler(PatternMatchingEventHandler):
         if event.src_path.endswith('model_params.json') and self.model_params_set is False:
 
             with open(str(event.src_path)) as json_file:
-                print("MODEL_PARAMS.JSON SIM PROC INIT MODEL: " + str(json_file.read()))
+
                 data = json.load(json_file)  # TODO Broken
 
-                params = data['model_params'][-1]
-                self.model_name = params['model_name']
-                self.step_size = params['step_size']
-                final_time = params['final_time']
-                fmu_path = params['fmu_path']
+                if len(data) > 0:
+                    params = data['model_params'][-1]
+                    self.model_name = params['model_name']
+                    self.step_size = params['step_size']
+                    final_time = params['final_time']
+                    fmu_path = params['fmu_path']
 
-                self.header = {'Authorization': params['Authorization']}
+                    self.header = {'Authorization': params['Authorization']}
 
-                self.sim_obj = SimulationObject(model_name=self.model_name, step_size=int(self.step_size),
-                                                final_time=float(final_time),
-                                                path_to_fmu=fmu_path)
-                self.sim_obj.model_init()
-                self.model_params_set = True
+                    self.sim_obj = SimulationObject(model_name=self.model_name, step_size=int(self.step_size),
+                                                    final_time=float(final_time),
+                                                    path_to_fmu=fmu_path)
+                    self.sim_obj.model_init()
+                    self.model_params_set = True
+                    os.system('rm /home/deb/code/store_incoming_json/model_params.json')
 
         # simulation time steps run here when time_step.txt is updated
-        if event.src_path.endswith('time_step.txt'):
+        if event.src_path.endswith('time_step.txt') and self.model_params_set is True:
             with open(str(event.src_path)) as text_file:
 
                 text_file.seek(0)
