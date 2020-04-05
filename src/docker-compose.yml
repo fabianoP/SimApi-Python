@@ -61,10 +61,9 @@ services:
 
   generator:
     container_name: generator
-    build: ./simapi_simulation/fmu_generator  # change to windows path syntax
+    build: ./simapi_simulation/fmu_generator
     command: bash -c "/run.sh"
     volumes:
-      - ./simapi_simulation/fmu_generator/volume:/home/fmu/code/energy/test # change ./simapi_simulation/fmu_generator/volume to windows path syntax
       - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
     ports:
       - 8001:8000
@@ -75,7 +74,6 @@ services:
     restart: always
 
   simulator:
-    # container_name: simulator
     build: ./simapi_simulation/fmu_simulator
     command: bash -c "/run.sh"
     volumes:

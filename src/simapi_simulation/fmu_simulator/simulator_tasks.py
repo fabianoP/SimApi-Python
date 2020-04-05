@@ -38,7 +38,7 @@ def set_model(model_params):
         init_url = 'http://web:8000/init_model/'
         hostname = subprocess.getoutput("cat /etc/hostname")
         model_name = model_name + '_' + hostname
-        print('MODEL_NAME IN EXTRA CONTAINER: {0}'.format(model_name))
+        logger.info('MODEL_NAME IN EXTRA CONTAINER: {0}'.format(model_name))
 
         init_data = {
             'model_name': model_name,  # change name each time script is run!
@@ -65,16 +65,17 @@ def set_model(model_params):
 
     write_json(data, './store_incoming_json/model_params.json')
 
+    swarm_check = Path('/home/deb/code/isSwarm.txt')
+
+    if swarm_check:
+        os.system('rm /home/deb/code/isSwarm.txt')
+
 
 @app.task
 def post_output(output_json, header):  # TODO refactor to send output data to api db
-    logger.info(f'post_output -> output_json {output_json}')
     output_url = 'http://web:8000/output/'
-    logger.info(f'post_output -> output_json {type(output_json)}')
 
     header['Content-Type'] = 'application/json'
-    logger.info(f'post_output -> output_json header {header}')
-    logger.info(f'post_output -> output_json header type {type(header)}')
 
     r = requests.post(output_url, headers=header, data=output_json)
     logger.info(f'post_output -> request status {r.status_code}')

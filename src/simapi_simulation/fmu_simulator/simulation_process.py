@@ -37,8 +37,10 @@ class MyHandler(PatternMatchingEventHandler):
     def on_modified(self, event):
         #  Model initialized here when model_params.json is updated
         if event.src_path.endswith('model_params.json') and self.model_params_set is False:
+
             with open(str(event.src_path)) as json_file:
-                data = json.load(json_file)
+                print("MODEL_PARAMS.JSON SIM PROC INIT MODEL: " + str(json_file.read()))
+                data = json.load(json_file)  # TODO Broken
 
                 params = data['model_params'][-1]
                 self.model_name = params['model_name']
@@ -63,6 +65,7 @@ class MyHandler(PatternMatchingEventHandler):
                 data = text_file.readline()
 
                 self.current_time_step = isint(data)
+                print("Current time Step read from file: " + str(self.current_time_step))
 
             if self.current_time_step == self.prev_time_step + int(self.step_size) or not self.first_input_set:
                 self.first_input_set = True
@@ -78,6 +81,9 @@ class MyHandler(PatternMatchingEventHandler):
                 }}
                 """.format(str(self.model_name), self.current_time_step)
                 r = requests.get(url=graphql_url, json={'query': input_query})
+                print("INPUT_QUERY: " + input_query)
+                print("STATUS: input_query " + str(r.status_code))
+                print("TEXT: input_query " + r.text)
 
                 graphql_response = r.json()['data']['inputs'][0]['inputJson']
 
@@ -103,8 +109,6 @@ class MyHandler(PatternMatchingEventHandler):
                     swarm_check = Path('/home/deb/code/isSwarm.txt')
                     if swarm_check.exists():
                         os.system('rm /home/deb/code/isSwarm.txt')
-
-                    self.sim_obj.model.terminate()
 
 
 if __name__ == '__main__':

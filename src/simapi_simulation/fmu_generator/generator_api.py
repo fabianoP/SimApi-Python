@@ -69,7 +69,6 @@ def generate(model_name):
             json.dump(data, f)
             f.close()
 
-        os.system('chmod -R  a+rw /home/fmu/code/energy/test/' + model_name + ' *')
         response.status = 200
         return 'FMU ready'  # FMU Stored in shared volume
     else:

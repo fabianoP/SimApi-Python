@@ -22,6 +22,7 @@ def write_time_step(t_step, filename):
 
 @route('/model_input', method='POST')
 def get_input():
+    print("RECEIVED INPUT: " + str(request.json))
     data = json.loads(request.json)
     t_step = data['time_step']
     write_time_step(t_step, '/home/deb/code/store_incoming_json/time_step.txt')

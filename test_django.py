@@ -34,13 +34,16 @@ json_resp = resp.json()
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
 
+idf_file = open('test_setup_files/update.idf', 'rb')
+epw_file = open('test_setup_files/update.epw', 'rb')
+
 # place .idf and .epw in simapi-python/test_setup_files/  replace a.idf and a.epw
-file = {'idf_file': ('update.idf', open('test_setup_files/update.idf', 'rb')),
-        'epw_file': ('update.epw', open('test_setup_files/update.epw', 'rb'))}
+file = {'idf_file': ('update.idf', idf_file),
+        'epw_file': ('update.epw', epw_file)}
 
 # model initialization parameters
 init_data = {
-    'model_name': 'sim88',   # change name each time script is run!
+    'model_name': 'poiu',   # change name each time script is run!
     'container_id': None,
     'step_size': 600,   # step size in seconds. 600 secs = 10 mins
     'final_time': 24.0  # 24 hours = 86400 secs
@@ -50,3 +53,7 @@ resp = requests.post(init_url, headers=header, data=init_data, files=file)
 
 # prints init_data on successful post
 print(resp.text)
+
+
+idf_file.close()
+epw_file.close()

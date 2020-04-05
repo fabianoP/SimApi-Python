@@ -20,11 +20,18 @@ def post_model(data):
 
         url = 'http://{0}:8000/upload/{1}'.format(data['container_id'], data['model_name'])
         logger.info(f'post_model url {url}')
-        file = {'epw':  ('a.epw', open(model.epw_file.path, 'rb'), 'application/octet-stream'),
-                'idf':  ('a.idf', open(model.idf_file.path, 'rb'), 'application/octet-stream'),
+
+        epw_file = open(model.epw_file.path, 'rb')
+        idf_file = open(model.idf_file.path, 'rb')
+
+        file = {'epw':  ('a.epw', epw_file, 'application/octet-stream'),
+                'idf':  ('a.idf', idf_file, 'application/octet-stream'),
                 'json': (None, json.dumps(data), 'application/json')}
 
         r = requests.post(url, files=file)
+
+        epw_file.close()
+        idf_file.close()
 
         return r.status_code
 
