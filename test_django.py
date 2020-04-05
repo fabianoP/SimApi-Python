@@ -1,5 +1,9 @@
 import requests
 
+model_name = 'abc12345'
+idf_file_path = 'test_setup_files/update.idf'
+epw_file_path = 'test_setup_files/update.epw'
+
 
 user_url = 'http://0.0.0.0:8000/user/'
 login_url = 'http://0.0.0.0:8000/login/'
@@ -34,8 +38,8 @@ json_resp = resp.json()
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
 
-idf_file = open('test_setup_files/update.idf', 'rb')
-epw_file = open('test_setup_files/update.epw', 'rb')
+idf_file = open(idf_file_path, 'rb')
+epw_file = open(epw_file_path, 'rb')
 
 # place .idf and .epw in simapi-python/test_setup_files/  replace a.idf and a.epw
 file = {'idf_file': ('update.idf', idf_file),
@@ -43,7 +47,7 @@ file = {'idf_file': ('update.idf', idf_file),
 
 # model initialization parameters
 init_data = {
-    'model_name': 'cheese',   # change name each time script is run!
+    'model_name': model_name,   # change name each time script is run!
     'container_id': None,
     'step_size': 600,   # step size in seconds. 600 secs = 10 mins
     'final_time': 24.0  # 24 hours = 86400 secs

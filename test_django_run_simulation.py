@@ -2,6 +2,9 @@ import polling2
 import requests
 import json
 
+initial_model_name = 'abc12345'
+
+
 user_url = 'http://0.0.0.0:8000/user/'
 login_url = 'http://0.0.0.0:8000/login/'
 init_url = 'http://0.0.0.0:8000/init_model/'
@@ -22,8 +25,6 @@ json_resp = resp.json()
 
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
-
-initial_model_name = 'cheese'
 
 model_query = """
            {{
@@ -46,7 +47,7 @@ while i < number_of_sims:
 
 shade = 1.0  # input value. Stays same on each iteration.
 
-input_list = [shade] * 25
+input_list = [shade] * 30
 
 print(sim_names)
 print(number_of_sims)

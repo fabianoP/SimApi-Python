@@ -60,14 +60,12 @@ def set_model(model_params):
 
     write_json(params, './store_incoming_json/model_params.json')
 
-    swarm_check = Path('/home/deb/code/isSwarm.txt')
-
     if swarm_check.exists():
         os.system('rm /home/deb/code/isSwarm.txt')
 
 
 @app.task
-def post_output(output_json, header):  # TODO refactor to send output data to api db
+def post_output(output_json, header):
     output_url = 'http://web:8000/output/'
 
     header['Content-Type'] = 'application/json'
