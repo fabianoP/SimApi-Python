@@ -1,8 +1,16 @@
+import sys
+
 import polling2
 import requests
 import json
 
-initial_model_name = 'abc12345'
+"""
+This script provides the logic needed to run a simulation or multiple simulations.
+
+initial_model_name: Needs to be same as model_name in initialize_model.py 
+"""
+
+initial_model_name = sys.argv[1]
 
 
 user_url = 'http://0.0.0.0:8000/user/'
@@ -26,6 +34,7 @@ json_resp = resp.json()
 token = json_resp['token']  # get validation token
 header = {'Authorization': 'Token ' + token}  # set request header
 
+# query for all models in db related to initial_model_name.
 model_query = """
            {{
                fmuModels(modelN: "{0}"){{
@@ -40,25 +49,26 @@ i = 0
 sim_names = []
 number_of_sims = len(r.json()['data']['fmuModels'])
 while i < number_of_sims:
-    name = r.json()['data']['fmuModels'][i]['modelName']
-    sim_names.append(name)
+    name = r.json()['data']['fmuModels'][i]['modelName']  # extract model name from graphql query response
+    sim_names.append(name)  # store extracted model name.
     i += 1
 
 
 shade = 1.0  # input value. Stays same on each iteration.
 
-input_list = [shade] * 30
+# up to 25 concurrent models can receive as input val(shade). [shade] * 25 expands the list from 1 to 25.
+input_list = [shade] * 25
 
 print(sim_names)
 print(number_of_sims)
 
 i = 0  # first step
 # run 24 hour (86400sec) simulation at 10 minute (600sec) time steps
-while i < 86400:
+while i < 86400:  # outer loop iterates over time steps
 
     j = 0
-    while j < number_of_sims:
-        input_dict = {'time_step': i, 'yShadeFMU': input_list[j]}
+    while j < number_of_sims:  # inner loop iterates over models, posing input to a different model on each iteration.
+        input_dict = {'time_step': i, 'yShadeFMU': input_list[j]}  # input is user defined, can be any number of inputs
 
         input_data = {
             'fmu_model': sim_names[j],
@@ -80,7 +90,7 @@ while i < 86400:
         print(output_query)
 
         # move outside loop and poll once for len() = n, where n is number of simulations!
-        polling2.poll(  # issue with extra sim names returned causing poll to get stuck
+        polling2.poll(
             lambda: len(requests.get(url=graphql_url, json={'query': output_query}).json()['data']['outputs']) == 1,
             step=0.1,
             poll_forever=True)

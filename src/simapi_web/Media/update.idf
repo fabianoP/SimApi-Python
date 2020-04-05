@@ -1338,32 +1338,12 @@
     Zone Mean Air Temperature,  !- Output:Variable Name
     TRoo;                       !- FMU Variable Name
 
-  Output:Variable,Zn001:Wall001:Win001, Surface Outside Face Beam Solar Incident Angle Cosine Value,Timestep;
-
-  ExternalInterface:FunctionalMockupUnitExport:From:Variable,
-    Zn001:Wall001:Win001,                                         !- Output:Variable Index Key Name
-    Surface Outside Face Incident Solar Radiation Rate per Area,  !- Output:Variable Name
-    ISolExt;                                                      !- FMU Variable Name
-
-  ExternalInterface:FunctionalMockupUnitExport:From:Variable,
-    Zn001:Wall001:Win001, !- Output:Variable Index Key Name
-    Surface Outside Face Beam Solar Incident Angle Cosine Value,  !- Output:Variable
-    SOut; !- FMU Variable Name
-
   Output:Variable,WEST ZONE,Zone Air System Sensible Heating Rate,Timestep;
 
   ExternalInterface:FunctionalMockupUnitExport:From:Variable,
     WEST ZONE,               !- Output:Variable Index Key Name
     Zone Air System Sensible Heating Rate,  !- Output:Variable
     ZoneSens;   !- FMU Variable Name
-
-  Output:Variable,WEST ZONE,Zone Air System Sensible Cooling Rate,Timestep;
-
-  ExternalInterface:FunctionalMockupUnitExport:From:Variable,
-    WEST ZONE,               !- Output:Variable Index Key Name
-    Zone Air System Sensible Cooling Rate,  !- Output:Variable
-    Zone_Sensible_Cool_Rate; !- FMU Variable Name
-
 
 
 ! EMS program. The first assignments sets the shading status and converts it into the

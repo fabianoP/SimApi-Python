@@ -1,6 +1,16 @@
 import requests
+import sys
+"""
+This script creates a user in the database and uploads the .idf, .epw, and model parameters required to create an FMU.
+Once the FMU is generated a pyFMI simulation object will be initialized using the FMU and model parameters. 
 
-model_name = 'abc12345'
+model_name: change after each run
+idf_file_path: path to .idf on host machine
+epw_file_path: path to .epw on host machine
+"""
+
+
+model_name = sys.argv[1]
 idf_file_path = 'test_setup_files/update.idf'
 epw_file_path = 'test_setup_files/update.epw'
 
@@ -24,7 +34,7 @@ json = {
 resp = requests.post(user_url, data=json)
 print(resp.text + ' ' + str(resp.status_code))
 
-# login details for super user
+# login details for user
 data = {"username": "user@user.com",  # username = email
         "password": "user user88"}
 

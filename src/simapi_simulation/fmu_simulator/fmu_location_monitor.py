@@ -38,8 +38,6 @@ class MyHandler(PatternMatchingEventHandler):
             result.get()
             print("FMU location handler COMPLETE")
 
-            # subprocess.getoutput('chmod -R  a+rw /home/deb/code/fmu_location/ *')
-
     def on_created(self, event):
         self.process(event)
 
