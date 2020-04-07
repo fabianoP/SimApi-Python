@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is file 'modelDescription.xml' for input 'sim88.idf'. -->
+<fmiModelDescription  fmiVersion="1.0"
+  modelName="sim88.idf"
+  modelIdentifier="sim88"
+  guid="db1017503d44118a54954644bd4ad5bc"
+  description="Automatically generated from EnergyPlus input file sim88.idf"
+  generationTool="idf-to-fmu-export-prep-linux"
+  generationDateAndTime="2020-04-07T14:39:12Z"
+  variableNamingConvention="flat"
+  numberOfContinuousStates="0"
+  numberOfEventIndicators="0">
+  <!-- Note guid is an md5 checksum of the IDF file. -->
+  <!-- Exposed model variables. -->
+  <ModelVariables>
+    <!-- Note valueReferences are (1, 2, 3...) for causality="input" (to E+). -->
+    <!-- Note valueReferences are (100001, 100002, 100003...) for "output" (from E+). -->
+    <!-- Note the order of valueReferences should match the order of elements in file 'variables.cfg'. -->
+    <ScalarVariable  name="yShadeFMU"  valueReference="1"
+      variability="continuous"  causality="input"
+      description="IDF line 1325">
+      <Real  start="6"/>
+    </ScalarVariable>
+    <ScalarVariable  name="dryBulb"  valueReference="100001"
+      variability="continuous"  causality="output"
+      description="IDF line 1330">
+      <Real/>
+    </ScalarVariable>
+    <ScalarVariable  name="TRoo"  valueReference="100002"
+      variability="continuous"  causality="output"
+      description="IDF line 1336">
+      <Real/>
+    </ScalarVariable>
+    <ScalarVariable  name="ZoneSens"  valueReference="100003"
+      variability="continuous"  causality="output"
+      description="IDF line 1343">
+      <Real/>
+    </ScalarVariable>
+  </ModelVariables>
+  <!-- Implementation details for co-simulation. -->
+  <Implementation>
+    <!-- EnergyPlus provided as tool (as opposed to source code or DLL). -->
+    <CoSimulation_Tool>
+      <Capabilities
+        canHandleVariableCommunicationStepSize="false"
+        canHandleEvents="false"
+        canRejectSteps="false"
+        canInterpolateInputs="false"
+        maxOutputDerivativeOrder="0"
+        canRunAsynchronuously="false"
+        canSignalEvents="false"
+        canBeInstantiatedOnlyOncePerProcess="false"
+        canNotUseMemoryManagementFunctions="true"/>
+      <Model
+        entryPoint="fmu://resources/sim88.idf"
+        manualStart="false"
+        type="text/plain">
+        <File  file="fmu://resources/variables.cfg"/>
+        <!-- No weather file specified. -->
+      </Model>
+    </CoSimulation_Tool>
+  </Implementation>
+</fmiModelDescription>
