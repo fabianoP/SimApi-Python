@@ -79,7 +79,7 @@ services:
     build: ./simapi_simulation/fmu_simulator
     command: bash -c "/run.sh"
     volumes:
-    # - ./simapi_simulation/fmu_simulator:/home/deb/code
+    - ./simapi_simulation/fmu_simulator:/home/deb/code
     - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
     - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
     ports:

@@ -28,6 +28,25 @@ def get_input():
     write_time_step(t_step, '/home/deb/code/store_incoming_json/time_step.txt')
 
 
+@route('/test_fmu/<model_name>', method='POST')
+def receive_fmu(model_name):
+    upload = request.files
+    save_path = '/home/deb/code/volume/' + model_name
+
+    json_data = request.forms.pop('json')
+    print(json_data)
+    try:
+        os.mkdir(save_path)
+    except OSError:
+        print("Creation of the directory %s failed" % save_path)
+    else:
+        print("Successfully created the directory %s " % save_path)
+
+    for name, file in upload.iteritems():
+        print("Saving: " + name)
+        file.save(save_path)
+
+
 @route('/upload/<model_name>', method='POST')
 def do_upload(model_name):
     upload = request.files

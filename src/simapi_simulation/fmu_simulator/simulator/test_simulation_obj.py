@@ -9,7 +9,7 @@ from simulator.simulation_obj import SimulationObject
 
 
 #  instantiate simulation obj with default values
-sim_obj = SimulationObject(model_name='nearly.fmu', final_time=24.0, path_to_fmu='nearly.fmu')
+sim_obj = SimulationObject(model_name='abc.fmu', final_time=24.0, path_to_fmu='abc.fmu')
 sim_obj.model_init()  # initialize fmu model. Calls pyFMI model.init() and sets start and finish time
 # new dictionary with inputs for fmu time step
 

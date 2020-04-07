@@ -1,12 +1,12 @@
 from pathlib import Path
 
+import requests
 from bottle import request, route, run, response
 
 import sys
 import json
 import os.path
 import generator_tasks
-
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -63,14 +63,18 @@ def test(model_name):
         message = "FMU ZIP EXISTS"
     else:
         message = "NO FMU OR ZIP"
+        return message
 
-    """
-    file = {'fmu': ('a.epw', epw_file, 'application/octet-stream'),
-            'json': (None, json.dumps(data), 'application/json')}
-    """
+    fmu_file = open('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.fmu', 'rb')
 
-    # r = requests.post(url, files=file)
+    file = {'fmu': (model_name + '.fmu', fmu_file, 'application/zip'),
+            'json': (None, json.dumps(json_data), 'application/json')}
+    url = 'http://src_simulator_1:8000/test_fmu/' + model_name
 
+    r = requests.post(url, files=file)
+
+    print(r.text)
+    fmu_file.close()
     return message
 
 
