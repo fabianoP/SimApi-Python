@@ -29,6 +29,7 @@ file = {'idf_file': ('update.idf', idf_file),
 init_data = {
     'model_name': initial_model_name,   # change name each time script is run!
     'container_id': None,
+    'model_count': 1,
     'step_size': 600,   # step size in seconds. 600 secs = 10 mins
     'final_time': 24.0  # 24 hours = 86400 secs
 }

@@ -27,7 +27,7 @@ class FmuModelParametersSerializer(serializers.ModelSerializer):
     """"""
     class Meta:
         model = FmuModel
-        fields = ('model_name', 'user', 'container_id', 'idf_file', 'epw_file', 'step_size', 'final_time', 'created_on')
+        fields = ('model_name', 'user', 'container_id', 'model_count', 'idf_file', 'epw_file', 'step_size', 'final_time', 'created_on')
 
         """read-only field user. Can only be created by authenticated user"""
         extra_kwargs = {'user': {'read_only': True}}

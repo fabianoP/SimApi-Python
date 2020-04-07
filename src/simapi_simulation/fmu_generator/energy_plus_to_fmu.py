@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 
@@ -15,6 +16,6 @@ class RunEnergyPlusToFMU:
                       -w " + self.epw + " " + self.idf + " && ./idf-to-fmu-export-prep-linux \
                       /home/fmu/code/Energy+.idd " + self.idf
 
-        subprocess.check_output(eplus_command, shell=True)
+        os.system(eplus_command)
         return 'success'
 

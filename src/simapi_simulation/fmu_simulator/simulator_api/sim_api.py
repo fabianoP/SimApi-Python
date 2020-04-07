@@ -48,7 +48,7 @@ def do_upload(model_name):
     for name, file in upload.iteritems():
         file.save(save_path)
 
-    subprocess.getoutput('chmod -R  a+rw /home/deb/code/volume/ *')
+    # subprocess.getoutput('chmod -R  a+rw /home/deb/code/volume/ *')
 
     if len(upload) == 2:
         j_dict = {'model_params': []}

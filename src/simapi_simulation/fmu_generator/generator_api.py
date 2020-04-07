@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from bottle import request, route, run, response
 
 import sys
@@ -26,35 +28,50 @@ def test(model_name):
         for name, file in upload.iteritems():
             print("Saving: " + name)
             file.save(save_path)
-        response.status = 200
-        return "Success"
     else:
         response.status = 400
         return "Found {0} files. Expected 2".format(len(upload))
 
+    directory = os.listdir(save_path)
+    print(directory)
 
-@route('/upload/<model_name>', method='POST')
-# upload from sim container.
-def do_upload(model_name):
-    upload = request.files
-    save_path = '/home/fmu/code/energy/test/' + model_name
+    if model_name + '.idf' in directory and model_name + '.epw' in directory:
+        epw = '/home/fmu/code/energy/test/' + model_name + '/' + model_name + '.epw'
+        idf = '/home/fmu/code/energy/test/' + model_name + '/' + model_name + '.idf'
+    else:
+        response.status = 400
+        return 'Error files not saved!'
+
+    fmu_store_dir = '/home/fmu/code/fmu_test/' + model_name
 
     try:
-        os.mkdir(save_path)
+        os.mkdir(fmu_store_dir)
     except OSError:
-        print("Creation of the directory %s failed" % save_path)
+        print("Creation of the directory %s failed" % fmu_store_dir)
     else:
-        print("Successfully created the directory %s " % save_path)
+        print("Successfully created the directory %s " % fmu_store_dir)
 
-    if len(upload) == 2:
-        for name, file in upload.iteritems():
-            print("GEN API /UPLOAD FILE SAVE: " + name)
-            file.save(save_path)
-        response.status = 200
-        return '2 files uploaded'
+    result = generator_tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
+    result.get()
+
+    fmu_check = Path('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.fmu')
+    fmu_zip_check = Path('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.zip')
+
+    if fmu_check.exists():
+        message = "FMU FILE EXISTS"
+    elif fmu_zip_check.exists():
+        message = "FMU ZIP EXISTS"
     else:
-        response.status = 400
-        return "Found {0} files. Expected 2".format(len(upload))
+        message = "NO FMU OR ZIP"
+
+    """
+    file = {'fmu': ('a.epw', epw_file, 'application/octet-stream'),
+            'json': (None, json.dumps(data), 'application/json')}
+    """
+
+    # r = requests.post(url, files=file)
+
+    return message
 
 
 @route('/fmu/<model_name>')

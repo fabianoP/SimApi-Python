@@ -43,17 +43,20 @@ class FmuModelViewSet(viewsets.ModelViewSet):
         if self.request.POST.get('container_id') is None:
             self.request.data['container_id'] = 'src_simulator_1'
 
-        serializer.save(user=self.request.user, container_id=self.request.data['container_id'])
+        serializer.save(user=self.request.user)
 
         data = {'model_name': self.request.data['model_name'],
                 'step_size': self.request.data['step_size'],
                 'final_time': self.request.data['final_time'],
                 'container_id': self.request.data['container_id'],
+                'model_count': self.request.data['model_count'],
                 'Authorization': 'Token ' + str(self.request.auth)
                 }
 
         if self.request.data['container_id'] not in self.request.data['model_name']:
             transaction.on_commit(lambda: tasks.post_model.apply_async((data,), queue='web', routing_key='web'))
+            # TODO poll result db for result
+            #   then return http 200
 
 
 class InputViewSet(viewsets.ModelViewSet):
@@ -69,7 +72,6 @@ class InputViewSet(viewsets.ModelViewSet):
     """
 
     def perform_create(self, serializer, **kwargs):
-        # TODO add second get param of time/date to ensure the current model is returned
         model = models.FmuModel.objects.get(model_name=self.request.data['fmu_model'])
 
         input_json_field = self.request.data['input_json']
@@ -100,7 +102,6 @@ class OutputViewSet(viewsets.ModelViewSet):
     """
 
     def perform_create(self, serializer, **kwargs):
-        # TODO add second get param of time/date to ensure the current model is returned
         output = self.request.data
         model = models.FmuModel.objects.get(model_name=output['fmu_model'])
         output_json_field = output['output_json']

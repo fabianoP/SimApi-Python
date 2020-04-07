@@ -11,21 +11,22 @@ logger = get_task_logger(__name__)
 @shared_task
 def post_model(data):
     logger.info(f'post_model data {data}')
+    model_name = data['model_name']
     auth_t = data['Authorization']
     logger.info(f'post_model data AUTH {auth_t}')
-    model = models.FmuModel.objects.get(model_name=data['model_name'])
+    model = models.FmuModel.objects.get(model_name=model_name)
 
     # TODO set simulator to hostname for multiple containers
     if model is not None:
 
-        url = 'http://generator:8000/test_upload/{0}'.format(data['model_name'])
+        url = 'http://generator:8000/test_upload/{0}'.format(model_name)
         logger.info(f'post_model url {url}')
 
         epw_file = open(model.epw_file.path, 'rb')
         idf_file = open(model.idf_file.path, 'rb')
 
-        file = {'epw':  ('a.epw', epw_file, 'application/octet-stream'),
-                'idf':  ('a.idf', idf_file, 'application/octet-stream'),
+        file = {'epw':  (model_name + '.epw', epw_file, 'application/octet-stream'),
+                'idf':  (model_name + '.idf', idf_file, 'application/octet-stream'),
                 'json': (None, json.dumps(data), 'application/json')}
 
         r = requests.post(url, files=file)
@@ -33,7 +34,7 @@ def post_model(data):
         epw_file.close()
         idf_file.close()
 
-        return r.status_code
+        return "{0} : {1}".format(r.content, r.status_code)
 
 
 @shared_task
