@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'coverage',
     'django_extensions',
     'sqlalchemy',
-    'graphene_django'
+    'graphene_django',
+    'django_celery_results'
 ]
 
 REST_FRAMEWORK = {

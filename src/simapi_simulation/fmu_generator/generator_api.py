@@ -9,6 +9,30 @@ import generator_tasks
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
+@route('/test_upload/<model_name>', method='POST')
+def test(model_name):
+    upload = request.files
+    save_path = '/home/fmu/code/energy/test/' + model_name
+    json_data = request.forms.pop('json')
+    print("json data: " + json_data)
+    try:
+        os.mkdir(save_path)
+    except OSError:
+        print("Creation of the directory %s failed" % save_path)
+    else:
+        print("Successfully created the directory %s " % save_path)
+
+    if len(upload) == 2:
+        for name, file in upload.iteritems():
+            print("Saving: " + name)
+            file.save(save_path)
+        response.status = 200
+        return "Success"
+    else:
+        response.status = 400
+        return "Found {0} files. Expected 2".format(len(upload))
+
+
 @route('/upload/<model_name>', method='POST')
 # upload from sim container.
 def do_upload(model_name):
