@@ -54,8 +54,8 @@ def test(model_name):
     result = generator_tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
     result.get()
 
-    fmu_check = Path('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.fmu')
-    fmu_zip_check = Path('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.zip')
+    fmu_check = Path('/home/fmu/code/fmu_test/{0}/{0}.fmu'.format(model_name))
+    fmu_zip_check = Path('/home/fmu/code/fmu_test/{0}/{0}.zip'.format(model_name))
 
     if fmu_check.exists():
         message = "FMU FILE EXISTS"
@@ -65,17 +65,34 @@ def test(model_name):
         message = "NO FMU OR ZIP"
         return message
 
-    fmu_file = open('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.fmu', 'rb')
-
-    file = {'fmu': (model_name + '.fmu', fmu_file, 'application/zip'),
-            'json': (None, json.dumps(json_data), 'application/json')}
-    url = 'http://src_simulator_1:8000/test_fmu/' + model_name
-
-    r = requests.post(url, files=file)
-
-    print(r.text)
-    fmu_file.close()
     return message
+
+
+@route('/fmu_to_simulator/<model_name>', method='POST')
+def send_fmu(model_name):
+    fmu_file = open('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.fmu', 'rb')
+    print(type(request.json))
+
+    json_data = request.json
+
+    model_count = json_data['model_count']
+    print(model_count)
+
+    i = 1
+    while i <= int(model_count):
+        file = {'fmu': (model_name + '.fmu', fmu_file, 'application/zip'),
+                'json': (None, json.dumps(json_data), 'application/json')}
+
+        url = 'http://src_simulator_{0}:8000/test_fmu/{1}'.format(i, model_name)
+
+        r = requests.post(url, files=file)
+
+        print(r.text)
+        i += 1
+
+    fmu_file.close()
+    response.status = 200
+    return 'File upload success in sim container for model_name = {0}'.format(model_name)
 
 
 @route('/fmu/<model_name>')

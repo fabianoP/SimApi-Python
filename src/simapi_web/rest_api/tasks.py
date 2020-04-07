@@ -38,6 +38,17 @@ def post_model(data):
 
 
 @shared_task
+def send_fmu(data):
+    logger.info(f'send_fmu data {data}')
+
+    url = 'http://generator:8000/fmu_to_simulator/{0}'.format(data['model_name'])
+
+    r = requests.post(url=url, json=data)
+
+    return "{0} | {1}".format(r.content, r.status_code)
+
+
+@shared_task
 def post_input(data):
     logger.info(f'post_input data {data}')
     # TODO create middleware to add DateTime to data

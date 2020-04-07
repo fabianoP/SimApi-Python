@@ -1,4 +1,3 @@
-import subprocess
 
 from bottle import request, route, run, response
 
@@ -34,7 +33,8 @@ def receive_fmu(model_name):
     save_path = '/home/deb/code/volume/' + model_name
 
     json_data = request.forms.pop('json')
-    print(json_data)
+    print(type(json.loads(json_data)))
+    print(json.loads(json_data))
     try:
         os.mkdir(save_path)
     except OSError:
@@ -45,6 +45,14 @@ def receive_fmu(model_name):
     for name, file in upload.iteritems():
         print("Saving: " + name)
         file.save(save_path)
+
+    j_dict = {'model_params': []}
+
+    j_dict['model_params'].append(json.loads(json_data))
+    write_json(j_dict, save_path + '/model_params.json')
+
+    response.status = 200
+    return 'File upload success in sim container for model_name = {0}'.format(model_name)
 
 
 @route('/upload/<model_name>', method='POST')

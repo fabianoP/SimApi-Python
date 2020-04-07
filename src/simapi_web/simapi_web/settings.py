@@ -155,4 +155,4 @@ AUTH_USER_MODEL = 'rest_api.User'
 
 CELERY_BROKER_URL = 'amqp://user:pass@broker:5672/vhost'
 
-CELERY_BACKEND_URL = 'db+postgresql://postgres:backend@backend/backend_db'
+CELERY_RESULT_BACKEND = 'django-db'

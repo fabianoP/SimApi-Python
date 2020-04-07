@@ -110,6 +110,15 @@ class OutputViewSet(viewsets.ModelViewSet):
                         output_json=json.dumps(output_json_field))
 
 
+class SendFMUView(APIView):
+    def post(self, request, *args, **kwargs):
+        data = request.data
+
+        result = tasks.send_fmu.apply_async((data,), queue='web', routing_key='web')
+
+        return Response(result.get())
+
+
 class HostNameViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.HostNameSerializer
     queryset = models.ContainerHostNames.objects.all()

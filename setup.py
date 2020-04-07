@@ -8,6 +8,7 @@ class Setup:
     input_url = 'http://0.0.0.0:8000/input/'
     output_url = 'http://0.0.0.0:8000/output/'
     graphql_url = 'http://0.0.0.0:8000/graphql/'
+    send_fmu = 'http://0.0.0.0:8000/send_fmu/'
 
     def create_user(self, user_email='user@user.com', user_name='user', user_password='user user88'):
         json_data = {

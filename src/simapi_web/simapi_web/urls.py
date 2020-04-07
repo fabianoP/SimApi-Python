@@ -31,5 +31,6 @@ router.register('hostname', views.HostNameViewSet, basename='hostname')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
+    path('send_fmu/', views.SendFMUView.as_view(), name='fmu'),
     path('graphql/', GraphQLView.as_view(graphiql=True)),
 ]
