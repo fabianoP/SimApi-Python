@@ -144,7 +144,7 @@ simulator_3         | [2020-04-05 22:09:09,412: INFO/MainProcess] celery@f06006b
 ```
 The system is now ready to initialize the models.
 
-To Run the initialize_model.py script open terminal window in the project root folder and run
+To Run the initialize_model.py script open terminal window in the project root folder and run (need to add dependencies example polling2)
 
 ```
 python initialize_model.py model_name
