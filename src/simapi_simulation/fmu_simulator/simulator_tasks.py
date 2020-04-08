@@ -58,7 +58,7 @@ def set_model(model_params):
               'fmu_path': fmu_path,
               'Authorization': auth_token}
 
-    write_json(params, './store_incoming_json/model_params.json')
+    write_json(params, 'fmu_data/model_params.json')
 
     if swarm_check.exists():
         os.system('rm /home/deb/code/isSwarm.txt')

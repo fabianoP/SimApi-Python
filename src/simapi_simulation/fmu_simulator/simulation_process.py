@@ -34,30 +34,46 @@ class MyHandler(PatternMatchingEventHandler):
     step_size = None
     prev_time_step = 0
 
-    def on_modified(self, event):
+    def on_created(self, event):
         #  Model initialized here when model_params.json is updated
         if event.src_path.endswith('model_params.json') and self.model_params_set is False:
 
             with open(str(event.src_path)) as json_file:
 
-                data = json.load(json_file)  # TODO Broken
+                data = json.load(json_file)
 
                 if len(data) > 0:
                     params = data['model_params'][-1]
                     self.model_name = params['model_name']
                     self.step_size = params['step_size']
                     final_time = params['final_time']
-                    fmu_path = params['fmu_path']
+                    fmu_path = '/home/deb/code/fmu_data/{0}/{0}.fmu'.format(self.model_name)
 
-                    self.header = {'Authorization': params['Authorization']}
+                    self.header = {'Authorization': 'Token ' + params['Authorization']}
+
+                    if not params['isSimOne']:
+                        init_url = 'http://web:8000/init_model/'
+                        hostname = subprocess.getoutput("cat /etc/hostname")
+                        model_name = self.model_name + '_' + hostname
+
+                        init_data = {
+                            'model_name': model_name,  # change name each time script is run!
+                            'step_size': self.step_size,  # step size in seconds. 600 secs = 10 mins
+                            'final_time': final_time,  # 24 hours = 86400 secs
+                            'container_id': hostname
+                        }
+
+                        requests.post(init_url, headers=self.header, data=init_data)
 
                     self.sim_obj = SimulationObject(model_name=self.model_name, step_size=int(self.step_size),
                                                     final_time=float(final_time),
                                                     path_to_fmu=fmu_path)
                     self.sim_obj.model_init()
-                    self.model_params_set = True
-                    os.system('rm /home/deb/code/store_incoming_json/model_params.json')
 
+                    self.model_params_set = True
+                    os.system('rm /home/deb/code/fmu_data/model_params.json')
+
+    def on_modified(self, event):
         # simulation time steps run here when time_step.txt is updated
         if event.src_path.endswith('time_step.txt') and self.model_params_set is True:
             with open(str(event.src_path)) as text_file:
@@ -82,7 +98,9 @@ class MyHandler(PatternMatchingEventHandler):
                     }}
                 }}
                 """.format(str(self.model_name), self.current_time_step)
+
                 r = requests.get(url=graphql_url, json={'query': input_query})
+
                 print("INPUT_QUERY: " + input_query)
                 print("STATUS: input_query " + str(r.status_code))
                 print("TEXT: input_query " + r.text)
@@ -114,9 +132,9 @@ class MyHandler(PatternMatchingEventHandler):
 
 
 if __name__ == '__main__':
-    path = '/home/deb/code/store_incoming_json'
+    path = '/home/deb/code/fmu_data'
     observer = Observer()
-    observer.schedule(MyHandler(), path)
+    observer.schedule(MyHandler(), path, recursive=True)
     observer.start()
 
     try:

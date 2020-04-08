@@ -71,7 +71,7 @@ class FmuModel(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     container_id = models.CharField(max_length=255, null=True)
-    model_count = models.IntegerField(default=1)
+    model_count = models.IntegerField(default=1, null=True)
 
     idf_file = FileField(upload_to='./Media/', default='', null=True)
     epw_file = FileField(upload_to='./Media/', default='', null=True)

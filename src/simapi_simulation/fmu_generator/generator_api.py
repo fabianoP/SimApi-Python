@@ -70,7 +70,7 @@ def test(model_name):
 
 @route('/fmu_to_simulator/<model_name>', method='POST')
 def send_fmu(model_name):
-    fmu_file = open('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.fmu', 'rb')
+
     print(type(request.json))
 
     json_data = request.json
@@ -80,6 +80,12 @@ def send_fmu(model_name):
 
     i = 1
     while i <= int(model_count):
+        if i == 1:
+            json_data['isSimOne'] = True
+        else:
+            json_data['isSimOne'] = False
+
+        fmu_file = open('/home/fmu/code/fmu_test/' + model_name + '/' + model_name + '.fmu', 'rb')
         file = {'fmu': (model_name + '.fmu', fmu_file, 'application/zip'),
                 'json': (None, json.dumps(json_data), 'application/json')}
 
@@ -88,9 +94,9 @@ def send_fmu(model_name):
         r = requests.post(url, files=file)
 
         print(r.text)
+        fmu_file.close()
         i += 1
 
-    fmu_file.close()
     response.status = 200
     return 'File upload success in sim container for model_name = {0}'.format(model_name)
 

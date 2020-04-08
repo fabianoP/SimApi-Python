@@ -45,13 +45,16 @@ class FmuModelViewSet(viewsets.ModelViewSet):
 
         serializer.save(user=self.request.user)
 
-        data = {'model_name': self.request.data['model_name'],
-                'step_size': self.request.data['step_size'],
-                'final_time': self.request.data['final_time'],
-                'container_id': self.request.data['container_id'],
-                'model_count': self.request.data['model_count'],
-                'Authorization': 'Token ' + str(self.request.auth)
-                }
+        data = {
+            'model_name': self.request.data['model_name'],
+            'step_size': self.request.data['step_size'],
+            'final_time': self.request.data['final_time'],
+            'container_id': self.request.data['container_id'],
+            'Authorization': 'Token ' + str(self.request.auth)
+        }
+
+        if 'model_count' in self.request.data:
+            data['model_count'] = self.request.data['model_count']
 
         if self.request.data['container_id'] not in self.request.data['model_name']:
             transaction.on_commit(lambda: tasks.post_model.apply_async((data,), queue='web', routing_key='web'))
@@ -111,8 +114,11 @@ class OutputViewSet(viewsets.ModelViewSet):
 
 
 class SendFMUView(APIView):
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
     def post(self, request, *args, **kwargs):
         data = request.data
+        data['Authorization'] = str(self.request.auth)
 
         result = tasks.send_fmu.apply_async((data,), queue='web', routing_key='web')
 

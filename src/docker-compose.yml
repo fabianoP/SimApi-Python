@@ -48,7 +48,7 @@ services:
     build: ./simapi_web
     command:  bash -c "python manage.py runserver 0.0.0.0:8000
                     & python manage.py migrate
-                    & celery -A simapi_web worker -l info --concurrency=1 --queues=web" # & celery -A simapi_web worker -l info --concurrency=1 --queues=web" #
+                    & celery -A simapi_web worker -l info --concurrency=1 --queues=web"
 
     volumes:
       - ./simapi_web:/code
@@ -65,8 +65,8 @@ services:
     container_name: generator
     build: ./simapi_simulation/fmu_generator
     command: bash -c "/run.sh"
-    volumes:
-      - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
+    # volumes:
+    #  - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
     ports:
       - 8001:8000
     depends_on:
@@ -78,10 +78,10 @@ services:
   simulator:
     build: ./simapi_simulation/fmu_simulator
     command: bash -c "/run.sh"
-    volumes:
-    - ./simapi_simulation/fmu_simulator:/home/deb/code
-    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
-    - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
+    # volumes:
+    # - ./simapi_simulation/fmu_simulator:/home/deb/code
+    # - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
+    # - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
     ports:
       - 8002-8102:8000
     depends_on:
