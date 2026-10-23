@@ -5,9 +5,9 @@ services:
     image: rabbitmq:3.13.7-management@sha256:e582c0bc7766f3342496d8485efb5a1df782b5ce3886ad017e2eaae442311f69
     hostname: broker
     environment:
-      RABBITMQ_DEFAULT_PASS: pass
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_VHOST: vhost
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-pass}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-user}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-vhost}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -29,7 +29,7 @@ services:
     image: postgres:16.10-bookworm@sha256:38471f330eb885e04de130b768d6db4e10469e2311879c7e5c699f6d2d8a1c74
     environment:
       POSTGRES_DB: backend_db
-      POSTGRES_PASSWORD: backend
+      POSTGRES_PASSWORD: ${CELERY_DB_PASSWORD:-backend}
       POSTGRES_USER: postgres
     ports:
       - "5434:5432"
@@ -51,7 +51,7 @@ services:
     image: postgres:16.10-bookworm@sha256:38471f330eb885e04de130b768d6db4e10469e2311879c7e5c699f6d2d8a1c74
     environment:
       POSTGRES_DB: db
-      POSTGRES_PASSWORD: db_pass
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-db_pass}
       POSTGRES_USER: postgres
     ports:
       - "5433:5432"
@@ -70,23 +70,24 @@ services:
   web:
     build:
       context: ./simapi_web
-    command:
-      - bash
-      - -c
-      - >-
-        set -e;
-        python manage.py migrate;
-        python manage.py runserver 0.0.0.0:8000 &
-        exec celery -A simapi_web worker --loglevel=info --concurrency=1 --queues=web
+    command: >-
+      bash -c "python manage.py migrate &&
+      exec python manage.py runserver 0.0.0.0:8000"
+    environment: &web-environment
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-user}:${RABBITMQ_PASSWORD:-pass}@broker:5672/${RABBITMQ_VHOST:-vhost}
+      CELERY_RESULT_BACKEND: db+postgresql://postgres:${CELERY_DB_PASSWORD:-backend}@backend/backend_db
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,web
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-simapi-insecure-development-key}
+      POSTGRES_DB: db
+      POSTGRES_HOST: db
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-db_pass}
+      POSTGRES_USER: postgres
     volumes:
       - ./simapi_web:/code
     ports:
       - "8000:8000"
     depends_on:
-      rabbitmq:
-        condition: service_healthy
-      celery_result_db:
-        condition: service_healthy
       db:
         condition: service_healthy
     healthcheck:
@@ -103,12 +104,33 @@ services:
       - simapi
     restart: unless-stopped
 
+  web_worker:
+    build:
+      context: ./simapi_web
+    command: celery -A simapi_web worker --loglevel=info --concurrency=1 --queues=web
+    environment: *web-environment
+    volumes:
+      - ./simapi_web:/code
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      celery_result_db:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - simapi
+    restart: unless-stopped
+
   generator:
     # Match the x86_64-only EnergyPlus simulator so generated FMU binaries remain compatible on Apple Silicon.
     platform: linux/amd64
     build:
       context: ./simapi_simulation/fmu_generator
     command: ["/run.sh"]
+    environment: &celery-environment
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-user}:${RABBITMQ_PASSWORD:-pass}@broker:5672/${RABBITMQ_VHOST:-vhost}
+      CELERY_RESULT_BACKEND: db+postgresql://postgres:${CELERY_DB_PASSWORD:-backend}@backend/backend_db
     volumes:
       - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
     ports:
@@ -140,6 +162,7 @@ services:
     build:
       context: ./simapi_simulation/fmu_simulator
     command: ["/run.sh"]
+    environment: *celery-environment
     volumes:
       - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
       - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location

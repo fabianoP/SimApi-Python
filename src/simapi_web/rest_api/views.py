@@ -1,3 +1,5 @@
+import os
+
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -37,9 +39,10 @@ class FmuModelViewSet(viewsets.ModelViewSet):
     queryset = models.FmuModel.objects.all()
 
     def perform_create(self, serializer):
-
-        if self.request.POST.get('container_id') is None:
-            self.request.data['container_id'] = 'src_simulator_1'
+        if not self.request.data.get("container_id"):
+            self.request.data["container_id"] = os.getenv(
+                "DEFAULT_SIMULATOR_HOST", "simulator"
+            )
 
         serializer.save(user=self.request.user, container_id=self.request.data['container_id'])
 

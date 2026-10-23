@@ -1,7 +1,11 @@
-import subprocess
+import os
+import socket
 
-queue_name = subprocess.getoutput("cat /etc/hostname")
+queue_name = socket.gethostname()
 
-BROKER_URL = 'amqp://user:pass@broker:5672/vhost'
-CELERY_RESULT_BACKEND = 'db+postgresql://postgres:backend@backend/backend_db'
-CELERY_ROUTES = {'simulator_tasks.*': {'queue': queue_name}}
+broker_url = os.getenv("CELERY_BROKER_URL", "amqp://user:pass@broker:5672/vhost")
+result_backend = os.getenv(
+    "CELERY_RESULT_BACKEND",
+    "db+postgresql://postgres:backend@backend/backend_db",
+)
+task_routes = {"simulator_tasks.*": {"queue": queue_name}}

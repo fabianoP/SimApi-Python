@@ -87,9 +87,10 @@ class MyHandler(PatternMatchingEventHandler):
                 print("STATUS: input_query " + str(r.status_code))
                 print("TEXT: input_query " + r.text)
 
-                graphql_response = r.json()['data']['inputs'][0]['inputJson']
-
-                self.current_input = json.loads(json.loads(graphql_response))
+                graphql_response = r.json()["data"]["inputs"][0]["inputJson"]
+                self.current_input = graphql_response
+                while isinstance(self.current_input, str):
+                    self.current_input = json.loads(self.current_input)
 
                 print("\ninput: " + str(self.current_input))
 

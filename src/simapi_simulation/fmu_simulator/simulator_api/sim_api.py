@@ -20,12 +20,15 @@ def write_time_step(t_step, filename):
         f.write(t_step)
 
 
-@route('/model_input', method='POST')
+@route("/model_input", method="POST")
 def get_input():
-    print("RECEIVED INPUT: " + str(request.json))
-    data = json.loads(request.json)
-    t_step = data['time_step']
-    write_time_step(t_step, '/home/deb/code/store_incoming_json/time_step.txt')
+    data = request.json
+    if not isinstance(data, dict) or "time_step" not in data:
+        response.status = 400
+        return "Expected a JSON object containing time_step"
+
+    write_time_step(str(data["time_step"]), "/home/deb/code/store_incoming_json/time_step.txt")
+    response.status = 204
 
 
 @route('/upload/<model_name>', method='POST')
@@ -62,4 +65,5 @@ def do_upload(model_name):
         return 'Number of Files required = 2. Uploaded Files = {0}'.format(len(upload))
 
 
-run(host='0.0.0.0', port=8000, debug=True, reloader=True)
+if __name__ == "__main__":
+    run(host="0.0.0.0", port=8000, debug=False, reloader=False)

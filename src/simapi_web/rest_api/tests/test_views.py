@@ -38,6 +38,21 @@ class JsonApiViewTest(APITestCase):
         created = FmuModel.objects.get(model_name="simulator_test")
         self.assertEqual(created.user, self.user)
 
+    def test_model_creation_defaults_to_compose_simulator(self):
+        response = self.client.post(
+            "/init_model/",
+            {
+                "model_name": "simulator_default",
+                "step_size": 600,
+                "final_time": "24.0",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        created = FmuModel.objects.get(model_name="simulator_default")
+        self.assertEqual(created.container_id, "simulator")
+
     def test_input_creation_stores_input_json(self):
         payload = {"yshade": 1.0, "schedule": [0, 1, 1]}
 

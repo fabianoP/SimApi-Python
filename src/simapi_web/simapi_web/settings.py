@@ -19,16 +19,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7rab5b9_ic_^)&hg2e!f@v-9__$=6*-)v3j_xvk2$t%+z=2rzf'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['0.0.0.0',
-                 '127.0.0.1',
-                 'localhost',
-                 'web']
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "simapi-insecure-development-key")
+DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() in {"1", "true", "yes"}
+ALLOWED_HOSTS = os.getenv(
+    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,web"
+).split(",")
 
 
 # Application definition
@@ -55,8 +50,8 @@ REST_FRAMEWORK = {
     ],
 }
 
-CELERY_ROUTES = {
-    'rest_api.tasks.*': {'queue': 'web'},
+CELERY_TASK_ROUTES = {
+    "rest_api.tasks.*": {"queue": "web"},
 }
 
 GRAPHENE = {
@@ -98,13 +93,13 @@ WSGI_APPLICATION = 'simapi_web.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db',
-        'PASSWORD': 'db_pass',
-        'USER': 'postgres',
-        'HOST': 'db',  # set in docker-compose.yml
-        'PORT': 5432  # default postgres port
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "db"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "db_pass"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "HOST": os.getenv("POSTGRES_HOST", "db"),
+        "PORT": int(os.getenv("POSTGRES_PORT", "5432")),
     }
 }
 
@@ -137,8 +132,6 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -148,8 +141,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-AUTH_USER_MODEL = 'rest_api.User'
+AUTH_USER_MODEL = "rest_api.User"
 
-CELERY_BROKER_URL = 'amqp://user:pass@broker:5672/vhost'
-
-CELERY_BACKEND_URL = 'db+postgresql://postgres:backend@backend/backend_db'
+CELERY_BROKER_URL = os.getenv(
+    "CELERY_BROKER_URL", "amqp://user:pass@broker:5672/vhost"
+)
+CELERY_RESULT_BACKEND = os.getenv(
+    "CELERY_RESULT_BACKEND",
+    "db+postgresql://postgres:backend@backend/backend_db",
+)

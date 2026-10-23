@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: src/simapi_web/requirements.txt
+
+      - name: Install web dependencies
+        run: python -m pip install -r src/simapi_web/requirements.txt
+
+      - name: Compile Python
+        run: python -m compileall -q .
+
+      - name: Check Django configuration and migrations
+        working-directory: src/simapi_web
+        run: |
+          python manage.py check --settings=simapi_web.test_settings
+          python manage.py makemigrations --check --dry-run --settings=simapi_web.test_settings
+
+      - name: Run Django tests
+        working-directory: src/simapi_web
+        run: python manage.py test --settings=simapi_web.test_settings
+
+      - name: Validate Compose configuration
+        working-directory: src
+        run: docker compose config --quiet
