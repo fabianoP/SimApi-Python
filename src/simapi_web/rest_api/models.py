@@ -1,13 +1,6 @@
-from django.db import models
 from django.conf import settings
-
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
-from django.contrib.auth.models import BaseUserManager
-
-from django.contrib.postgres.fields import JSONField
-
-# TODO make fat models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
 from django.db.models import FileField
 
 
@@ -101,7 +94,7 @@ class Input(models.Model):
     fmu_model = models.ForeignKey(FmuModel, on_delete=models.CASCADE)
     time_step = models.IntegerField(null=False)
     # set as single json object
-    input_json = JSONField()
+    input_json = models.JSONField()
 
     objects = models.Manager()
 
@@ -112,7 +105,7 @@ class Output(models.Model):
     fmu_model = models.ForeignKey(FmuModel, on_delete=models.CASCADE)
     time_step = models.IntegerField(null=False)
     # set as single json object
-    output_json = JSONField()
+    output_json = models.JSONField()
 
     objects = models.Manager()
 

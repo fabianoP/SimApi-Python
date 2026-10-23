@@ -1,12 +1,19 @@
-FROM python:3
+FROM python:3.12-slim-bookworm
 
-ENV PYTHONUNBUFFERED 1
-RUN apt-get update && apt-get install -y --no-install-recommends \
-               iputils-ping \
-               net-tools \
-               nmap
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-RUN mkdir /code
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        iputils-ping \
+        net-tools \
+        nmap \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /code
-COPY . /code
-RUN pip install -r requirements.txt
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+COPY . .

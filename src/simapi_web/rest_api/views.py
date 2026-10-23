@@ -1,5 +1,3 @@
-import json
-
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -105,8 +103,12 @@ class OutputViewSet(viewsets.ModelViewSet):
         model = models.FmuModel.objects.get(model_name=output['fmu_model'])
         output_json_field = output['output_json']
         time_step = output['time_step']
-        serializer.save(user=self.request.user, fmu_model=model, time_step=time_step,
-                        output_json=json.dumps(output_json_field))
+        serializer.save(
+            user=self.request.user,
+            fmu_model=model,
+            time_step=time_step,
+            output_json=output_json_field,
+        )
 
 
 class HostNameViewSet(viewsets.ModelViewSet):

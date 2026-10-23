@@ -42,12 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'celery',
     'rest_api',
-    'coverage',
     'django_extensions',
-    'sqlalchemy',
-    'graphene_django'
+    'graphene_django',
 ]
 
 REST_FRAMEWORK = {
@@ -149,6 +146,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 AUTH_USER_MODEL = 'rest_api.User'
 
