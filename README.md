@@ -201,6 +201,43 @@ python run_initialized_model.py example-model \
 
 `--duration` and `--step-size` are measured in seconds. Use the same step size passed to `initialize_model.py`.
 
+### Full worked example (expected responses and logs)
+
+A complete walkthrough—including container health verification, FMU compilation logs, EnergyPlus 9.0.1 initialization output, time-step execution results, and raw REST/GraphQL `curl` requests—is available in [`doc/full-example.md`](doc/full-example.md).
+
+In summary, running the bundled example model (`test_setup_files/update.idf` and `test_setup_files/update.epw`) produces:
+
+1. **Model initialization (`python initialize_model.py example-model`)**:
+   ```json
+   {
+     "model_name": "example-model",
+     "user": 1,
+     "container_id": "simulator",
+     "idf_file": "http://localhost:8000/Media/update.idf",
+     "epw_file": "http://localhost:8000/Media/update.epw",
+     "step_size": 600,
+     "final_time": "24.0",
+     "created_on": "2026-10-23T21:09:36.988160Z"
+   }
+   ```
+2. **Generator and simulator readiness (`docker compose logs -f generator simulator`)**:
+   ```text
+   generator-1 | ! EnergyPlusToFMU.py -- Renaming completed zip file {example_model.zip} to {example_model.fmu}
+   generator-1 | Task generator_tasks.gen_fmu[...] succeeded in 21.35s: 'success'
+   simulator-1 | [INFO][Slave] [ok][FMU status:OK] fmiInitializeSlave: Slave Slave is initialized.
+   simulator-1 | ExternalInterface starts first data exchange.
+   ```
+3. **Time-step execution (`python run_initialized_model.py example-model --duration 3600 --step-size 600`)**:
+   ```text
+   Running 1 model(s): ['example-model']
+   Sim: example-model | Time: 0 | Output: [{'outputJson': '{"TRoo": 14.99999999999973, "dryBulb": -6.333333333333334, "ZoneSens": 1244.017637607269}'}]
+   Sim: example-model | Time: 600 | Output: [{'outputJson': '{"TRoo": 14.99999999999963, "dryBulb": -5.666666666666667, "ZoneSens": 1604.645955026183}'}]
+   Sim: example-model | Time: 1200 | Output: [{'outputJson': '{"TRoo": 15.00000000000032, "dryBulb": -5.0, "ZoneSens": 1578.976321292014}'}]
+   Sim: example-model | Time: 1800 | Output: [{'outputJson': '{"TRoo": 15.00000000000019, "dryBulb": -4.333333333333334, "ZoneSens": 1532.971508074938}'}]
+   Sim: example-model | Time: 2400 | Output: [{'outputJson': '{"TRoo": 15.00000000000001, "dryBulb": -3.666666666666667, "ZoneSens": 1505.238734612665}'}]
+   Sim: example-model | Time: 3000 | Output: [{'outputJson': '{"TRoo": 15.00000000000032, "dryBulb": -3.0, "ZoneSens": 1476.929963191514}'}]
+   ```
+
 ### 8. Scale simulators (optional)
 
 From `src`, start several simulator replicas:
@@ -296,6 +333,8 @@ The full FMU simulator remains container-oriented because PyFMI, Assimulo, and E
 
 ```text
 .
+├── doc
+│   └── full-example.md
 ├── initialize_model.py
 ├── run_initialized_model.py
 ├── src
