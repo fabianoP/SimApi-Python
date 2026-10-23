@@ -1,73 +1,62 @@
+import argparse
+import os
+from pathlib import Path
+
 import requests
-import sys
-"""
-This script creates a user in the database and uploads the .idf, .epw, and model parameters required to create an FMU.
-Once the FMU is generated a pyFMI simulation object will be initialized using the FMU and model parameters. 
-
-model_name: change after each run
-idf_file_path: path to .idf on host machine
-epw_file_path: path to .epw on host machine
-"""
 
 
-model_name = sys.argv[1]
-idf_file_path = 'test_setup_files/update.idf'
-epw_file_path = 'test_setup_files/update.epw'
+def parse_args():
+    parser = argparse.ArgumentParser(description="Initialize a SimApi FMU model")
+    parser.add_argument("model_name")
+    parser.add_argument("--idf", type=Path, default=Path("test_setup_files/update.idf"))
+    parser.add_argument("--epw", type=Path, default=Path("test_setup_files/update.epw"))
+    parser.add_argument("--step-size", type=int, default=600)
+    parser.add_argument("--final-time", type=float, default=24.0)
+    return parser.parse_args()
 
 
-user_url = 'http://0.0.0.0:8000/user/'
-login_url = 'http://0.0.0.0:8000/login/'
-init_url = 'http://0.0.0.0:8000/init_model/'
-input_url = 'http://0.0.0.0:8000/input/'
-output_url = 'http://0.0.0.0:8000/output/'
+def main():
+    args = parse_args()
+    base_url = os.getenv("SIMAPI_URL", "http://localhost:8000").rstrip("/")
+    email = os.getenv("SIMAPI_EMAIL", "user@user.com")
+    name = os.getenv("SIMAPI_USER", "user")
+    password = os.getenv("SIMAPI_PASSWORD", "user user88")
 
-user_email = 'user@user.com'
-user_name = 'user'
-user_password = 'user user88'
+    with requests.Session() as session:
+        user_response = session.post(
+            f"{base_url}/user/",
+            data={"name": name, "email": email, "password": password},
+            timeout=30,
+        )
+        if user_response.status_code not in {201, 400}:
+            user_response.raise_for_status()
 
-json = {
-    "name": user_name,
-    "email": user_email,
-    "password": user_password
-}
+        login_response = session.post(
+            f"{base_url}/login/",
+            data={"username": email, "password": password},
+            timeout=30,
+        )
+        login_response.raise_for_status()
+        headers = {"Authorization": f"Token {login_response.json()['token']}"}
 
-resp = requests.post(user_url, data=json)
-print(resp.text + ' ' + str(resp.status_code))
-
-# login details for user
-data = {"username": "user@user.com",  # username = email
-        "password": "user user88"}
-
-resp = requests.post(login_url, data=data)
-
-# prints login token
-print(resp.content)
-
-json_resp = resp.json()
-
-token = json_resp['token']  # get validation token
-header = {'Authorization': 'Token ' + token}  # set request header
-
-idf_file = open(idf_file_path, 'rb')
-epw_file = open(epw_file_path, 'rb')
-
-# place .idf and .epw in simapi-python/test_setup_files/  replace a.idf and a.epw
-file = {'idf_file': ('update.idf', idf_file),
-        'epw_file': ('update.epw', epw_file)}
-
-# model initialization parameters
-init_data = {
-    'model_name': model_name,   # change name each time script is run!
-    'container_id': None,
-    'step_size': 600,   # step size in seconds. 600 secs = 10 mins
-    'final_time': 24.0  # 24 hours = 86400 secs
-}
-
-resp = requests.post(init_url, headers=header, data=init_data, files=file)
-
-# prints init_data on successful post
-print(resp.text)
+        with args.idf.open("rb") as idf_file, args.epw.open("rb") as epw_file:
+            response = session.post(
+                f"{base_url}/init_model/",
+                headers=headers,
+                data={
+                    "model_name": args.model_name,
+                    "step_size": args.step_size,
+                    "final_time": args.final_time,
+                },
+                files={
+                    "idf_file": (args.idf.name, idf_file),
+                    "epw_file": (args.epw.name, epw_file),
+                },
+                timeout=120,
+            )
+        response.raise_for_status()
+        print(response.text)
 
 
-idf_file.close()
-epw_file.close()
+if __name__ == "__main__":
+    main()
