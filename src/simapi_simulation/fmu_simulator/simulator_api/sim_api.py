@@ -45,7 +45,7 @@ def do_upload(model_name):
     else:
         print("Successfully created the directory %s " % save_path)
 
-    for name, file in upload.iteritems():
+    for name, file in upload.items():
         file.save(save_path)
 
     subprocess.getoutput('chmod -R  a+rw /home/deb/code/volume/ *')
