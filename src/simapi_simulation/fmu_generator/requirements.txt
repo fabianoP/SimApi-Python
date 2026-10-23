@@ -1,9 +1,5 @@
-billiard==3.6.3.0
-bottle==0.12.18
-celery==4.4.1
-kombu==4.6.8
-requests==2.22.0
-redis==3.4.1
-watchdog==0.10.2
-sqlalchemy
-psycopg2-binary==2.8.4
+bottle==0.13.4
+celery==5.6.3
+psycopg2-binary==2.9.13
+SQLAlchemy==2.1.6
+watchdog==6.0.0

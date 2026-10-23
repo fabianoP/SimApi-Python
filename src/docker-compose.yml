@@ -1,97 +1,168 @@
-version: '3.7'
+name: simapi
 
 services:
   rabbitmq:
-    image: rabbitmq:latest
-    ports:
-      - '5672:5672'
-      - '15672:15672'
+    image: rabbitmq:3.13.7-management@sha256:e582c0bc7766f3342496d8485efb5a1df782b5ce3886ad017e2eaae442311f69
+    hostname: broker
     environment:
-        - "RABBITMQ_DEFAULT_PASS=pass"
-        - "RABBITMQ_DEFAULT_USER=user"
-        - "RABBITMQ_DEFAULT_VHOST=vhost"
-    container_name: broker
+      RABBITMQ_DEFAULT_PASS: pass
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_VHOST: vhost
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     networks:
-      - simapi
-    restart: always
+      simapi:
+        aliases:
+          - broker
+    restart: unless-stopped
 
   celery_result_db:
-    container_name: backend
-    image: postgres
+    image: postgres:16.10-bookworm@sha256:38471f330eb885e04de130b768d6db4e10469e2311879c7e5c699f6d2d8a1c74
     environment:
-      POSTGRES_DB: "backend_db"
-      POSTGRES_PASSWORD: "backend"
-    networks:
-      - simapi
+      POSTGRES_DB: backend_db
+      POSTGRES_PASSWORD: backend
+      POSTGRES_USER: postgres
     ports:
-      - 5434:5432
+      - "5434:5432"
     volumes:
-      - postgres_celery_data:/var/lib/postgresql/data/
-    restart: always
+      - postgres_celery_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d backend_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks:
+      simapi:
+        aliases:
+          - backend
+    restart: unless-stopped
 
   db:
-    container_name: db
-    image: postgres
+    image: postgres:16.10-bookworm@sha256:38471f330eb885e04de130b768d6db4e10469e2311879c7e5c699f6d2d8a1c74
     environment:
-      POSTGRES_DB: "db"
-      POSTGRES_PASSWORD: "db_pass"
+      POSTGRES_DB: db
+      POSTGRES_PASSWORD: db_pass
+      POSTGRES_USER: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d db"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
     networks:
       - simapi
-    ports:
-    - 5433:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    restart: always
+    restart: unless-stopped
 
   web:
-    container_name: web
-    build: ./simapi_web
-    command:  bash -c "python manage.py runserver 0.0.0.0:8000
-                    & python manage.py migrate
-                    & celery -A simapi_web worker -l info --concurrency=1 --queues=web"
+    build:
+      context: ./simapi_web
+    command:
+      - bash
+      - -c
+      - >-
+        set -e;
+        python manage.py migrate;
+        python manage.py runserver 0.0.0.0:8000 &
+        exec celery -A simapi_web worker --loglevel=info --concurrency=1 --queues=web
     volumes:
       - ./simapi_web:/code
     ports:
-      - 8000:8000
+      - "8000:8000"
     depends_on:
-      - db
+      rabbitmq:
+        condition: service_healthy
+      celery_result_db:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import socket; socket.create_connection(('localhost', 8000), timeout=5).close()"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     networks:
       - simapi
-    restart: always
+    restart: unless-stopped
 
   generator:
-    container_name: generator
-    build: ./simapi_simulation/fmu_generator
-    command: bash -c "/run.sh"
+    # Match the x86_64-only EnergyPlus simulator so generated FMU binaries remain compatible on Apple Silicon.
+    platform: linux/amd64
+    build:
+      context: ./simapi_simulation/fmu_generator
+    command: ["/run.sh"]
     volumes:
       - ./simapi_simulation/fmu_simulator/fmu_location:/home/fmu/code/fmu_location
     ports:
-      - 8001:8000
+      - "8001:8000"
     depends_on:
-      - web
+      rabbitmq:
+        condition: service_healthy
+      celery_result_db:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5).close()"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     networks:
       - simapi
-    restart: always
+    restart: unless-stopped
 
   simulator:
-    build: ./simapi_simulation/fmu_simulator
-    command: bash -c "/run.sh"
+    # Its bundled EnergyPlus and Miniconda artifacts are published only for x86_64 Linux.
+    platform: linux/amd64
+    build:
+      context: ./simapi_simulation/fmu_simulator
+    command: ["/run.sh"]
     volumes:
-    # - ./simapi_simulation/fmu_simulator:/home/deb/code
-    - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
-    - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
+      - ./simapi_simulation/fmu_simulator/volume:/home/deb/code/volume
+      - ./simapi_simulation/fmu_simulator/fmu_location:/home/deb/code/fmu_location
     ports:
-      - 8002-8102:8000
+      - "8002-8102:8000"
     depends_on:
-      - web
-      - generator
+      rabbitmq:
+        condition: service_healthy
+      celery_result_db:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+      generator:
+        condition: service_healthy
     networks:
       - simapi
-    restart: always
+    restart: unless-stopped
 
 networks:
   simapi:
     driver: bridge
+
 volumes:
   postgres_data:
   postgres_celery_data:
+  rabbitmq_data:

@@ -1,79 +1,58 @@
-from bottle import request, route, run, response
-
-import sys
 import json
-import os.path
-import generator_tasks
+from pathlib import Path
+
+from bottle import request, response, route, run
+
+MODEL_ROOT = Path("/home/fmu/code/energy/test")
+FMU_ROOT = Path("/home/fmu/code/fmu_location")
 
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+@route("/health")
+def health():
+    return "ok"
 
 
-@route('/upload/<model_name>', method='POST')
-# upload from sim container.
+@route("/upload/<model_name>", method="POST")
 def do_upload(model_name):
     upload = request.files
-    save_path = '/home/fmu/code/energy/test/' + model_name
+    save_path = MODEL_ROOT / model_name
+    save_path.mkdir(parents=True, exist_ok=True)
 
-    try:
-        os.mkdir(save_path)
-    except OSError:
-        print("Creation of the directory %s failed" % save_path)
-    else:
-        print("Successfully created the directory %s " % save_path)
-
-    if len(upload) == 2:
-        for name, file in upload.iteritems():
-            print("GEN API /UPLOAD FILE SAVE: " + name)
-            file.save(save_path)
-        response.status = 200
-        return '2 files uploaded'
-    else:
+    if len(upload) != 2:
         response.status = 400
-        return "Found {0} files. Expected 2".format(len(upload))
+        return f"Found {len(upload)} files. Expected 2"
+
+    for name, uploaded_file in upload.items():
+        print(f"GEN API /UPLOAD FILE SAVE: {name}")
+        uploaded_file.save(str(save_path), overwrite=True)
+
+    response.status = 200
+    return "2 files uploaded"
 
 
-@route('/fmu/<model_name>')
-# check task status on sim container for upload. when finished call this from sim
+@route("/fmu/<model_name>")
 def generate(model_name):
-    directory = os.listdir('/home/fmu/code/energy/test/' + model_name)
-
-    # maybe write to .json file and monitor for updates
-    if model_name + '.idf' in directory and model_name + '.epw' in directory:
-        epw = '/home/fmu/code/energy/test/' + model_name + '/' + model_name + '.epw'
-        idf = '/home/fmu/code/energy/test/' + model_name + '/' + model_name + '.idf'
-    else:
+    model_directory = MODEL_ROOT / model_name
+    idf = model_directory / f"{model_name}.idf"
+    epw = model_directory / f"{model_name}.epw"
+    if not idf.is_file() or not epw.is_file():
         response.status = 400
-        return 'No such files'
+        return "No such files"
 
-    fmu_store_dir = '/home/fmu/code/fmu_location/' + model_name
+    fmu_store_dir = FMU_ROOT / model_name
+    fmu_store_dir.mkdir(parents=True, exist_ok=True)
+    data = {
+        "epw_path": str(epw),
+        "idf_path": str(idf),
+        "fmu_store_dir": str(fmu_store_dir),
+    }
 
-    try:
-        os.mkdir(fmu_store_dir)
-    except OSError:
-        print("Creation of the directory %s failed" % fmu_store_dir)
-    else:
-        print("Successfully created the directory %s " % fmu_store_dir)
+    with (model_directory / "data.json").open("w", encoding="utf-8") as data_file:
+        json.dump(data, data_file)
 
-    # result = generator_tasks.gen_fmu.apply_async((idf, epw, fmu_store_dir))
-    # result.get()
-
-    if os.path.exists(fmu_store_dir):
-        # write JSON file here '/home/fmu/code/energy/test/' + model_name + '/'
-        # model_name, epw, idf, fmu_store_dir
-        data = {'epw_path': epw,
-                'idf_path': idf,
-                'fmu_store_dir': fmu_store_dir}
-
-        with open('/home/fmu/code/energy/test/' + model_name + '/data.json', 'w') as f:
-            json.dump(data, f)
-            f.close()
-
-        response.status = 200
-        return 'FMU ready'  # FMU Stored in shared volume
-    else:
-        response.status = 400
-        return 'FMU not ready'  # re-add task to queue
+    response.status = 200
+    return "FMU ready"
 
 
-run(host='0.0.0.0', port=8000, debug=True, reloader=True)
+if __name__ == "__main__":
+    run(host="0.0.0.0", port=8000, debug=False, reloader=False)
