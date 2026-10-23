@@ -28,7 +28,7 @@ class LoginViewSet(viewsets.ViewSet):
 
     @staticmethod
     def create(request):
-        return ObtainAuthToken().post(request)
+        return ObtainAuthToken.as_view()(request._request)
 
 
 class FmuModelViewSet(viewsets.ModelViewSet):

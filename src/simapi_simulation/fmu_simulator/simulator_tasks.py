@@ -31,10 +31,16 @@ def set_model(model_params):
     model_name = model_params['model_name']
     step_size = model_params['step_size']
     final_time = model_params['final_time']
-    fmu_path = '/home/deb/code/fmu_location/' + model_name + '/' + model_name + '.fmu'
+    fmu_dir = Path('/home/deb/code/fmu_location') / model_name
+    fmu_file = fmu_dir / f'{model_name}.fmu'
     auth_token = model_params['Authorization']
-    logger.info(f'PATH TO FMU IN SET_MODEL: {fmu_path}')
     time.sleep(5)
+    if not fmu_file.is_file():
+        sanitized_fmu = fmu_dir / f'{model_name.replace("-", "_")}.fmu'
+        if sanitized_fmu.is_file():
+            fmu_file = sanitized_fmu
+    fmu_path = str(fmu_file)
+    logger.info(f'PATH TO FMU IN SET_MODEL: {fmu_path}')
 
     swarm_check = Path('/home/deb/code/isSwarm.txt')
     if not swarm_check.exists():

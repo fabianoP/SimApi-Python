@@ -62,7 +62,7 @@ class Query(object):
         return models.FmuModel.objects.all()
 
     def resolve_inputs(self, info, model_n=None, t_step=None, **kwargs):
-        if model_n and t_step:
+        if model_n and t_step is not None:
             filter = (
                     Q(fmu_model=model_n) &
                     Q(time_step=t_step)
@@ -75,7 +75,7 @@ class Query(object):
             )
             return models.Input.objects.filter(filter)
 
-        if t_step:
+        if t_step is not None:
             filter = (
                 Q(time_step=t_step)
             )
@@ -84,7 +84,7 @@ class Query(object):
         return models.Input.objects.all()
 
     def resolve_outputs(self, info, model_n=None, t_step=None, **kwargs):
-        if model_n and t_step:
+        if model_n and t_step is not None:
             filter = (
                     Q(fmu_model=model_n) &
                     Q(time_step=t_step)
@@ -97,7 +97,7 @@ class Query(object):
             )
             return models.Output.objects.filter(filter)
 
-        if t_step:
+        if t_step is not None:
             filter = (
                 Q(time_step=t_step)
             )

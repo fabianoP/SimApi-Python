@@ -2,6 +2,7 @@ import subprocess
 import sys
 import time
 import json
+from pathlib import Path
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
@@ -23,11 +24,15 @@ class MyHandler(PatternMatchingEventHandler):
 
         if event.src_path.endswith('.zip'):
             print("FMU LOCATION!")
-            fmu_name = event.src_path.rsplit('/', 1)[1]
-            model_name = str(fmu_name).rsplit('.', 1)[0]
+            src_path = Path(event.src_path)
+            model_name = src_path.stem
+            params_path = Path('/home/deb/code/volume') / model_name / 'model_params.json'
+            if not params_path.is_file():
+                model_name = src_path.parent.name
+                params_path = Path('/home/deb/code/volume') / model_name / 'model_params.json'
 
             # directory_path should be volume
-            with open('/home/deb/code/volume/' + model_name + '/model_params.json', 'r') as json_file:
+            with params_path.open('r') as json_file:
                 data = json.load(json_file)
                 temp = data['model_params']
                 params_json = temp[-1]
