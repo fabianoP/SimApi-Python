@@ -334,7 +334,8 @@ The full FMU simulator remains container-oriented because PyFMI, Assimulo, and E
 ```text
 .
 ├── doc
-│   └── full-example.md
+│   ├── full-example.md
+│   └── future-work.md
 ├── initialize_model.py
 ├── run_initialized_model.py
 ├── src
@@ -349,3 +350,10 @@ The full FMU simulator remains container-oriented because PyFMI, Assimulo, and E
 ## Continuous integration
 
 GitHub Actions compiles all Python sources, validates Django configuration and migration state, runs the API tests, and validates the primary Compose configuration.
+
+## Future work
+
+Planned architectural extensions are documented in [`doc/future-work.md`](doc/future-work.md):
+
+- **Simulation Command API (`/simulations/`)**: High-level lifecycle state tracking (`COMPILING_FMU` -> `INITIALIZING` -> `READY` -> `RUNNING` -> `COMPLETED`), automatic FMU input/output variable introspection, synchronous single-step and multi-step horizon execution (`POST /simulations/<name>/step/`), batch schedule execution (`POST /simulations/<name>/run/`), KPI/time-series aggregation (`GET /simulations/<name>/timeseries/`), and simulator reset (`POST /simulations/<name>/reset/`).
+- **MCP Server (`simapi_mcp`)**: A Model Context Protocol server exposing tools (`simapi_status`, `simapi_init_model`, `simapi_step`, `simapi_run_experiment`, `simapi_get_summary_and_timeseries`, `simapi_reset_simulator`), resources (`simapi://simulations/{name}/schema`, `simapi://simulations/{name}/timeseries`), and prompts (`optimize_shading_control`) for AI-in-the-loop building energy co-simulation.
